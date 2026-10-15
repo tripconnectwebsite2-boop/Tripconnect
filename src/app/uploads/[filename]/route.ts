@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import fs from "fs/promises";
+import os from "os";
 
 export const dynamic = "force-dynamic";
 
@@ -22,11 +23,17 @@ export async function GET(
     const { filename } = await context.params;
     // Sanitize filename to avoid path traversal
     const safeFilename = path.basename(filename);
-    const tmpPath = path.join("/tmp", "uploads", safeFilename);
+    const isServerless = Boolean(
+      process.env.VERCEL ||
+      process.env.AWS_LAMBDA_FUNCTION_NAME ||
+      process.env.LAMBDA_TASK_ROOT ||
+      process.env.NODE_ENV === "production"
+    );
+    const tmpPath = path.join(os.tmpdir(), "uploads", safeFilename);
     const publicPath = path.join(process.cwd(), "public", "uploads", safeFilename);
 
     let filePath = publicPath;
-    if (process.env.VERCEL) {
+    if (isServerless) {
       const existsInTmp = await fs.stat(tmpPath).then(() => true).catch(() => false);
       if (existsInTmp) {
         filePath = tmpPath;

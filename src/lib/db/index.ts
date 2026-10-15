@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import os from "os";
 import {
   TravelPackage,
   Destination,
@@ -40,10 +41,31 @@ interface DatabaseStore {
   pages?: CustomPage[];
 }
 
-const DATA_DIR = process.env.VERCEL
-  ? path.join("/tmp", ".data")
-  : path.join(process.cwd(), ".data");
+function getDataDir(): string {
+  // Always use OS temp directory when running in Vercel or any cloud serverless environment
+  const isServerless = Boolean(
+    process.env.VERCEL ||
+    process.env.AWS_LAMBDA_FUNCTION_NAME ||
+    process.env.LAMBDA_TASK_ROOT ||
+    process.env.NODE_ENV === "production"
+  );
+
+  if (isServerless) {
+    try {
+      return path.join(os.tmpdir(), "tripconnect-data");
+    } catch {
+      return "/tmp/tripconnect-data";
+    }
+  }
+
+  return path.join(process.cwd(), ".data");
+}
+
+const DATA_DIR = getDataDir();
 const DB_FILE = path.join(DATA_DIR, "db.json");
+
+// In-memory cache ensures zero crashes if filesystem is strictly read-only
+let inMemoryStore: DatabaseStore | null = null;
 
 const initialBugs: BugReport[] = [
   {
@@ -91,86 +113,103 @@ const initialBugs: BugReport[] = [
 ];
 
 function ensureStore(): DatabaseStore {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  // 1. If we already have inMemoryStore cached, return it immediately
+  if (inMemoryStore) {
+    return inMemoryStore;
   }
 
-  if (!fs.existsSync(DB_FILE)) {
-    // If running in /tmp on Vercel, attempt to clone from bundled repo .data/db.json
-    const bundledDb = path.join(process.cwd(), ".data", "db.json");
-    if (fs.existsSync(bundledDb) && DB_FILE !== bundledDb) {
-      try {
-        const raw = fs.readFileSync(bundledDb, "utf-8");
-        fs.writeFileSync(DB_FILE, raw, "utf-8");
-        return JSON.parse(raw);
-      } catch {
-        // Fall back to code initial seed below
-      }
-    }
-
-    const initial: DatabaseStore = {
-      packages: initialPackages,
-      destinations: initialDestinations,
-      enquiries: [
-        {
-          id: "enq-sample-1",
-          customer_name: "Anita Menon",
-          phone: "+91 98470 12345",
-          email: "anita.menon@example.com",
-          package_id: "pkg-classic-kerala",
-          package_title: "Classic Kerala Grand Tour",
-          preferred_destination: "Munnar & Alleppey",
-          travel_date: "2026-11-20",
-          traveller_count: 2,
-          additional_requirements: "Honeymoon setup on houseboat requested, vegetarian meals.",
-          status: "new",
-          privacy_notice_version: "1.0",
-          marketing_consent: true,
-          marketing_consent_timestamp: new Date().toISOString(),
-          source_page: "/packages/classic-kerala-grand-tour",
-          created_at: new Date(Date.now() - 3600000 * 4).toISOString(),
-          updated_at: new Date(Date.now() - 3600000 * 4).toISOString(),
-        },
-        {
-          id: "enq-sample-2",
-          customer_name: "Rahul Sharma",
-          phone: "+91 98200 54321",
-          email: "rahul.sharma@example.com",
-          package_id: "pkg-munnar-tea-trails",
-          package_title: "Munnar Cloud Mist & Tea Trails",
-          preferred_destination: "Munnar",
-          travel_date: "2026-12-15",
-          traveller_count: 4,
-          additional_requirements: "Family trip with senior parents, prefer ground floor rooms.",
-          status: "contacted",
-          privacy_notice_version: "1.0",
-          marketing_consent: false,
-          source_page: "/contact",
-          created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
-          updated_at: new Date(Date.now() - 3600000 * 20).toISOString(),
-        },
-      ],
-      enquiry_notes: [
-        {
-          id: "note-1",
-          enquiry_id: "enq-sample-2",
-          note: "Spoke with Rahul on WhatsApp. Sent custom itinerary with senior-friendly cottage options.",
-          created_by: "tripconnectwebsite2@gmail.com",
-          created_at: new Date(Date.now() - 3600000 * 20).toISOString(),
-        },
-      ],
-      offers: initialOffers,
-      reviews: initialReviews,
-      settings: initialSettings,
-      content: initialSiteContent,
-      bugs: initialBugs,
-      pages: initialPages,
-    };
-    fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), "utf-8");
-    return initial;
-  }
+  const initial: DatabaseStore = {
+    packages: initialPackages,
+    destinations: initialDestinations,
+    enquiries: [
+      {
+        id: "enq-sample-1",
+        customer_name: "Anita Menon",
+        phone: "+91 98470 12345",
+        email: "anita.menon@example.com",
+        package_id: "pkg-classic-kerala",
+        package_title: "Classic Kerala Grand Tour",
+        preferred_destination: "Munnar & Alleppey",
+        travel_date: "2026-11-20",
+        traveller_count: 2,
+        additional_requirements: "Honeymoon setup on houseboat requested, vegetarian meals.",
+        status: "new",
+        privacy_notice_version: "1.0",
+        marketing_consent: true,
+        marketing_consent_timestamp: new Date().toISOString(),
+        source_page: "/packages/classic-kerala-grand-tour",
+        created_at: new Date(Date.now() - 3600000 * 4).toISOString(),
+        updated_at: new Date(Date.now() - 3600000 * 4).toISOString(),
+      },
+      {
+        id: "enq-sample-2",
+        customer_name: "Rahul Sharma",
+        phone: "+91 98200 54321",
+        email: "rahul.sharma@example.com",
+        package_id: "pkg-munnar-tea-trails",
+        package_title: "Munnar Cloud Mist & Tea Trails",
+        preferred_destination: "Munnar",
+        travel_date: "2026-12-15",
+        traveller_count: 4,
+        additional_requirements: "Family trip with senior parents, prefer ground floor rooms.",
+        status: "contacted",
+        privacy_notice_version: "1.0",
+        marketing_consent: false,
+        source_page: "/contact",
+        created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
+        updated_at: new Date(Date.now() - 3600000 * 20).toISOString(),
+      },
+    ],
+    enquiry_notes: [
+      {
+        id: "note-1",
+        enquiry_id: "enq-sample-2",
+        note: "Spoke with Rahul on WhatsApp. Sent custom itinerary with senior-friendly cottage options.",
+        created_by: "tripconnectwebsite2@gmail.com",
+        created_at: new Date(Date.now() - 3600000 * 20).toISOString(),
+      },
+    ],
+    offers: initialOffers,
+    reviews: initialReviews,
+    settings: initialSettings,
+    content: initialSiteContent,
+    bugs: initialBugs,
+    pages: initialPages,
+  };
 
   try {
+    try {
+      if (!fs.existsSync(DATA_DIR)) {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      }
+    } catch {
+      // Ignored if directory creation fails on read-only environments
+    }
+
+    if (!fs.existsSync(DB_FILE)) {
+      // If running in /tmp on Vercel, attempt to clone from bundled repo .data/db.json
+      const bundledDb = path.join(process.cwd(), ".data", "db.json");
+      if (fs.existsSync(bundledDb) && DB_FILE !== bundledDb) {
+        try {
+          const raw = fs.readFileSync(bundledDb, "utf-8");
+          const parsed = JSON.parse(raw);
+          inMemoryStore = parsed;
+          try {
+            fs.writeFileSync(DB_FILE, raw, "utf-8");
+          } catch {}
+          return parsed;
+        } catch {
+          // Fall back to code initial seed below
+        }
+      }
+
+      try {
+        fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), "utf-8");
+      } catch {}
+      inMemoryStore = initial;
+      return initial;
+    }
+
     const raw = fs.readFileSync(DB_FILE, "utf-8");
     const parsed = JSON.parse(raw);
     let mutated = false;
@@ -198,29 +237,29 @@ function ensureStore(): DatabaseStore {
       mutated = true;
     }
     if (mutated) {
-      saveStore(parsed);
+      try {
+        fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2), "utf-8");
+      } catch {}
     }
+    inMemoryStore = parsed;
     return parsed;
-  } catch {
-    return {
-      packages: initialPackages,
-      destinations: initialDestinations,
-      enquiries: [],
-      enquiry_notes: [],
-      offers: initialOffers,
-      reviews: initialReviews,
-      settings: initialSettings,
-      content: initialSiteContent,
-      bugs: initialBugs,
-    };
+  } catch (err) {
+    console.warn("[DatabaseStore] Disk access skipped, using in-memory store:", err);
+    inMemoryStore = initial;
+    return initial;
   }
 }
 
 function saveStore(store: DatabaseStore) {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  inMemoryStore = store;
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(DB_FILE, JSON.stringify(store, null, 2), "utf-8");
+  } catch (err) {
+    console.warn("[DatabaseStore] Disk write skipped in serverless environment:", err);
   }
-  fs.writeFileSync(DB_FILE, JSON.stringify(store, null, 2), "utf-8");
 }
 
 function isSupabaseConfigured(): boolean {

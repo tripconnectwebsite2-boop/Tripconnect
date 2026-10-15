@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/auth";
 import path from "path";
 import fs from "fs/promises";
+import os from "os";
 
 export const dynamic = "force-dynamic";
 
@@ -123,8 +124,14 @@ export async function POST(req: NextRequest) {
     const uniqueSuffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const filename = `${safeBaseName || "upload"}-${uniqueSuffix}${ext}`;
 
-    const uploadsDir = process.env.VERCEL
-      ? path.join("/tmp", "uploads")
+    const isServerless = Boolean(
+      process.env.VERCEL ||
+      process.env.AWS_LAMBDA_FUNCTION_NAME ||
+      process.env.LAMBDA_TASK_ROOT ||
+      process.env.NODE_ENV === "production"
+    );
+    const uploadsDir = isServerless
+      ? path.join(os.tmpdir(), "uploads")
       : path.join(process.cwd(), "public", "uploads");
     await fs.mkdir(uploadsDir, { recursive: true });
 
