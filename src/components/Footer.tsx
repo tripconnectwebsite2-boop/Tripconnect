@@ -161,8 +161,11 @@ export default async function Footer({ content }: { content?: Partial<SiteConten
         </div>
 
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-outline font-body-sm text-body-sm">
-          <div className="flex flex-wrap items-center gap-6">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <p>{copyright}</p>
+            <span className="text-xs text-on-surface-variant font-medium inline-flex items-center gap-1">
+              Designed by <span className="text-primary font-semibold">Adharsh</span>
+            </span>
             <Link className="hover:text-on-surface transition-colors" href="/privacy-policy">
               Privacy Policy
             </Link>
