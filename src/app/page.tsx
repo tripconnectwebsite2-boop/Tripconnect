@@ -9,14 +9,15 @@ import SpecialOffer from "@/components/SpecialOffer";
 import PlanTripForm from "@/components/PlanTripForm";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import { getOffers, getReviews, getPackages, getSiteContent } from "@/lib/db";
+import { getOffers, getReviews, getPackages, getSiteContent, getSiteSettings } from "@/lib/db";
 
 export default async function Home() {
-  const [activeOffers, approvedReviews, publishedPackages, siteContent] = await Promise.all([
+  const [activeOffers, approvedReviews, publishedPackages, siteContent, siteSettings] = await Promise.all([
     getOffers(true), // Only current active verified offers
     getReviews(true), // Only approved genuine reviews
     getPackages({ status: "published" }), // Only published packages
     getSiteContent(),
+    getSiteSettings(),
   ]);
 
   return (
@@ -30,7 +31,13 @@ export default async function Home() {
           <Destinations />
           <WhyTripConnect content={siteContent} />
           {/* Conditionally rendered: Only displayed if genuine approved reviews exist */}
-          {approvedReviews.length > 0 && <Reviews />}
+          {approvedReviews.length > 0 && (
+            <Reviews
+              rating={siteSettings.google_rating}
+              reviewCount={siteSettings.google_review_count}
+              reviewsUrl={siteSettings.google_reviews_url}
+            />
+          )}
           {/* Conditionally rendered: Only displayed if approved active current offers exist */}
           {activeOffers.length > 0 && <SpecialOffer />}
           <PlanTripForm />

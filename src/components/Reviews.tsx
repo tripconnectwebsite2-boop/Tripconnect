@@ -1,9 +1,36 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { APPLE_EASE } from "@/lib/animation";
 
-export default function Reviews() {
+interface ReviewsProps {
+  rating?: number;
+  reviewCount?: number;
+  reviewsUrl?: string;
+}
+
+export default function Reviews({
+  rating: initialRating = 5.0,
+  reviewCount: initialCount = 122,
+  reviewsUrl: initialUrl = "https://www.google.com/search?sca_esv=3c37b919d1c0a20a&sxsrf=APpeQnsQBeFlGryg8C-3YNc9gCiwY-ybZg:1792077470654&si=APenkKm7iecQ4G6P-TsbSMFKIQtv3EFIqRAFw-i8uEbk55Z-_ycx-DTCj1xuY2o22e4ADWu-gAQ93o0pN1Babfm2IQHvGzW4cDIuWmeHU5d7op1kp2QGhaaGzVrZjVwLOIv2v1EKhNkoXu8QNEF34ufqcaxAjPyE0A%3D%3D&q=Trip+Connect+Kochi+Reviews&sa=X&ved=2ahUKEwiN-bDoqLyXAxXbcGwGHe70K8wQ0bkNegQINhAH&biw=1920&bih=945&dpr=1",
+}: ReviewsProps) {
+  const [rating, setRating] = useState(initialRating);
+  const [reviewCount, setReviewCount] = useState(initialCount);
+  const [reviewsUrl, setReviewsUrl] = useState(initialUrl);
+
+  useEffect(() => {
+    fetch("/api/reviews/google")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data) {
+          if (data.rating !== undefined) setRating(data.rating);
+          if (data.review_count !== undefined) setReviewCount(data.review_count);
+          if (data.reviews_url) setReviewsUrl(data.reviews_url);
+        }
+      })
+      .catch(() => {});
+  }, []);
   const reviews = [
     {
       author: "Abilraj Kr",
@@ -97,7 +124,7 @@ export default function Reviews() {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/30 text-on-surface font-label-md text-label-md shadow-sm transition-all"
-            href="https://www.google.com/search?sca_esv=a5849753dad976a5&sxsrf=APpeQnt0QHiXv1yeJwQ9xr75ioth2exqfw:1792074904272&si=APenkKm7iecQ4G6P-TsbSMFKIQtv3EFIqRAFw-i8uEbk55Z-_ycx-DTCj1xuY2o22e4ADWu-gAQ93o0pN1Babfm2IQHvGzW4cDIuWmeHU5d7op1kp2QGhaaGzVrZjVwLOIv2v1EKhNkoXu8QNEF34ufqcaxAjPyE0A%3D%3D&q=Trip+Connect+Kochi+Reviews&sa=X&ved=2ahUKEwjmrdGgn7yXAxWiR2wGHUUfAIgQ0bkNegQIPhAH&biw=1920&bih=911&dpr=1"
+            href={reviewsUrl}
             rel="noopener noreferrer"
             target="_blank"
           >
@@ -156,7 +183,9 @@ export default function Reviews() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-headline-lg text-headline-lg font-bold text-on-surface">5.0</span>
+                <span className="font-headline-lg text-headline-lg font-bold text-on-surface">
+                  {rating.toFixed(1)}
+                </span>
                 <div className="flex items-center text-amber-500">
                   <span className="material-symbols-outlined text-[20px]">star</span>
                   <span className="material-symbols-outlined text-[20px]">star</span>
@@ -166,12 +195,17 @@ export default function Reviews() {
                 </div>
               </div>
               <div className="flex items-center gap-2 text-outline font-body-sm text-body-sm">
-                <span className="font-semibold text-on-surface">122 reviews</span>
+                <span className="font-semibold text-on-surface">{reviewCount} reviews</span>
                 <span>•</span>
-                <span className="text-secondary font-medium flex items-center gap-1">
+                <a
+                  href={reviewsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-secondary hover:underline font-medium flex items-center gap-1"
+                >
                   <span className="material-symbols-outlined text-[16px]">verified</span>
                   Verified Google Reviews
-                </span>
+                </a>
               </div>
             </div>
           </div>

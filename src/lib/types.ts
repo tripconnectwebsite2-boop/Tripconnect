@@ -129,6 +129,11 @@ export interface SiteSettings {
   business_hours: string;
   ga_measurement_id?: string;
   search_console_id?: string;
+  google_reviews_url?: string;
+  google_review_count?: number;
+  google_rating?: number;
+  google_reviews_last_synced?: string;
+  google_reviews_auto_sync?: boolean;
   updated_at: string;
 }
 

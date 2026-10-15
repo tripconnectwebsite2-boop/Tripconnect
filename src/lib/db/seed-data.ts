@@ -617,6 +617,12 @@ export const initialSettings: SiteSettings = {
   business_hours: "Monday – Saturday: 9:00 AM – 8:00 PM IST",
   ga_measurement_id: "",
   search_console_id: "",
+  google_reviews_url:
+    "https://www.google.com/search?sca_esv=3c37b919d1c0a20a&sxsrf=APpeQnsQBeFlGryg8C-3YNc9gCiwY-ybZg:1792077470654&si=APenkKm7iecQ4G6P-TsbSMFKIQtv3EFIqRAFw-i8uEbk55Z-_ycx-DTCj1xuY2o22e4ADWu-gAQ93o0pN1Babfm2IQHvGzW4cDIuWmeHU5d7op1kp2QGhaaGzVrZjVwLOIv2v1EKhNkoXu8QNEF34ufqcaxAjPyE0A%3D%3D&q=Trip+Connect+Kochi+Reviews&sa=X&ved=2ahUKEwiN-bDoqLyXAxXbcGwGHe70K8wQ0bkNegQINhAH&biw=1920&bih=945&dpr=1",
+  google_review_count: 122,
+  google_rating: 5.0,
+  google_reviews_last_synced: new Date().toISOString(),
+  google_reviews_auto_sync: true,
   updated_at: new Date().toISOString(),
 };
 

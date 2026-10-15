@@ -164,6 +164,17 @@ function ensureStore(): DatabaseStore {
       parsed.bugs = initialBugs;
       mutated = true;
     }
+    if (!parsed.settings?.google_reviews_url) {
+      parsed.settings = {
+        ...(parsed.settings || initialSettings),
+        google_reviews_url: initialSettings.google_reviews_url,
+        google_review_count: parsed.settings?.google_review_count ?? initialSettings.google_review_count,
+        google_rating: parsed.settings?.google_rating ?? initialSettings.google_rating,
+        google_reviews_last_synced: parsed.settings?.google_reviews_last_synced ?? initialSettings.google_reviews_last_synced,
+        google_reviews_auto_sync: parsed.settings?.google_reviews_auto_sync ?? true,
+      };
+      mutated = true;
+    }
     if (mutated) {
       saveStore(parsed);
     }
