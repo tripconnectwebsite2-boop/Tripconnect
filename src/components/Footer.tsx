@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { SiteContent } from "@/lib/types";
 import { getSiteContent } from "@/lib/db";
+import ReportBugFooterButton from "@/components/ReportBugFooterButton";
 
 export default async function Footer({ content }: { content?: Partial<SiteContent> }) {
   const activeContent = content || (await getSiteContent().catch(() => null));
@@ -175,10 +176,7 @@ export default async function Footer({ content }: { content?: Partial<SiteConten
             <Link className="hover:text-on-surface transition-colors" href="/terms">
               Terms &amp; Conditions
             </Link>
-            <Link className="hover:text-error transition-colors flex items-center gap-1" href="/report-bug">
-              <span className="material-symbols-outlined text-[14px]">bug_report</span>
-              <span>Report a Bug</span>
-            </Link>
+            <ReportBugFooterButton />
           </div>
           <p className="text-center md:text-right font-label-sm text-label-sm text-outline-variant">
             Package prices are starting estimates. Inquiries do not constitute confirmed reservations.

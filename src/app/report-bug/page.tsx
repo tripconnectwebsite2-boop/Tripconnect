@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import BugReportModal from "@/components/BugReportModal";
+import ReportBugClient from "./ReportBugClient";
 
 export const metadata = {
   title: "Report an Issue | Trip Connect Kochi",
@@ -26,7 +26,7 @@ export default function ReportBugPage() {
         </div>
 
         <div className="bg-surface-container-low p-6 sm:p-8 rounded-2xl border border-outline-variant/30 shadow-sm">
-          <BugReportModal isOpen={true} showFloatingButton={false} />
+          <ReportBugClient />
         </div>
       </main>
       <Footer />

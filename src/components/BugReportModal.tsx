@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { BugCategory, BugSeverity } from "@/lib/types";
 
@@ -15,16 +15,30 @@ export default function BugReportModal({
   onClose: controlledOnClose,
   showFloatingButton = true,
 }: BugReportModalProps) {
-  const [internalIsOpen, setInternalIsOpen] = useState(false);
-  const isModalOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen;
+  const [internalIsOpen, setInternalIsOpen] = useState(Boolean(controlledIsOpen));
 
-  const handleClose = () => {
+  // Sync when controlledIsOpen changes
+  useEffect(() => {
+    if (controlledIsOpen !== undefined) {
+      setInternalIsOpen(controlledIsOpen);
+    }
+  }, [controlledIsOpen]);
+
+  // Listen for open-bug-report event from any trigger (e.g. footer button)
+  useEffect(() => {
+    const handleOpen = () => setInternalIsOpen(true);
+    window.addEventListener("open-bug-report", handleOpen);
+    return () => window.removeEventListener("open-bug-report", handleOpen);
+  }, []);
+
+  const isModalOpen = internalIsOpen;
+
+  const handleClose = useCallback(() => {
+    setInternalIsOpen(false);
     if (controlledOnClose) {
       controlledOnClose();
-    } else {
-      setInternalIsOpen(false);
     }
-  };
+  }, [controlledOnClose]);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -89,6 +103,29 @@ export default function BugReportModal({
         user_agent: ua.slice(0, 250),
       });
     }
+  }, [isModalOpen]);
+
+  // Handle ESC key to close modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isModalOpen) {
+        handleClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isModalOpen, handleClose]);
+
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isModalOpen]);
 
   const handleScreenshotUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,7 +261,14 @@ export default function BugReportModal({
 
       {/* Modal Backdrop */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              handleClose();
+            }
+          }}
+        >
           <div className="bg-surface-container-lowest text-on-surface border border-outline-variant/30 rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
             {/* Modal Header */}
             <div className="p-5 border-b border-outline-variant/20 flex items-center justify-between sticky top-0 bg-surface-container-lowest/95 backdrop-blur z-10">
@@ -239,10 +283,16 @@ export default function BugReportModal({
               </div>
               <button
                 type="button"
-                onClick={handleClose}
-                className="w-8 h-8 rounded-lg bg-surface-container-low hover:bg-surface-container-high flex items-center justify-center text-outline hover:text-on-surface"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleClose();
+                }}
+                className="w-9 h-9 rounded-xl bg-surface-container-low hover:bg-error/15 hover:text-error text-on-surface-variant flex items-center justify-center transition-all cursor-pointer shadow-sm active:scale-90"
+                aria-label="Close Bug Report Modal"
+                title="Close"
               >
-                <span className="material-symbols-outlined text-[18px]">close</span>
+                <span className="material-symbols-outlined text-[20px] pointer-events-none">close</span>
               </button>
             </div>
 
@@ -279,8 +329,12 @@ export default function BugReportModal({
                     </button>
                     <button
                       type="button"
-                      onClick={handleReset}
-                      className="px-5 py-2 rounded-xl bg-primary text-white text-xs font-semibold"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleReset();
+                      }}
+                      className="px-5 py-2 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-semibold cursor-pointer transition-all active:scale-95 shadow-sm"
                     >
                       Done &amp; Close
                     </button>
@@ -465,15 +519,19 @@ export default function BugReportModal({
                   <div className="pt-3 border-t border-outline-variant/20 flex items-center justify-end gap-2">
                     <button
                       type="button"
-                      onClick={handleClose}
-                      className="px-4 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-semibold"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleClose();
+                      }}
+                      className="px-4 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-semibold cursor-pointer transition-all active:scale-95"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={submitting}
-                      className="px-5 py-2 rounded-xl bg-primary text-white font-semibold inline-flex items-center gap-1.5 shadow-sm hover:opacity-90 active:scale-95 transition-all disabled:opacity-50"
+                      className="px-5 py-2 rounded-xl bg-primary text-white font-semibold inline-flex items-center gap-1.5 shadow-sm hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
                     >
                       {submitting ? (
                         <>
