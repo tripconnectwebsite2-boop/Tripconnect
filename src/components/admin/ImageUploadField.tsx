@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import ImageCropperModal, { CropResult } from "./ImageCropperModal";
 
 interface Preset {
   label: string;
@@ -45,6 +46,11 @@ export default function ImageUploadField({
     height: number;
     ratio: string;
   } | null>(null);
+
+  // Image Cropper Modal State
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropperSrc, setCropperSrc] = useState<string>("");
+  const [cropperFileName, setCropperFileName] = useState<string>("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -95,9 +101,49 @@ export default function ImageUploadField({
     }
   };
 
+  // Intercept file selection to open Cropper & Adjuster Modal
+  const handleFileSelect = (file: File) => {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setUploadError("Please select a valid image file (JPG, PNG, WebP, SVG, AVIF, GIF).");
+      return;
+    }
+
+    if (file.size > 20 * 1024 * 1024) {
+      setUploadError("Image is too large. Maximum size is 20MB.");
+      return;
+    }
+
+    // SVGs are vector files, upload directly without raster cropping
+    if (file.type === "image/svg+xml") {
+      handleFileUpload(file);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    setCropperSrc(objectUrl);
+    setCropperFileName(file.name);
+    setCropperOpen(true);
+  };
+
+  const handleCropComplete = (result: CropResult) => {
+    handleFileUpload(result.file);
+  };
+
+  const handleOpenCropperForCurrent = () => {
+    if (!value) return;
+    setCropperSrc(value);
+    setCropperFileName("image.jpg");
+    setCropperOpen(true);
+  };
+
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      handleFileUpload(e.target.files[0]);
+      handleFileSelect(e.target.files[0]);
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -116,7 +162,7 @@ export default function ImageUploadField({
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFileUpload(e.dataTransfer.files[0]);
+      handleFileSelect(e.dataTransfer.files[0]);
     }
   };
 
@@ -231,8 +277,8 @@ export default function ImageUploadField({
           )}
         </div>
 
-        {/* Upload from PC Button */}
-        <div>
+        {/* Upload & Crop Buttons */}
+        <div className="flex flex-wrap items-center gap-2">
           <input
             ref={fileInputRef}
             type="file"
@@ -244,7 +290,7 @@ export default function ImageUploadField({
             type="button"
             disabled={uploading}
             onClick={() => fileInputRef.current?.click()}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 text-xs font-semibold inline-flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60 whitespace-nowrap shadow-sm"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 text-xs font-semibold inline-flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60 whitespace-nowrap shadow-sm cursor-pointer"
           >
             {uploading ? (
               <>
@@ -258,6 +304,18 @@ export default function ImageUploadField({
               </>
             )}
           </button>
+
+          {value && (
+            <button
+              type="button"
+              onClick={handleOpenCropperForCurrent}
+              className="w-full sm:w-auto px-3.5 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface border border-outline-variant/30 text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] shadow-sm cursor-pointer whitespace-nowrap"
+              title="Crop, rotate, and adjust current photo"
+            >
+              <span className="material-symbols-outlined text-[17px] text-primary">crop</span>
+              <span>Crop &amp; Adjust</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -354,13 +412,23 @@ export default function ImageUploadField({
               onLoad={handleImageLoad}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-wrap items-center justify-center gap-2 p-2">
+              <button
+                type="button"
+                onClick={handleOpenCropperForCurrent}
+                className="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-semibold shadow hover:bg-primary-container flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+                title="Crop, rotate, and adjust this photo"
+              >
+                <span className="material-symbols-outlined text-[15px]">crop</span>
+                <span>Crop &amp; Adjust</span>
+              </button>
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="px-3 py-1.5 rounded-lg bg-white/90 text-neutral-900 text-xs font-semibold shadow hover:bg-white"
+                className="px-3 py-1.5 rounded-lg bg-white/90 text-neutral-900 text-xs font-semibold shadow hover:bg-white flex items-center gap-1 cursor-pointer transition-all active:scale-95"
               >
-                Change Image
+                <span className="material-symbols-outlined text-[15px]">add_photo_alternate</span>
+                <span>Change Image</span>
               </button>
               <button
                 type="button"
@@ -368,14 +436,25 @@ export default function ImageUploadField({
                   setDetectedSpecs(null);
                   onChange("");
                 }}
-                className="px-3 py-1.5 rounded-lg bg-error text-white text-xs font-semibold shadow hover:bg-error/90"
+                className="px-3 py-1.5 rounded-lg bg-error text-white text-xs font-semibold shadow hover:bg-error/90 flex items-center gap-1 cursor-pointer transition-all active:scale-95"
               >
-                Remove
+                <span className="material-symbols-outlined text-[15px]">delete</span>
+                <span>Remove</span>
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Interactive Image Cropper & Adjuster Modal */}
+      <ImageCropperModal
+        isOpen={cropperOpen}
+        imageSrc={cropperSrc}
+        originalFileName={cropperFileName}
+        targetRatio={activeSpecs.ratio}
+        onClose={() => setCropperOpen(false)}
+        onApplyCrop={handleCropComplete}
+      />
     </div>
   );
 }
