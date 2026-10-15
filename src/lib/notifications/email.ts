@@ -20,6 +20,17 @@ export async function sendAdminEnquiryEmail(enquiry: Enquiry): Promise<EmailNoti
   const fromEmail = process.env.NOTIFICATION_FROM_EMAIL || "onboarding@resend.dev";
   const crmUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://tripconnwct-website.vercel.app"}/admin/enquiries`;
 
+  const rawPhone = enquiry.phone || "";
+  const digitsOnly = rawPhone.replace(/[^0-9]/g, "");
+  const waNumber = digitsOnly.length === 10 ? `91${digitsOnly}` : digitsOnly;
+  const hasValidPhone = waNumber.length >= 10;
+  const waMessage = encodeURIComponent(
+    `Hello ${enquiry.customer_name || ""}, thank you for contacting Trip Connect! We received your travel enquiry regarding ${
+      enquiry.package_title || enquiry.preferred_destination || "your Kerala holiday"
+    }. How can we assist you with planning your itinerary?`
+  );
+  const waUrl = hasValidPhone ? `https://wa.me/${waNumber}?text=${waMessage}` : "";
+
   const emailSubject = `✦ [New Enquiry] ${enquiry.customer_name} — ${
     enquiry.package_title || enquiry.preferred_destination || "Bespoke Kerala Circuit"
   }`;
@@ -83,6 +94,15 @@ export async function sendAdminEnquiryEmail(enquiry: Enquiry): Promise<EmailNoti
                 </td>
                 <td style="padding: 12px 18px; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-size: 14px; font-weight: 600;">
                   <a href="tel:${enquiry.phone}" style="color: #0f172a; text-decoration: none;">${enquiry.phone || "Not Provided"}</a>
+                  ${
+                    hasValidPhone
+                      ? `
+                  <a href="${waUrl}" target="_blank" style="display: inline-block; background-color: #25D366; color: #ffffff; text-decoration: none; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-left: 8px; vertical-align: middle; box-shadow: 0 1px 3px rgba(0,0,0,0.15);">
+                    <span style="font-size: 13px; vertical-align: middle; margin-right: 3px;">💬</span>
+                    <span style="vertical-align: middle;">Chat on WhatsApp</span>
+                  </a>`
+                      : ""
+                  }
                 </td>
               </tr>
               <tr>
@@ -123,6 +143,19 @@ export async function sendAdminEnquiryEmail(enquiry: Enquiry): Promise<EmailNoti
 
             <!-- Action Button: Open in Admin CRM & Reply to Guest -->
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+              ${
+                hasValidPhone
+                  ? `
+              <tr>
+                <td align="center" style="padding-bottom: 12px;">
+                  <a href="${waUrl}" target="_blank" style="display: inline-block; background-color: #25D366; color: #ffffff; font-size: 14px; font-weight: 700; text-decoration: none; padding: 13px 32px; border-radius: 8px; box-shadow: 0 2px 10px rgba(37, 211, 102, 0.35);">
+                    <span style="font-size: 16px; vertical-align: middle; margin-right: 6px;">💬</span>
+                    <span style="vertical-align: middle;">Chat with ${enquiry.customer_name} on WhatsApp</span>
+                  </a>
+                </td>
+              </tr>`
+                  : ""
+              }
               <tr>
                 <td align="center" style="padding-bottom: 12px;">
                   <a href="${crmUrl}" style="display: inline-block; background-color: #047857; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none; padding: 13px 32px; border-radius: 8px; box-shadow: 0 2px 8px rgba(4, 120, 87, 0.25);">
@@ -169,7 +202,7 @@ export async function sendAdminEnquiryEmail(enquiry: Enquiry): Promise<EmailNoti
         replyTo: enquiry.email,
         subject: emailSubject,
         html: emailHtml,
-        text: `New Enquiry Received from ${enquiry.customer_name}\n\nPhone: ${enquiry.phone}\nEmail: ${enquiry.email}\nPackage: ${enquiry.package_title || enquiry.preferred_destination || "Custom Itinerary"}\nDate: ${enquiry.travel_date || "Flexible"}\nGuests: ${enquiry.traveller_count}\nNotes: ${enquiry.additional_requirements || "None"}\n\nView CRM: ${crmUrl}`,
+        text: `New Enquiry Received from ${enquiry.customer_name}\n\nPhone: ${enquiry.phone || "Not Provided"}${hasValidPhone ? ` (WhatsApp: ${waUrl})` : ""}\nEmail: ${enquiry.email}\nPackage: ${enquiry.package_title || enquiry.preferred_destination || "Custom Itinerary"}\nDate: ${enquiry.travel_date || "Flexible"}\nGuests: ${enquiry.traveller_count}\nNotes: ${enquiry.additional_requirements || "None"}\n\nView CRM: ${crmUrl}`,
       });
 
       if (error) {
