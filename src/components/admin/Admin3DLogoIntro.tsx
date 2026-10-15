@@ -17,7 +17,7 @@ export default function Admin3DLogoIntro({
   logoUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuDYJZOkBqsaeTOLbOEwhz53LmuCxqlx4FZCyvrnDINoyxkUn91Tsh4RgfoyI-eQ171uAkntsNBkuKDOx8dcghNLRyQ3Mbl7L2WNHMaE-6X3i91C5UykVqixmD9wV_FK7U416tlER4E8uXR_UkBo90roeRFK7pKMHlTdKTv8Iuxo8AfT9QcmL7jvcnluVXo0BsJb6EIZc7VTEAf-StYMbsp5A8FU2KewNVHerKfVC_W2_Ux4Rzjzy9e-LLOa2DRvH-59oaQ",
   brandName = "Trip Connect",
 }: Admin3DLogoIntroProps) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [checkedStorage, setCheckedStorage] = useState(false);
@@ -49,22 +49,19 @@ export default function Admin3DLogoIntro({
     try {
       const verified = sessionStorage.getItem("tc_admin_passcode_verified");
       if (verified === "true") {
+        // ALREADY UNLOCKED: Do NOT show loading screen when switching between admin options!
         setIsUnlocked(true);
-        // Quick smooth entrance for already verified active session
-        setProgress(60);
-        const t1 = setTimeout(() => setProgress(100), 300);
-        const t2 = setTimeout(() => handleClose(), 1100);
+        setIsOpen(false);
         setCheckedStorage(true);
-        return () => {
-          clearTimeout(t1);
-          clearTimeout(t2);
-        };
+        return;
       }
     } catch {
       // Fallback
     }
 
+    // Fresh login / not yet unlocked: prompt for password
     setIsUnlocked(false);
+    setIsOpen(true);
     setCheckedStorage(true);
   }, [forceShow, handleClose]);
 
@@ -136,8 +133,8 @@ export default function Admin3DLogoIntro({
     }
   };
 
-  // Block all background interaction until closed
-  if (!isOpen && checkedStorage) return null;
+  // Block all background interaction until opened and verified
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>
