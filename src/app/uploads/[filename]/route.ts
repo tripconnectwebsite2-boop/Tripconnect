@@ -22,7 +22,16 @@ export async function GET(
     const { filename } = await context.params;
     // Sanitize filename to avoid path traversal
     const safeFilename = path.basename(filename);
-    const filePath = path.join(process.cwd(), "public", "uploads", safeFilename);
+    const tmpPath = path.join("/tmp", "uploads", safeFilename);
+    const publicPath = path.join(process.cwd(), "public", "uploads", safeFilename);
+
+    let filePath = publicPath;
+    if (process.env.VERCEL) {
+      const existsInTmp = await fs.stat(tmpPath).then(() => true).catch(() => false);
+      if (existsInTmp) {
+        filePath = tmpPath;
+      }
+    }
 
     try {
       const buffer = await fs.readFile(filePath);

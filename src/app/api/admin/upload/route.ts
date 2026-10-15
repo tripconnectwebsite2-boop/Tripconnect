@@ -123,7 +123,9 @@ export async function POST(req: NextRequest) {
     const uniqueSuffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const filename = `${safeBaseName || "upload"}-${uniqueSuffix}${ext}`;
 
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    const uploadsDir = process.env.VERCEL
+      ? path.join("/tmp", "uploads")
+      : path.join(process.cwd(), "public", "uploads");
     await fs.mkdir(uploadsDir, { recursive: true });
 
     const filePath = path.join(uploadsDir, filename);

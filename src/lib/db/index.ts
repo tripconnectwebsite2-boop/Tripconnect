@@ -40,7 +40,9 @@ interface DatabaseStore {
   pages?: CustomPage[];
 }
 
-const DATA_DIR = path.join(process.cwd(), ".data");
+const DATA_DIR = process.env.VERCEL
+  ? path.join("/tmp", ".data")
+  : path.join(process.cwd(), ".data");
 const DB_FILE = path.join(DATA_DIR, "db.json");
 
 const initialBugs: BugReport[] = [
@@ -94,6 +96,18 @@ function ensureStore(): DatabaseStore {
   }
 
   if (!fs.existsSync(DB_FILE)) {
+    // If running in /tmp on Vercel, attempt to clone from bundled repo .data/db.json
+    const bundledDb = path.join(process.cwd(), ".data", "db.json");
+    if (fs.existsSync(bundledDb) && DB_FILE !== bundledDb) {
+      try {
+        const raw = fs.readFileSync(bundledDb, "utf-8");
+        fs.writeFileSync(DB_FILE, raw, "utf-8");
+        return JSON.parse(raw);
+      } catch {
+        // Fall back to code initial seed below
+      }
+    }
+
     const initial: DatabaseStore = {
       packages: initialPackages,
       destinations: initialDestinations,
