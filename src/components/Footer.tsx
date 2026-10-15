@@ -15,7 +15,6 @@ export default async function Footer({ content }: { content?: Partial<SiteConten
     "Curated bespoke journeys across Kerala and India, crafted from Kochi. Experience backwater serenity, misty highland estates, and iconic cultural sanctuaries with our dedicated travel concierges.";
   const address = activeContent?.contact_address || "Ayyappankavu, Kochi, Ernakulam, Kerala – 682018";
   const phone = activeContent?.contact_phone || "+91 9400886838";
-  const email = activeContent?.contact_email || "tripconnectwebsite2@gmail.com";
   const copyright = activeContent?.footer_copyright || "© 2026 Trip Connect. All rights reserved.";
 
   return (
@@ -144,12 +143,6 @@ export default async function Footer({ content }: { content?: Partial<SiteConten
                 <span className="material-symbols-outlined text-outline text-[18px] shrink-0">call</span>
                 <a className="hover:text-primary transition-colors" href={`tel:${phone.replace(/\s+/g, '')}`}>
                   {phone}
-                </a>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <span className="material-symbols-outlined text-outline text-[18px] shrink-0">mail</span>
-                <a className="hover:text-primary transition-colors" href={`mailto:${email}`}>
-                  {email}
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
