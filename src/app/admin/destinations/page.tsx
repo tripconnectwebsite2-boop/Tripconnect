@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import ImageUploadField from "@/components/admin/ImageUploadField";
 import { Destination } from "@/lib/types";
 
 export default function AdminDestinationsPage() {
@@ -192,18 +193,13 @@ export default function AdminDestinationsPage() {
                     className="w-full p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs"
                   />
                 </div>
-                <div>
-                  <label className="font-semibold block mb-1">Cover Image URL *</label>
-                  <input
-                    type="text"
-                    required
-                    value={editingDest.cover_image || ""}
-                    onChange={(e) =>
-                      setEditingDest({ ...editingDest, cover_image: e.target.value })
-                    }
-                    className="w-full p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs"
-                  />
-                </div>
+                <ImageUploadField
+                  label="Cover Photograph"
+                  value={editingDest.cover_image || ""}
+                  onChange={(url) => setEditingDest({ ...editingDest, cover_image: url })}
+                  helperText="Upload image from your PC or enter an image URL."
+                  previewHeight="h-36"
+                />
                 <div className="flex justify-end gap-2 pt-4 border-t border-outline-variant/20">
                   <button
                     type="button"

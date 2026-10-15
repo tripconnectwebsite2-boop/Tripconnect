@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import ImageUploadField from "@/components/admin/ImageUploadField";
 import { SiteContent } from "@/lib/types";
 
 const PHOTO_PRESETS = [
@@ -215,7 +216,7 @@ export default function AdminContentPage() {
                 <span>Brand Identity &amp; Logo</span>
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-6">
                 <div>
                   <label className="block text-xs font-semibold text-on-surface mb-1.5">
                     Agency Brand Name
@@ -228,31 +229,14 @@ export default function AdminContentPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-on-surface mb-1.5">
-                    Website Logo URL
-                  </label>
-                  <input
-                    type="url"
-                    value={content.logo_url}
-                    onChange={(e) => handleFieldChange("logo_url", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
+                <ImageUploadField
+                  label="Website Brand Logo"
+                  value={content.logo_url}
+                  onChange={(url) => handleFieldChange("logo_url", url)}
+                  helperText="Upload transparent PNG, SVG, or high-res logo from your PC, or enter an image URL."
+                  previewHeight="h-24"
+                />
               </div>
-
-              {content.logo_url && (
-                <div className="p-4 rounded-xl bg-surface-container-low flex items-center gap-4">
-                  <span className="text-xs text-outline font-medium">Logo Preview:</span>
-                  <div className="h-12 px-4 py-2 rounded-lg bg-white border border-outline-variant/30 flex items-center">
-                    <img
-                      src={content.logo_url}
-                      alt="Brand Logo Preview"
-                      className="h-8 w-auto object-contain"
-                    />
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Hero Copywriting */}
@@ -367,56 +351,14 @@ export default function AdminContentPage() {
                 <span>Hero Background Travel Photography</span>
               </h3>
 
-              <div>
-                <label className="block text-xs font-semibold text-on-surface mb-1.5">
-                  Image URL
-                </label>
-                <input
-                  type="url"
-                  value={content.hero_bg_image}
-                  onChange={(e) => handleFieldChange("hero_bg_image", e.target.value)}
-                  placeholder="https://images.unsplash.com/... or Google hosted image"
-                  className="w-full px-4 py-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary font-mono text-xs"
-                />
-              </div>
-
-              {/* Presets */}
-              <div className="space-y-2">
-                <span className="text-xs text-outline font-semibold">1-Click Photography Presets:</span>
-                <div className="flex flex-wrap gap-2">
-                  {PHOTO_PRESETS.map((preset) => (
-                    <button
-                      key={preset.label}
-                      type="button"
-                      onClick={() => handleFieldChange("hero_bg_image", preset.url)}
-                      className="px-3 py-1 rounded-full text-xs font-medium bg-surface-container hover:bg-primary hover:text-white transition-colors border border-outline-variant/20"
-                    >
-                      {preset.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Live Preview Card */}
-              {content.hero_bg_image && (
-                <div className="space-y-2">
-                  <span className="text-xs text-outline font-semibold">Live Visual Preview:</span>
-                  <div className="relative w-full h-64 rounded-xl overflow-hidden shadow-md border border-outline-variant/30 bg-neutral-900">
-                    <img
-                      src={content.hero_bg_image}
-                      alt="Hero preview"
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-6 text-white">
-                      <span className="text-xs font-bold uppercase tracking-wider text-secondary-fixed">
-                        {content.hero_badge}
-                      </span>
-                      <h4 className="text-lg font-bold">{content.hero_title}</h4>
-                      <p className="text-xs text-neutral-300 line-clamp-1">{content.hero_subtitle}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
+              <ImageUploadField
+                label="Hero Main Background Photo"
+                value={content.hero_bg_image}
+                onChange={(url) => handleFieldChange("hero_bg_image", url)}
+                helperText="Upload any high-res photo directly from your PC (JPG, PNG, WebP) or pick a preset."
+                presets={PHOTO_PRESETS}
+                previewHeight="h-64"
+              />
             </div>
           </div>
         )}
@@ -471,28 +413,15 @@ export default function AdminContentPage() {
               </div>
 
               {/* Kerala Feature Photo */}
-              <div className="pt-4 border-t border-outline-variant/20 space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-on-surface mb-1.5">
-                    Section Feature Image URL
-                  </label>
-                  <input
-                    type="url"
-                    value={content.kerala_image}
-                    onChange={(e) => handleFieldChange("kerala_image", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs font-mono focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                {content.kerala_image && (
-                  <div className="w-full h-48 rounded-xl overflow-hidden border border-outline-variant/30">
-                    <img
-                      src={content.kerala_image}
-                      alt="Kerala feature preview"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
+              <div className="pt-4 border-t border-outline-variant/20">
+                <ImageUploadField
+                  label="Kerala Section Feature Photography"
+                  value={content.kerala_image}
+                  onChange={(url) => handleFieldChange("kerala_image", url)}
+                  helperText="Upload feature photograph from your PC or pick a preset."
+                  presets={PHOTO_PRESETS}
+                  previewHeight="h-48"
+                />
               </div>
 
               {/* 3 Pillar Features */}
@@ -610,8 +539,8 @@ export default function AdminContentPage() {
                           </span>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div className="md:col-span-2 space-y-3">
+                        <div className="space-y-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
                               <label className="block text-[11px] font-semibold text-outline mb-1">
                                 Tour Title
@@ -626,91 +555,45 @@ export default function AdminContentPage() {
                               />
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              <div>
-                                <label className="block text-[11px] font-semibold text-outline mb-1">
-                                  Starting Price
-                                </label>
-                                <input
-                                  type="text"
-                                  value={(content as any)[tour.priceKey] || ""}
-                                  onChange={(e) =>
-                                    handleFieldChange(tour.priceKey as keyof SiteContent, e.target.value)
-                                  }
-                                  placeholder="e.g. ₹14,500"
-                                  className="w-full px-3 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-xs font-bold text-primary"
-                                />
-                              </div>
-
-                              <div>
-                                <label className="block text-[11px] font-semibold text-outline mb-1">
-                                  Card Photo URL
-                                </label>
-                                <input
-                                  type="url"
-                                  value={currentImg || ""}
-                                  onChange={(e) =>
-                                    handleFieldChange(tour.imageKey as keyof SiteContent, e.target.value)
-                                  }
-                                  className="w-full px-3 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-xs font-mono"
-                                />
-                              </div>
-                            </div>
-
                             <div>
                               <label className="block text-[11px] font-semibold text-outline mb-1">
-                                Description
+                                Starting Price
                               </label>
-                              <textarea
-                                rows={2}
-                                value={(content as any)[tour.descKey] || ""}
+                              <input
+                                type="text"
+                                value={(content as any)[tour.priceKey] || ""}
                                 onChange={(e) =>
-                                  handleFieldChange(tour.descKey as keyof SiteContent, e.target.value)
+                                  handleFieldChange(tour.priceKey as keyof SiteContent, e.target.value)
                                 }
-                                className="w-full px-3 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-xs"
+                                placeholder="e.g. ₹14,500"
+                                className="w-full px-3 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-xs font-bold text-primary"
                               />
                             </div>
-
-                            {/* 1-Click Presets */}
-                            <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                              <span className="text-[10px] text-outline font-semibold">Presets:</span>
-                              {PHOTO_PRESETS.map((preset) => (
-                                <button
-                                  key={preset.label}
-                                  type="button"
-                                  onClick={() =>
-                                    handleFieldChange(tour.imageKey as keyof SiteContent, preset.url)
-                                  }
-                                  className="px-2 py-0.5 rounded text-[10px] bg-surface-container-lowest hover:bg-primary hover:text-white transition-colors border border-outline-variant/20"
-                                >
-                                  {preset.label}
-                                </button>
-                              ))}
-                            </div>
                           </div>
 
-                          {/* Image Thumbnail Preview */}
-                          <div className="space-y-1">
-                            <span className="block text-[11px] font-semibold text-outline">
-                              Live Card Preview
-                            </span>
-                            <div className="w-full h-36 rounded-xl overflow-hidden border border-outline-variant/30 bg-neutral-900 relative">
-                              {currentImg ? (
-                                <img
-                                  src={currentImg}
-                                  alt="Tour preview"
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-outline text-xs">
-                                  No photo
-                                </div>
-                              )}
-                              <div className="absolute bottom-2 left-2 right-2 px-2 py-1 bg-black/60 backdrop-blur-sm rounded text-[10px] text-white truncate">
-                                {(content as any)[tour.priceKey] || "₹0"} • {(content as any)[tour.titleKey] || "Tour"}
-                              </div>
-                            </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-outline mb-1">
+                              Description
+                            </label>
+                            <textarea
+                              rows={2}
+                              value={(content as any)[tour.descKey] || ""}
+                              onChange={(e) =>
+                                handleFieldChange(tour.descKey as keyof SiteContent, e.target.value)
+                              }
+                              className="w-full px-3 py-2 rounded-lg bg-surface-container-lowest border border-outline-variant/30 text-xs"
+                            />
                           </div>
+
+                          <ImageUploadField
+                            label="Tour Card Photograph"
+                            value={currentImg || ""}
+                            onChange={(url) =>
+                              handleFieldChange(tour.imageKey as keyof SiteContent, url)
+                            }
+                            presets={PHOTO_PRESETS}
+                            previewHeight="h-36"
+                          />
                         </div>
                       </div>
                     );
@@ -769,27 +652,14 @@ export default function AdminContentPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-on-surface mb-1.5">
-                    Side Showcase Image URL
-                  </label>
-                  <input
-                    type="url"
-                    value={content.why_image}
-                    onChange={(e) => handleFieldChange("why_image", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs font-mono focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                {content.why_image && (
-                  <div className="w-full h-44 rounded-xl overflow-hidden border border-outline-variant/30">
-                    <img
-                      src={content.why_image}
-                      alt="Why preview"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
+                <ImageUploadField
+                  label="Side Showcase Image"
+                  value={content.why_image}
+                  onChange={(url) => handleFieldChange("why_image", url)}
+                  helperText="Upload showcase photo from your PC or pick a preset."
+                  presets={PHOTO_PRESETS}
+                  previewHeight="h-44"
+                />
               </div>
 
               {/* 4 Value Cards */}
@@ -877,27 +747,14 @@ export default function AdminContentPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-on-surface mb-1.5">
-                    About Hero Image URL
-                  </label>
-                  <input
-                    type="url"
-                    value={content.about_image}
-                    onChange={(e) => handleFieldChange("about_image", e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs font-mono focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                {content.about_image && (
-                  <div className="w-full h-44 rounded-xl overflow-hidden border border-outline-variant/30">
-                    <img
-                      src={content.about_image}
-                      alt="About preview"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
+                <ImageUploadField
+                  label="About Hero Featured Photography"
+                  value={content.about_image}
+                  onChange={(url) => handleFieldChange("about_image", url)}
+                  helperText="Upload feature photograph from your PC or pick a preset."
+                  presets={PHOTO_PRESETS}
+                  previewHeight="h-52"
+                />
 
                 <div className="space-y-3 pt-4 border-t border-outline-variant/20">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-primary">

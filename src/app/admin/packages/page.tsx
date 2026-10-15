@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import ImageUploadField from "@/components/admin/ImageUploadField";
 import { TravelPackage, PackageCategory } from "@/lib/types";
 import Link from "next/link";
 
@@ -470,6 +471,19 @@ export default function AdminPackagesPage() {
                     className="w-full p-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-on-surface focus:outline-none focus:ring-1 focus:ring-primary text-xs"
                   />
                 </div>
+
+                {/* Cover Photography */}
+                <ImageUploadField
+                  label="Package Cover Photography"
+                  value={editingPkg.gallery && editingPkg.gallery.length > 0 ? editingPkg.gallery[0] : ""}
+                  onChange={(url) => {
+                    const currentGallery = editingPkg.gallery ? [...editingPkg.gallery] : [];
+                    currentGallery[0] = url;
+                    setEditingPkg({ ...editingPkg, gallery: currentGallery });
+                  }}
+                  helperText="Upload primary cover photograph from your PC or enter an image URL."
+                  previewHeight="h-40"
+                />
 
                 {/* Publication Status & Verification Confirmation */}
                 <div className="p-4 rounded-xl bg-surface-container-high/40 border border-outline-variant/20 space-y-3">
