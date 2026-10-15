@@ -9,8 +9,6 @@ interface Admin3DLogoIntroProps {
   onClose?: () => void;
   logoUrl?: string;
   brandName?: string;
-  autoClose?: boolean;
-  durationMs?: number;
 }
 
 export default function Admin3DLogoIntro({
@@ -18,58 +16,57 @@ export default function Admin3DLogoIntro({
   onClose,
   logoUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuDYJZOkBqsaeTOLbOEwhz53LmuCxqlx4FZCyvrnDINoyxkUn91Tsh4RgfoyI-eQ171uAkntsNBkuKDOx8dcghNLRyQ3Mbl7L2WNHMaE-6X3i91C5UykVqixmD9wV_FK7U416tlER4E8uXR_UkBo90roeRFK7pKMHlTdKTv8Iuxo8AfT9QcmL7jvcnluVXo0BsJb6EIZc7VTEAf-StYMbsp5A8FU2KewNVHerKfVC_W2_Ux4Rzjzy9e-LLOa2DRvH-59oaQ",
   brandName = "Trip Connect",
-  autoClose = true,
-  durationMs = 2000,
 }: Admin3DLogoIntroProps) {
-  // Always active on mount so it acts as the primary loading screen when entering
   const [isOpen, setIsOpen] = useState(true);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [statusText, setStatusText] = useState("Verifying Admin Clearance...");
-  const [progress, setProgress] = useState(15);
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [checkedStorage, setCheckedStorage] = useState(false);
+
+  // Passcode verification state
+  const [passcode, setPasscode] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [errorNotice, setErrorNotice] = useState("");
+  const [successNotice, setSuccessNotice] = useState("");
+  const [progress, setProgress] = useState(25);
+  const [isTerminating, setIsTerminating] = useState(false);
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
     if (onClose) onClose();
   }, [onClose]);
 
+  // Check if session is already unlocked in this active tab
   useEffect(() => {
     if (forceShow) {
       setIsOpen(true);
-      setProgress(15);
-      setStatusText("Initializing Admin Workspace...");
+      setIsUnlocked(false);
+      setProgress(25);
+      setCheckedStorage(true);
+      return;
     }
-  }, [forceShow]);
 
-  // Timed loading sequence
-  useEffect(() => {
-    if (!isOpen || !autoClose) return;
+    try {
+      const verified = sessionStorage.getItem("tc_admin_passcode_verified");
+      if (verified === "true") {
+        setIsUnlocked(true);
+        // Quick smooth entrance for already verified active session
+        setProgress(60);
+        const t1 = setTimeout(() => setProgress(100), 400);
+        const t2 = setTimeout(() => handleClose(), 1200);
+        setCheckedStorage(true);
+        return () => {
+          clearTimeout(t1);
+          clearTimeout(t2);
+        };
+      }
+    } catch {
+      // Fallback
+    }
 
-    const t1 = setTimeout(() => {
-      setProgress(55);
-      setStatusText("Synchronizing Enquiries, Itineraries & CMS...");
-    }, durationMs * 0.28);
-
-    const t2 = setTimeout(() => {
-      setProgress(90);
-      setStatusText("Finalizing Workspace Security...");
-    }, durationMs * 0.65);
-
-    const t3 = setTimeout(() => {
-      setProgress(100);
-      setStatusText("Workspace Ready • Entering Admin Portal");
-    }, durationMs * 0.88);
-
-    const t4 = setTimeout(() => {
-      handleClose();
-    }, durationMs);
-
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      clearTimeout(t4);
-    };
-  }, [isOpen, autoClose, durationMs, handleClose]);
+    setIsUnlocked(false);
+    setCheckedStorage(true);
+  }, [forceShow, handleClose]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -78,17 +75,69 @@ export default function Admin3DLogoIntro({
     setMousePos({ x, y });
   };
 
-  // Allow instant skip with Escape, Enter or Space
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" || e.key === " " || e.key === "Enter") {
-        handleClose();
+  const handlePasscodeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!passcode.trim() || isVerifying || isTerminating) return;
+
+    setIsVerifying(true);
+    setErrorNotice("");
+    setSuccessNotice("");
+
+    try {
+      const res = await fetch("/api/admin/auth/verify-passcode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passcode: passcode.trim() }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        // Wrong passcode: Terminate session and redirect back to public website
+        setIsTerminating(true);
+        setErrorNotice(
+          "Invalid Secret Passcode! Access Denied. Disconnecting and redirecting to public site..."
+        );
+
+        try {
+          sessionStorage.removeItem("tc_admin_passcode_verified");
+          await fetch("/api/admin/auth/logout", { method: "POST" });
+        } catch {
+          // Silent
+        }
+
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1400);
+        return;
       }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, handleClose]);
+
+      // Success: Correct passcode
+      setSuccessNotice("Clearance Verified • Welcome Administrator");
+      setProgress(100);
+      try {
+        sessionStorage.setItem("tc_admin_passcode_verified", "true");
+      } catch {
+        // Silent
+      }
+
+      setTimeout(() => {
+        setIsUnlocked(true);
+        handleClose();
+      }, 1000);
+    } catch {
+      setIsTerminating(true);
+      setErrorNotice("Verification error. Disconnecting...");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1400);
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  // Block all background interaction until closed
+  if (!isOpen && checkedStorage) return null;
 
   return (
     <AnimatePresence>
@@ -96,60 +145,44 @@ export default function Admin3DLogoIntro({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.03 }}
-          transition={{ duration: 0.4, ease: "easeInOut" }}
+          exit={{ opacity: 0, scale: 1.02 }}
+          transition={{ duration: 0.45, ease: "easeInOut" }}
           onMouseMove={handleMouseMove}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950 text-white select-none overflow-hidden cursor-pointer"
-          onClick={handleClose}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950 text-white select-none overflow-y-auto p-4"
           role="dialog"
-          aria-label="Admin Loading Screen with 3D Logo Animation"
+          aria-modal="true"
+          aria-label="Admin Security Gate with 3D Logo"
         >
-          {/* Ambient 3D Volumetric Lighting */}
+          {/* Ambient 3D Depth Illumination */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <motion.div
               animate={{
                 scale: [1, 1.3, 1],
                 opacity: [0.35, 0.65, 0.35],
-                x: [0, 30, 0],
+                x: [0, 25, 0],
                 y: [0, -25, 0],
               }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -top-36 -left-36 w-[450px] h-[450px] rounded-full bg-emerald-500/25 blur-[130px]"
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -top-36 -left-36 w-[480px] h-[480px] rounded-full bg-emerald-500/25 blur-[130px]"
             />
             <motion.div
               animate={{
                 scale: [1, 1.25, 1],
                 opacity: [0.3, 0.6, 0.3],
-                x: [0, -35, 0],
+                x: [0, -30, 0],
                 y: [0, 30, 0],
               }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -bottom-36 -right-36 w-[450px] h-[450px] rounded-full bg-cyan-500/25 blur-[130px]"
+              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-36 -right-36 w-[480px] h-[480px] rounded-full bg-cyan-500/25 blur-[130px]"
             />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-teal-500/10 blur-[150px]" />
-            <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:20px_20px] opacity-40" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] rounded-full bg-teal-500/10 blur-[160px]" />
+            <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:22px_22px] opacity-40" />
           </div>
 
-          {/* Quick Skip Button */}
-          <div className="absolute top-6 right-6 z-20">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleClose();
-              }}
-              className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white text-xs font-semibold backdrop-blur-md border border-white/15 transition-all flex items-center gap-1.5 shadow-lg active:scale-95"
-            >
-              <span>Skip Loading</span>
-              <span className="material-symbols-outlined text-[16px]">close</span>
-            </button>
-          </div>
-
-          {/* 3D Stage */}
+          {/* Main 3D Stage Container */}
           <div
-            className="relative z-10 flex flex-col items-center max-w-md px-6 w-full"
+            className="relative z-10 flex flex-col items-center max-w-md w-full my-auto"
             style={{ perspective: 1200 }}
-            onClick={(e) => e.stopPropagation()}
           >
             {/* 3D Dual Gyroscope Orbit Rings */}
             <motion.div
@@ -158,13 +191,13 @@ export default function Admin3DLogoIntro({
                 rotateX: [65, 75, 65],
               }}
               transition={{
-                rotateZ: { duration: 10, repeat: Infinity, ease: "linear" },
-                rotateX: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                rotateZ: { duration: 11, repeat: Infinity, ease: "linear" },
+                rotateX: { duration: 4.5, repeat: Infinity, ease: "easeInOut" },
               }}
-              className="absolute -top-6 w-80 h-80 rounded-full border-2 border-emerald-400/35 border-dashed pointer-events-none"
+              className="absolute -top-8 w-72 h-72 sm:w-80 sm:h-80 rounded-full border-2 border-emerald-400/35 border-dashed pointer-events-none"
               style={{
                 transformStyle: "preserve-3d",
-                boxShadow: "0 0 40px rgba(16, 185, 129, 0.25)",
+                boxShadow: "0 0 35px rgba(16, 185, 129, 0.25)",
               }}
             />
 
@@ -174,29 +207,29 @@ export default function Admin3DLogoIntro({
                 rotateY: [65, 75, 65],
               }}
               transition={{
-                rotateZ: { duration: 14, repeat: Infinity, ease: "linear" },
+                rotateZ: { duration: 15, repeat: Infinity, ease: "linear" },
                 rotateY: { duration: 5, repeat: Infinity, ease: "easeInOut" },
               }}
-              className="absolute -top-6 w-72 h-72 rounded-full border border-cyan-400/30 pointer-events-none"
+              className="absolute -top-8 w-64 h-64 sm:w-72 sm:h-72 rounded-full border border-cyan-400/30 pointer-events-none"
               style={{
                 transformStyle: "preserve-3d",
-                boxShadow: "0 0 30px rgba(6, 182, 212, 0.2)",
+                boxShadow: "0 0 25px rgba(6, 182, 212, 0.2)",
               }}
             />
 
-            {/* 3D Floating Glass Pedestal & Logo */}
+            {/* 3D Floating Glass Pedestal & Animated Logo */}
             <motion.div
               initial={{
                 scale: 0.2,
-                rotateY: -140,
+                rotateY: -130,
                 rotateX: 45,
                 opacity: 0,
                 z: -250,
               }}
               animate={{
                 scale: 1,
-                rotateY: mousePos.x * 18,
-                rotateX: -mousePos.y * 18,
+                rotateY: mousePos.x * 16,
+                rotateX: -mousePos.y * 16,
                 opacity: 1,
                 z: 0,
               }}
@@ -207,7 +240,7 @@ export default function Admin3DLogoIntro({
                 mass: 0.85,
               }}
               style={{ transformStyle: "preserve-3d" }}
-              className="relative p-8 sm:p-10 rounded-3xl bg-gradient-to-b from-white/[0.15] to-white/[0.03] backdrop-blur-3xl border border-white/25 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.8),0_0_50px_rgba(16,185,129,0.3)] flex flex-col items-center justify-center"
+              className="relative p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-white/[0.14] to-white/[0.03] backdrop-blur-3xl border border-white/25 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.8),0_0_50px_rgba(16,185,129,0.3)] flex flex-col items-center justify-center"
             >
               {/* Dynamic 3D Glare Light */}
               <div
@@ -219,17 +252,17 @@ export default function Admin3DLogoIntro({
                 }}
               />
 
-              {/* Glowing 3D Corner Marks */}
+              {/* Glowing Corner Accents */}
               <div className="absolute top-2.5 left-2.5 w-3.5 h-3.5 border-t-2 border-l-2 border-emerald-400/90 rounded-tl-sm shadow-[0_0_8px_#34d399]" />
               <div className="absolute top-2.5 right-2.5 w-3.5 h-3.5 border-t-2 border-r-2 border-emerald-400/90 rounded-tr-sm shadow-[0_0_8px_#34d399]" />
               <div className="absolute bottom-2.5 left-2.5 w-3.5 h-3.5 border-b-2 border-l-2 border-emerald-400/90 rounded-bl-sm shadow-[0_0_8px_#34d399]" />
               <div className="absolute bottom-2.5 right-2.5 w-3.5 h-3.5 border-b-2 border-r-2 border-emerald-400/90 rounded-br-sm shadow-[0_0_8px_#34d399]" />
 
-              {/* Elevated Floating 3D Logo Layer */}
+              {/* Elevated Floating 3D Logo */}
               <motion.div
                 animate={{
-                  y: [-6, 6, -6],
-                  rotateZ: [0, 1.2, -1.2, 0],
+                  y: [-5, 5, -5],
+                  rotateZ: [0, 1, -1, 0],
                 }}
                 transition={{
                   duration: 3.2,
@@ -237,16 +270,16 @@ export default function Admin3DLogoIntro({
                   ease: "easeInOut",
                 }}
                 style={{
-                  transform: "translateZ(70px)",
+                  transform: "translateZ(65px)",
                   transformStyle: "preserve-3d",
                 }}
-                className="relative w-52 sm:w-60 h-22 sm:h-28 flex items-center justify-center drop-shadow-[0_20px_30px_rgba(0,0,0,0.7)]"
+                className="relative w-48 sm:w-56 h-20 sm:h-24 flex items-center justify-center drop-shadow-[0_20px_30px_rgba(0,0,0,0.7)]"
               >
                 <Image
                   src={logoUrl}
                   alt={brandName}
-                  width={240}
-                  height={90}
+                  width={220}
+                  height={80}
                   priority
                   className="max-h-full w-auto object-contain brightness-110 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.45)]"
                 />
@@ -276,47 +309,126 @@ export default function Admin3DLogoIntro({
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-                className="w-44 h-4 mt-6 rounded-full bg-black/70 blur-md pointer-events-none"
+                className="w-40 h-3.5 mt-4 rounded-full bg-black/70 blur-md pointer-events-none"
                 style={{ transform: "translateZ(-30px)" }}
               />
             </motion.div>
 
-            {/* Typography & Loading Telemetry */}
+            {/* Security Passcode Gate Section */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25, duration: 0.5 }}
-              className="mt-8 text-center space-y-3 w-full"
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="mt-6 text-center space-y-4 w-full"
             >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-xs font-semibold uppercase tracking-widest shadow-inner">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                <span>Admin Portal</span>
+                <span>Security Clearance Required</span>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center justify-center gap-2">
-                <span>{brandName}</span>
-                <span className="text-emerald-400 text-xs font-semibold px-2 py-0.5 rounded bg-emerald-950/70 border border-emerald-800/40">
-                  Secure CRM
-                </span>
-              </h2>
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center justify-center gap-2">
+                  <span>{brandName}</span>
+                  <span className="text-emerald-400 text-xs font-semibold px-2 py-0.5 rounded bg-emerald-950/70 border border-emerald-800/40">
+                    Admin Gate
+                  </span>
+                </h2>
+                <p className="text-xs text-white/60 tracking-wide mt-1">
+                  Enter master security key to decrypt operations portal
+                </p>
+              </div>
 
-              <p className="text-xs text-emerald-200/80 tracking-wide font-medium min-h-[1.25rem]">
-                {statusText}
-              </p>
-
-              {/* Precision Loading Progress Bar */}
-              <div className="w-60 sm:w-72 h-2 bg-white/10 rounded-full overflow-hidden mx-auto mt-3 p-0.5 border border-white/15 shadow-inner">
+              {/* Error / Terminating Alert */}
+              {errorNotice && (
                 <motion.div
-                  className="h-full bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 rounded-full shadow-[0_0_15px_rgba(52,211,153,0.9)]"
-                  initial={{ width: "15%" }}
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="p-3.5 rounded-xl bg-error/20 border border-error/50 text-red-200 text-xs font-semibold flex items-center gap-2 text-left"
+                >
+                  <span className="material-symbols-outlined text-[20px] text-red-400 shrink-0">
+                    gpp_bad
+                  </span>
+                  <span>{errorNotice}</span>
+                </motion.div>
+              )}
+
+              {/* Success Alert */}
+              {successNotice && (
+                <motion.div
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-400/60 text-emerald-200 text-xs font-semibold flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-[20px] text-emerald-400">
+                    verified_user
+                  </span>
+                  <span>{successNotice}</span>
+                </motion.div>
+              )}
+
+              {/* Passcode Input Form (Secret masked bullets) */}
+              {!isUnlocked && !successNotice && (
+                <form
+                  onSubmit={handlePasscodeSubmit}
+                  className="space-y-3 pt-1 w-full"
+                >
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={passcode}
+                      onChange={(e) => setPasscode(e.target.value)}
+                      placeholder="Enter secret security key..."
+                      autoFocus
+                      disabled={isVerifying || isTerminating}
+                      className="w-full px-4 py-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.12] focus:bg-white/[0.15] text-white placeholder:text-white/40 text-sm tracking-wider font-mono border border-white/20 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all pr-12 text-center"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isVerifying || isTerminating}
+                      className="absolute right-3 top-3 text-white/50 hover:text-white transition-colors p-1"
+                      title={showPassword ? "Hide password" : "Show password"}
+                      aria-label="Toggle password visibility"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">
+                        {showPassword ? "visibility_off" : "visibility"}
+                      </span>
+                    </button>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isVerifying || !passcode.trim() || isTerminating}
+                    className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-semibold text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)] disabled:opacity-50 flex items-center justify-center gap-2 active:scale-[0.98]"
+                  >
+                    {isVerifying ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" />
+                        <span>Verifying Security Key...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="material-symbols-outlined text-[18px]">key</span>
+                        <span>Unlock Admin Portal</span>
+                      </>
+                    )}
+                  </button>
+
+                  <p className="text-[11px] text-white/40 pt-1">
+                    * Secret Master Key required. Incorrect attempts terminate session immediately.
+                  </p>
+                </form>
+              )}
+
+              {/* Progress bar */}
+              <div className="w-56 sm:w-64 h-1.5 bg-white/10 rounded-full overflow-hidden mx-auto mt-2 p-0.5 border border-white/10 shadow-inner">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 rounded-full shadow-[0_0_12px_rgba(52,211,153,0.8)]"
+                  initial={{ width: "25%" }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.45, ease: "easeOut" }}
                 />
               </div>
-
-              <p className="text-[11px] text-white/40 pt-1">
-                Loading dashboard • Click anywhere to skip
-              </p>
             </motion.div>
           </div>
         </motion.div>

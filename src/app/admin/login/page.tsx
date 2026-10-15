@@ -24,6 +24,11 @@ function AdminLoginForm() {
   const handleFirebaseGoogleSignIn = async () => {
     setIsLoading(true);
     setErrorMsg("");
+    try {
+      sessionStorage.removeItem("tc_admin_passcode_verified");
+    } catch {
+      // Silent
+    }
 
     if (!firebaseActive || !auth || !googleProvider) {
       setErrorMsg(
@@ -82,12 +87,7 @@ function AdminLoginForm() {
 
   return (
     <>
-      {isLoading && (
-        <Admin3DLogoIntro
-          forceShow={true}
-          autoClose={false}
-        />
-      )}
+      {isLoading && <Admin3DLogoIntro forceShow={true} />}
       <div className="w-full max-w-md bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/30 p-8">
       <div className="text-center mb-8">
         <Image

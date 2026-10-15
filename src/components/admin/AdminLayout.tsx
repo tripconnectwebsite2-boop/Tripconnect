@@ -25,6 +25,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const handleLogout = async () => {
     try {
+      try {
+        sessionStorage.removeItem("tc_admin_passcode_verified");
+      } catch {
+        // Silent
+      }
       await fetch("/api/admin/auth/logout", { method: "POST" });
       router.push("/admin/login");
       router.refresh();

@@ -1,6 +1,12 @@
 export const ADMIN_ALLOWLIST = ["tripconnectwebsite2@gmail.com"];
 export const SESSION_COOKIE_NAME = "tc_admin_session";
+export const MASTER_SECURITY_PASSCODE = process.env.ADMIN_SECURITY_PASSCODE || "96338589622007";
 const SESSION_SECRET = process.env.SESSION_SECRET || "tc_kerala_secure_admin_jwt_salt_secret_key_2026";
+
+export function verifyPasscode(input?: string | null): boolean {
+  if (!input || typeof input !== "string") return false;
+  return input.trim() === MASTER_SECURITY_PASSCODE;
+}
 
 function base64UrlEncode(bytes: Uint8Array): string {
   let binary = "";
