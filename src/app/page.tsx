@@ -11,6 +11,8 @@ import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import { getOffers, getReviews, getPackages, getSiteContent, getSiteSettings } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const [activeOffers, approvedReviews, publishedPackages, siteContent, siteSettings] = await Promise.all([
     getOffers(true), // Only current active verified offers
@@ -39,7 +41,7 @@ export default async function Home() {
             />
           )}
           {/* Conditionally rendered: Only displayed if approved active current offers exist */}
-          {activeOffers.length > 0 && <SpecialOffer />}
+          {activeOffers.length > 0 && <SpecialOffer offer={activeOffers[0]} offers={activeOffers} />}
           <PlanTripForm />
         </div>
       </main>

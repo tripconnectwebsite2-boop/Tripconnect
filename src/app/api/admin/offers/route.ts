@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { getOffers, createOffer } from "@/lib/db";
 
@@ -33,6 +34,8 @@ export async function POST(request: Request) {
     }
 
     const created = await createOffer(body);
+    revalidatePath("/");
+    revalidatePath("/offers");
     return NextResponse.json({ success: true, offer: created }, { status: 201 });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Failed to create offer." }, { status: 500 });

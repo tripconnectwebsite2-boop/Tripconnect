@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { updateOffer, deleteOffer } from "@/lib/db";
 
@@ -26,6 +27,8 @@ export async function PATCH(
     return NextResponse.json({ error: "Offer not found" }, { status: 404 });
   }
 
+  revalidatePath("/");
+  revalidatePath("/offers");
   return NextResponse.json({ success: true, offer: updated });
 }
 
@@ -44,5 +47,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Offer not found" }, { status: 404 });
   }
 
+  revalidatePath("/");
+  revalidatePath("/offers");
   return NextResponse.json({ success: true, message: "Offer removed." });
 }

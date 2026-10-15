@@ -9,6 +9,8 @@ export const metadata = {
   description: "Limited seasonal discounts and advance retreat offers for Kerala backwaters, tea highlands, and Pan-India circuits.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function OffersPage() {
   const offers = await getOffers(true); // Only active, verified, non-expired offers
 
