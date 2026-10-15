@@ -7,6 +7,13 @@ interface Preset {
   url: string;
 }
 
+export interface ImageSpecs {
+  ratio?: string;          // e.g. "16:9 (Landscape)", "4:3 (Card)", "1:1 (Square)"
+  measurement?: string;    // e.g. "1920 × 1080 px", "1200 × 800 px", "512 × 512 px"
+  quality?: string;        // e.g. "Maximum (Lossless / 90%+ WebP/PNG)", "Crisp High-Res"
+  maxSize?: string;        // e.g. "Max 20MB (Recommended: 500KB – 2MB)"
+}
+
 interface ImageUploadFieldProps {
   label: string;
   value: string;
@@ -16,6 +23,7 @@ interface ImageUploadFieldProps {
   aspectRatio?: string;
   previewHeight?: string;
   placeholder?: string;
+  specs?: ImageSpecs;
 }
 
 export default function ImageUploadField({
@@ -27,11 +35,26 @@ export default function ImageUploadField({
   aspectRatio = "aspect-video",
   previewHeight = "h-44",
   placeholder = "https://images.unsplash.com/... or upload from your computer",
+  specs,
 }: ImageUploadFieldProps) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [dragActive, setDragActive] = useState(false);
+  const [detectedSpecs, setDetectedSpecs] = useState<{
+    width: number;
+    height: number;
+    ratio: string;
+  } | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Default specifications if not explicitly overridden
+  const activeSpecs: Required<ImageSpecs> = {
+    ratio: specs?.ratio || "16:9 (Landscape)",
+    measurement: specs?.measurement || "1920 × 1080 px (or min 1200px width)",
+    quality: specs?.quality || "Maximum (High-Definition WebP, PNG, or JPG 90%+)",
+    maxSize: specs?.maxSize || "Max 20MB (Recommended: 500KB – 2MB)",
+  };
 
   const handleFileUpload = async (file: File) => {
     if (!file) return;
@@ -97,6 +120,25 @@ export default function ImageUploadField({
     }
   };
 
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const { naturalWidth, naturalHeight } = e.currentTarget;
+    if (naturalWidth && naturalHeight) {
+      const aspect = naturalWidth / naturalHeight;
+      let ratioStr = `${naturalWidth}:${naturalHeight}`;
+      if (Math.abs(aspect - 16 / 9) < 0.08) ratioStr = "16:9";
+      else if (Math.abs(aspect - 4 / 3) < 0.08) ratioStr = "4:3";
+      else if (Math.abs(aspect - 3 / 2) < 0.08) ratioStr = "3:2";
+      else if (Math.abs(aspect - 1) < 0.05) ratioStr = "1:1";
+      else if (Math.abs(aspect - 9 / 16) < 0.08) ratioStr = "9:16 (Portrait)";
+
+      setDetectedSpecs({
+        width: naturalWidth,
+        height: naturalHeight,
+        ratio: ratioStr,
+      });
+    }
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -105,9 +147,60 @@ export default function ImageUploadField({
         </label>
         {value && (
           <span className="text-[11px] text-outline truncate max-w-[220px]">
-            {value.startsWith("/uploads/") ? "📁 Stored on PC" : "🌐 Web Hosted"}
+            {value.startsWith("/uploads/") ? "📁 Stored on PC Disk" : "🌐 Web Hosted"}
           </span>
         )}
+      </div>
+
+      {/* Specifications Guide Banner: Size, Quality, Measurement, Ratio */}
+      <div className="p-3 rounded-xl bg-surface-container-high/40 border border-outline-variant/30 space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-primary text-[11px] font-bold tracking-wide uppercase">
+            <span className="material-symbols-outlined text-[15px]">photo_size_select_actual</span>
+            <span>Recommended Image Specifications</span>
+          </div>
+          <span className="text-[10px] font-semibold text-primary/80 bg-primary/10 px-2 py-0.5 rounded-full">
+            Best Display
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          {/* Aspect Ratio */}
+          <div className="p-2 rounded-lg bg-surface-container-lowest border border-outline-variant/20">
+            <span className="text-[10px] uppercase font-bold text-outline block">Ratio</span>
+            <span className="font-semibold text-on-surface text-[11px] flex items-center gap-1 mt-0.5">
+              <span className="material-symbols-outlined text-[13px] text-primary shrink-0">aspect_ratio</span>
+              <span className="truncate">{activeSpecs.ratio}</span>
+            </span>
+          </div>
+
+          {/* Measurement / Resolution */}
+          <div className="p-2 rounded-lg bg-surface-container-lowest border border-outline-variant/20">
+            <span className="text-[10px] uppercase font-bold text-outline block">Measurement</span>
+            <span className="font-semibold text-on-surface text-[11px] flex items-center gap-1 mt-0.5">
+              <span className="material-symbols-outlined text-[13px] text-primary shrink-0">straighten</span>
+              <span className="truncate">{activeSpecs.measurement}</span>
+            </span>
+          </div>
+
+          {/* Quality */}
+          <div className="p-2 rounded-lg bg-surface-container-lowest border border-outline-variant/20">
+            <span className="text-[10px] uppercase font-bold text-outline block">Quality</span>
+            <span className="font-semibold text-on-surface text-[11px] flex items-center gap-1 mt-0.5">
+              <span className="material-symbols-outlined text-[13px] text-secondary shrink-0">high_quality</span>
+              <span className="truncate">{activeSpecs.quality}</span>
+            </span>
+          </div>
+
+          {/* Upload File Size */}
+          <div className="p-2 rounded-lg bg-surface-container-lowest border border-outline-variant/20">
+            <span className="text-[10px] uppercase font-bold text-outline block">Max Size</span>
+            <span className="font-semibold text-on-surface text-[11px] flex items-center gap-1 mt-0.5">
+              <span className="material-symbols-outlined text-[13px] text-amber-600 shrink-0">data_usage</span>
+              <span className="truncate">{activeSpecs.maxSize}</span>
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Main input controls */}
@@ -116,14 +209,20 @@ export default function ImageUploadField({
           <input
             type="text"
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(e) => {
+              setDetectedSpecs(null);
+              onChange(e.target.value);
+            }}
             placeholder={placeholder}
             className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary text-on-surface"
           />
           {value && (
             <button
               type="button"
-              onClick={() => onChange("")}
+              onClick={() => {
+                setDetectedSpecs(null);
+                onChange("");
+              }}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-outline hover:text-error text-xs"
               title="Clear image"
             >
@@ -145,7 +244,7 @@ export default function ImageUploadField({
             type="button"
             disabled={uploading}
             onClick={() => fileInputRef.current?.click()}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 text-xs font-semibold inline-flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60 whitespace-nowrap"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 text-xs font-semibold inline-flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-60 whitespace-nowrap shadow-sm"
           >
             {uploading ? (
               <>
@@ -181,8 +280,10 @@ export default function ImageUploadField({
       >
         <span className="material-symbols-outlined text-[24px] text-primary">cloud_upload</span>
         <div className="text-xs">
-          <span className="font-semibold text-primary">Click to choose image</span> or drag &amp; drop from your PC
-          <span className="block text-[10px] text-outline mt-0.5">JPG, PNG, WebP, SVG, AVIF up to 20MB (stored directly on your computer)</span>
+          <span className="font-semibold text-primary">Click to select image from PC</span> or drag &amp; drop file here
+          <span className="block text-[10px] text-outline mt-0.5">
+            JPG, PNG, WebP, SVG, AVIF • Max 20MB • Automatically stored on local computer
+          </span>
         </div>
       </div>
 
@@ -205,7 +306,10 @@ export default function ImageUploadField({
               <button
                 key={preset.label}
                 type="button"
-                onClick={() => onChange(preset.url)}
+                onClick={() => {
+                  setDetectedSpecs(null);
+                  onChange(preset.url);
+                }}
                 className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-surface-container-low hover:bg-primary hover:text-white transition-colors border border-outline-variant/30 text-on-surface"
               >
                 {preset.label}
@@ -215,25 +319,38 @@ export default function ImageUploadField({
         </div>
       )}
 
-      {/* Live Preview Box */}
+      {/* Live Preview Box with Detected Image Readout */}
       {value && (
-        <div className="space-y-1 pt-1">
+        <div className="space-y-2 pt-1">
           <div className="flex items-center justify-between text-[11px] text-outline">
-            <span className="font-semibold">Live Visual Preview:</span>
-            <a
-              href={value}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline inline-flex items-center gap-1"
-            >
-              <span>View full size</span>
-              <span className="material-symbols-outlined text-[12px]">open_in_new</span>
-            </a>
+            <span className="font-semibold text-on-surface">Live Visual Preview:</span>
+            <div className="flex items-center gap-3">
+              {detectedSpecs && (
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-secondary">
+                  <span className="material-symbols-outlined text-[13px]">check_circle</span>
+                  <span>
+                    Detected: {detectedSpecs.width} × {detectedSpecs.height} px ({detectedSpecs.ratio})
+                  </span>
+                </span>
+              )}
+              <a
+                href={value}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline inline-flex items-center gap-1"
+              >
+                <span>Full resolution</span>
+                <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+              </a>
+            </div>
           </div>
-          <div className={`relative w-full ${previewHeight} rounded-xl overflow-hidden border border-outline-variant/30 bg-neutral-900 group shadow-sm`}>
+          <div
+            className={`relative w-full ${previewHeight} rounded-xl overflow-hidden border border-outline-variant/30 bg-neutral-900 group shadow-sm`}
+          >
             <img
               src={value}
               alt="Preview"
+              onLoad={handleImageLoad}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
@@ -246,7 +363,10 @@ export default function ImageUploadField({
               </button>
               <button
                 type="button"
-                onClick={() => onChange("")}
+                onClick={() => {
+                  setDetectedSpecs(null);
+                  onChange("");
+                }}
                 className="px-3 py-1.5 rounded-lg bg-error text-white text-xs font-semibold shadow hover:bg-error/90"
               >
                 Remove

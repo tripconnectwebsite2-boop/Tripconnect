@@ -235,6 +235,12 @@ export default function AdminContentPage() {
                   onChange={(url) => handleFieldChange("logo_url", url)}
                   helperText="Upload transparent PNG, SVG, or high-res logo from your PC, or enter an image URL."
                   previewHeight="h-24"
+                  specs={{
+                    ratio: "1:1 (Square)",
+                    measurement: "512 × 512 px (or SVG)",
+                    quality: "Maximum (Lossless Transparent PNG / SVG)",
+                    maxSize: "Max 5MB (Recommended < 500KB)",
+                  }}
                 />
               </div>
             </div>
@@ -358,6 +364,12 @@ export default function AdminContentPage() {
                 helperText="Upload any high-res photo directly from your PC (JPG, PNG, WebP) or pick a preset."
                 presets={PHOTO_PRESETS}
                 previewHeight="h-64"
+                specs={{
+                  ratio: "16:9 (Landscape)",
+                  measurement: "1920 × 1080 px (or 2560 × 1440 4K)",
+                  quality: "Maximum (Sharp WebP / JPG 90%+)",
+                  maxSize: "Max 20MB (Recommended: 1MB – 3MB)",
+                }}
               />
             </div>
           </div>
@@ -421,6 +433,12 @@ export default function AdminContentPage() {
                   helperText="Upload feature photograph from your PC or pick a preset."
                   presets={PHOTO_PRESETS}
                   previewHeight="h-48"
+                  specs={{
+                    ratio: "16:9 (Landscape)",
+                    measurement: "1400 × 900 px",
+                    quality: "Maximum (High-Definition Scenic)",
+                    maxSize: "Max 20MB (Recommended: 800KB – 2MB)",
+                  }}
                 />
               </div>
 
@@ -593,6 +611,12 @@ export default function AdminContentPage() {
                             }
                             presets={PHOTO_PRESETS}
                             previewHeight="h-36"
+                            specs={{
+                              ratio: "4:3 (Card)",
+                              measurement: "1200 × 800 px",
+                              quality: "Maximum (Vibrant Destination Photo)",
+                              maxSize: "Max 20MB (Recommended: 500KB – 1.5MB)",
+                            }}
                           />
                         </div>
                       </div>
@@ -659,6 +683,12 @@ export default function AdminContentPage() {
                   helperText="Upload showcase photo from your PC or pick a preset."
                   presets={PHOTO_PRESETS}
                   previewHeight="h-44"
+                  specs={{
+                    ratio: "4:3 (Feature)",
+                    measurement: "1200 × 900 px",
+                    quality: "Maximum (Retina Resolution)",
+                    maxSize: "Max 20MB (Recommended: 500KB – 2MB)",
+                  }}
                 />
               </div>
 
@@ -754,6 +784,12 @@ export default function AdminContentPage() {
                   helperText="Upload feature photograph from your PC or pick a preset."
                   presets={PHOTO_PRESETS}
                   previewHeight="h-52"
+                  specs={{
+                    ratio: "16:9 (Wide Banner)",
+                    measurement: "1920 × 1080 px",
+                    quality: "Maximum (Panoramic Quality)",
+                    maxSize: "Max 20MB (Recommended: 1MB – 3MB)",
+                  }}
                 />
 
                 <div className="space-y-3 pt-4 border-t border-outline-variant/20">

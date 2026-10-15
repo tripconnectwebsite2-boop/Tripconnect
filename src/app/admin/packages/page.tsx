@@ -483,6 +483,12 @@ export default function AdminPackagesPage() {
                   }}
                   helperText="Upload primary cover photograph from your PC or enter an image URL."
                   previewHeight="h-40"
+                  specs={{
+                    ratio: "16:9 or 4:3",
+                    measurement: "1200 × 800 px (Min 800px width)",
+                    quality: "Maximum (Sharp Tour Photography)",
+                    maxSize: "Max 20MB (Recommended: 600KB – 2MB)",
+                  }}
                 />
 
                 {/* Publication Status & Verification Confirmation */}

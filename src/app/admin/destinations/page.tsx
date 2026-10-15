@@ -199,6 +199,12 @@ export default function AdminDestinationsPage() {
                   onChange={(url) => setEditingDest({ ...editingDest, cover_image: url })}
                   helperText="Upload image from your PC or enter an image URL."
                   previewHeight="h-36"
+                  specs={{
+                    ratio: "4:3 or 16:9",
+                    measurement: "1200 × 800 px (Min 800px width)",
+                    quality: "Maximum (High-Impact Destination Photo)",
+                    maxSize: "Max 20MB (Recommended: 600KB – 2MB)",
+                  }}
                 />
                 <div className="flex justify-end gap-2 pt-4 border-t border-outline-variant/20">
                   <button
