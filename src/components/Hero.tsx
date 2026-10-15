@@ -17,7 +17,6 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
   const primaryCtaLink = content?.hero_primary_cta_link || "#kerala-tours";
   const secondaryCtaText = content?.hero_secondary_cta_text || "Plan Your Trip";
   const secondaryCtaLink = content?.hero_secondary_cta_link || "#plan-trip";
-  const floatingBadge = content?.hero_floating_badge || "100% Curated Kerala Journeys";
 
   // Scroll animations linked directly to Hero container scroll progress
   const { scrollYProgress } = useScroll({
@@ -187,40 +186,6 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
 
           {/* Vignette Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-on-background/75 via-on-background/20 to-transparent pointer-events-none" />
-
-          {/* Floating Micro Badges on Top of Hero Image */}
-          <div className="absolute top-4 left-4 right-4 flex flex-wrap items-center justify-between gap-3 pointer-events-none z-10">
-            {/* Google Rating Pill with subtle float animation */}
-            <motion.div
-              animate={{ y: [0, -5, 0] }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-lowest/90 backdrop-blur-md shadow-md text-on-surface font-label-sm text-label-sm pointer-events-auto hover:bg-surface-container-lowest transition-all cursor-default"
-            >
-              <span className="text-amber-500 font-bold">★ 5.0</span>
-              <span className="text-on-surface-variant font-medium">Google Rated</span>
-              <span className="text-outline text-xs">(122 Reviews)</span>
-            </motion.div>
-
-            <div className="flex items-center gap-2">
-              <motion.div
-                animate={{ y: [0, 4, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
-                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-on-background/60 backdrop-blur-md text-white font-label-sm text-label-sm pointer-events-auto border border-white/10"
-              >
-                <span className="material-symbols-outlined text-secondary-fixed text-[16px]">verified</span>
-                <span>{floatingBadge}</span>
-              </motion.div>
-
-              <motion.div
-                animate={{ y: [0, -3, 0] }}
-                transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/85 backdrop-blur-md text-white font-label-sm text-label-sm pointer-events-auto shadow-sm"
-              >
-                <span className="material-symbols-outlined text-[16px]">pin_drop</span>
-                <span>Kochi Desk</span>
-              </motion.div>
-            </div>
-          </div>
 
           {/* Hero Image Bottom Destination Tag */}
           <div className="absolute bottom-6 left-6 right-6 lg:bottom-10 lg:left-10 lg:right-10 flex flex-wrap items-end justify-between gap-4 text-white z-10">
