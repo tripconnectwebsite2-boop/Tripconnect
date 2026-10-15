@@ -221,8 +221,18 @@ function ensureStore(): DatabaseStore {
       parsed.bugs = initialBugs;
       mutated = true;
     }
-    if (!parsed.pages) {
-      parsed.pages = initialPages;
+    if (Array.isArray(parsed.pages)) {
+      const filtered = parsed.pages.filter(
+        (p: any) =>
+          p.slug !== "luxury-houseboat-experience" &&
+          p.slug !== "private-taxi-chauffeur"
+      );
+      if (filtered.length !== parsed.pages.length) {
+        parsed.pages = filtered;
+        mutated = true;
+      }
+    } else {
+      parsed.pages = [];
       mutated = true;
     }
     if (!parsed.settings?.google_reviews_url) {
