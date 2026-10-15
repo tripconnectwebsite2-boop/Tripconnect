@@ -9,6 +9,7 @@ import { SiteContent } from "@/lib/types";
 export default function Header({ content }: { content?: Partial<SiteContent> }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dynamicContent, setDynamicContent] = useState<Partial<SiteContent> | undefined>(content);
+  const [headerPages, setHeaderPages] = useState<{ label: string; href: string }[]>([]);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -20,6 +21,21 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
         })
         .catch(() => {});
     }
+
+    // Load any custom pages enabled for header navigation
+    fetch("/api/pages?in_header=true")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.pages && Array.isArray(data.pages)) {
+          setHeaderPages(
+            data.pages.slice(0, 3).map((p: any) => ({
+              label: p.title,
+              href: `/p/${p.slug}`,
+            }))
+          );
+        }
+      })
+      .catch(() => {});
   }, [content]);
 
   // Close mobile menu automatically on route change
@@ -49,6 +65,7 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
     { label: "Packages", href: "/packages" },
     { label: "Destinations", href: "/destinations" },
     { label: "Special Offers", href: "/offers" },
+    ...headerPages,
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ];

@@ -247,3 +247,26 @@ export interface BugReport {
   updated_at: string;
   resolved_at?: string | null;
 }
+
+// -----------------------------------------------------------------------------
+// Custom Dynamic Pages (CMS)
+// -----------------------------------------------------------------------------
+export interface CustomPage {
+  id: string;
+  title: string;
+  slug: string;
+  hero_title?: string;
+  hero_subtitle?: string;
+  hero_image?: string;
+  content: string;
+  highlights?: string[];
+  show_in_header?: boolean;
+  show_in_footer?: boolean;
+  cta_title?: string;
+  cta_whatsapp?: boolean;
+  status: "draft" | "published";
+  seo_title?: string;
+  seo_description?: string;
+  created_at: string;
+  updated_at: string;
+}

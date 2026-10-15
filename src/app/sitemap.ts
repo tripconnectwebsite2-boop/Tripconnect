@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { getPackages, getDestinations } from "@/lib/db";
+import { getPackages, getDestinations, getCustomPages } from "@/lib/db";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tripconnect.in";
@@ -7,6 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch only published verified items for search indexing
   const packages = await getPackages({ status: "published" });
   const destinations = await getDestinations(true);
+  const customPages = await getCustomPages({ status: "published" });
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -73,5 +74,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.75,
   }));
 
-  return [...staticRoutes, ...packageRoutes, ...destinationRoutes];
+  const customPageRoutes: MetadataRoute.Sitemap = customPages.map((page) => ({
+    url: `${baseUrl}/p/${page.slug}`,
+    lastModified: new Date(page.updated_at),
+    changeFrequency: "weekly",
+    priority: 0.8,
+  }));
+
+  return [...staticRoutes, ...packageRoutes, ...destinationRoutes, ...customPageRoutes];
 }

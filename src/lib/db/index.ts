@@ -14,6 +14,7 @@ import {
   BugStatus,
   BugSeverity,
   BugCategory,
+  CustomPage,
 } from "../types";
 import {
   initialDestinations,
@@ -22,6 +23,7 @@ import {
   initialOffers,
   initialSettings,
   initialSiteContent,
+  initialPages,
 } from "./seed-data";
 import { createAdminClient } from "../supabase/admin";
 
@@ -35,6 +37,7 @@ interface DatabaseStore {
   settings: SiteSettings;
   content: SiteContent;
   bugs?: BugReport[];
+  pages?: CustomPage[];
 }
 
 const DATA_DIR = path.join(process.cwd(), ".data");
@@ -147,6 +150,7 @@ function ensureStore(): DatabaseStore {
       settings: initialSettings,
       content: initialSiteContent,
       bugs: initialBugs,
+      pages: initialPages,
     };
     fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), "utf-8");
     return initial;
@@ -162,6 +166,10 @@ function ensureStore(): DatabaseStore {
     }
     if (!parsed.bugs) {
       parsed.bugs = initialBugs;
+      mutated = true;
+    }
+    if (!parsed.pages) {
+      parsed.pages = initialPages;
       mutated = true;
     }
     if (!parsed.settings?.google_reviews_url) {
@@ -790,4 +798,123 @@ export async function deleteBug(id: string): Promise<boolean> {
   store.bugs = store.bugs.filter((b) => b.id !== id);
   saveStore(store);
   return store.bugs.length < initial;
+}
+
+// -----------------------------------------------------------------------------
+// Custom Dynamic Pages (CMS)
+// -----------------------------------------------------------------------------
+export async function getCustomPages(filters?: {
+  status?: "draft" | "published";
+  show_in_header?: boolean;
+  show_in_footer?: boolean;
+}): Promise<CustomPage[]> {
+  const store = ensureStore();
+  let pages = store.pages || [];
+  if (filters?.status) {
+    pages = pages.filter((p) => p.status === filters.status);
+  }
+  if (filters?.show_in_header !== undefined) {
+    pages = pages.filter((p) => p.show_in_header === filters.show_in_header);
+  }
+  if (filters?.show_in_footer !== undefined) {
+    pages = pages.filter((p) => p.show_in_footer === filters.show_in_footer);
+  }
+  return [...pages].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+}
+
+export async function getCustomPageBySlug(slug: string): Promise<CustomPage | null> {
+  const store = ensureStore();
+  const page = (store.pages || []).find(
+    (p) => p.slug.toLowerCase() === slug.toLowerCase()
+  );
+  return page || null;
+}
+
+export async function getCustomPageById(id: string): Promise<CustomPage | null> {
+  const store = ensureStore();
+  const page = (store.pages || []).find((p) => p.id === id);
+  return page || null;
+}
+
+export async function createCustomPage(
+  data: Omit<CustomPage, "id" | "created_at" | "updated_at">
+): Promise<CustomPage> {
+  const store = ensureStore();
+  if (!store.pages) store.pages = [];
+
+  // Generate clean slug
+  let baseSlug = (data.slug || data.title)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  if (!baseSlug) baseSlug = `page-${Date.now()}`;
+
+  let finalSlug = baseSlug;
+  let counter = 1;
+  while (store.pages.some((p) => p.slug === finalSlug)) {
+    finalSlug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+
+  const newPage: CustomPage = {
+    ...data,
+    id: `page-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    slug: finalSlug,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  store.pages.unshift(newPage);
+  saveStore(store);
+  return newPage;
+}
+
+export async function updateCustomPage(
+  id: string,
+  data: Partial<CustomPage>
+): Promise<CustomPage | null> {
+  const store = ensureStore();
+  if (!store.pages) store.pages = [];
+  const idx = store.pages.findIndex((p) => p.id === id);
+  if (idx === -1) return null;
+
+  const existing = store.pages[idx];
+  let finalSlug = existing.slug;
+  if (data.slug && data.slug !== existing.slug) {
+    let slugCandidate = data.slug
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+    if (!slugCandidate) slugCandidate = existing.slug;
+
+    const conflict = store.pages.some(
+      (p) => p.id !== id && p.slug === slugCandidate
+    );
+    if (!conflict) {
+      finalSlug = slugCandidate;
+    }
+  }
+
+  store.pages[idx] = {
+    ...existing,
+    ...data,
+    slug: finalSlug,
+    updated_at: new Date().toISOString(),
+  };
+
+  saveStore(store);
+  return store.pages[idx];
+}
+
+export async function deleteCustomPage(id: string): Promise<boolean> {
+  const store = ensureStore();
+  if (!store.pages) return false;
+  const initial = store.pages.length;
+  store.pages = store.pages.filter((p) => p.id !== id);
+  saveStore(store);
+  return store.pages.length < initial;
 }

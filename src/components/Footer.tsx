@@ -1,11 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import { SiteContent } from "@/lib/types";
-import { getSiteContent } from "@/lib/db";
+import { getSiteContent, getCustomPages } from "@/lib/db";
 import ReportBugFooterButton from "@/components/ReportBugFooterButton";
 
 export default async function Footer({ content }: { content?: Partial<SiteContent> }) {
   const activeContent = content || (await getSiteContent().catch(() => null));
+  const customFooterPages = await getCustomPages({
+    status: "published",
+    show_in_footer: true,
+  }).catch(() => []);
   const brandName = activeContent?.brand_name || "Trip Connect";
   const logoUrl =
     activeContent?.logo_url ||
@@ -82,6 +86,16 @@ export default async function Footer({ content }: { content?: Partial<SiteConten
                   Contact Concierge
                 </Link>
               </li>
+              {customFooterPages.map((page) => (
+                <li key={page.id}>
+                  <Link
+                    className="hover:text-primary transition-colors truncate max-w-[200px] block"
+                    href={`/p/${page.slug}`}
+                  >
+                    {page.title}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
