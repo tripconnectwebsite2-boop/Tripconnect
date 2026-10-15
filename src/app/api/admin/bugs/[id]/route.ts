@@ -4,14 +4,15 @@ import { getBugById, updateBug, deleteBug } from "@/lib/db";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getAdminSession();
   if (!session.authorized) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  const bug = await getBugById(params.id);
+  const { id } = await params;
+  const bug = await getBugById(id);
   if (!bug) {
     return NextResponse.json({ error: "Bug report not found" }, { status: 404 });
   }
@@ -21,15 +22,16 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getAdminSession();
   if (!session.authorized) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
+  const { id } = await params;
   const body = await request.json();
-  const updated = await updateBug(params.id, body);
+  const updated = await updateBug(id, body);
 
   if (!updated) {
     return NextResponse.json({ error: "Bug report not found" }, { status: 404 });
@@ -40,14 +42,15 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getAdminSession();
   if (!session.authorized) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  const success = await deleteBug(params.id);
+  const { id } = await params;
+  const success = await deleteBug(id);
   if (!success) {
     return NextResponse.json({ error: "Bug report not found" }, { status: 404 });
   }

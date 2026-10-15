@@ -51,6 +51,17 @@ export default function BugReportModal({
     title: string;
   } | null>(null);
 
+  // Floating button visible for 50 seconds, then becomes invisible
+  const [buttonVisible, setButtonVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setButtonVisible(false);
+    }, 50000); // 50 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // Auto-detect current page & device info on client
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -177,12 +188,12 @@ export default function BugReportModal({
 
   return (
     <>
-      {/* Discreet floating trigger button */}
-      {showFloatingButton && (
+      {/* Discreet floating trigger button (shown on bottom-left for 50 seconds) */}
+      {showFloatingButton && buttonVisible && (
         <button
           type="button"
           onClick={() => setInternalIsOpen(true)}
-          className="fixed bottom-6 right-6 z-40 bg-surface-container-high/90 hover:bg-primary hover:text-white text-on-surface backdrop-blur-md px-3.5 py-2 rounded-full border border-outline-variant/30 shadow-lg text-xs font-semibold flex items-center gap-2 transition-all active:scale-95 group"
+          className="fixed bottom-6 left-6 z-40 bg-surface-container-high/90 hover:bg-primary hover:text-white text-on-surface backdrop-blur-md px-3.5 py-2 rounded-full border border-outline-variant/30 shadow-lg text-xs font-semibold flex items-center gap-2 transition-all duration-500 active:scale-95 group animate-in fade-in"
           title="Found a glitch or issue? Click to report it."
         >
           <span className="material-symbols-outlined text-[18px] text-error group-hover:text-white transition-colors">
