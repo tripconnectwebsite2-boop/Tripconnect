@@ -1,37 +1,49 @@
+"use client";
+
+import { motion } from "motion/react";
+import Link from "next/link";
+import { APPLE_EASE } from "@/lib/animation";
+
 export default function Destinations() {
   const keralaDestinations = [
     {
       name: "Munnar",
+      slug: "munnar",
       desc: "Tea highlands & mist",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuCS6rdtUJavTVgWbUI86Y5txQAw4vh9DOVSjEb-mm1UlIP_fYNmW9Mymw_Pa3SO436DDorhrW6n9uzu_yyzjmlMig0UtMIERGMaq3nXh07gg_fyXi0tz6dvO8LBDHoMv7UyEBEtZrpOeeFwbE80wqUyLa9-CDbMbCvFde6Gl8oXLj9NaUxy_UNCEb-cYrTtCWKA-J76wKU4H6tx3rK4j59d8L-cJlqFAn1cmfQ-0eHRot1evVrGgRpkgQ",
     },
     {
       name: "Alleppey",
+      slug: "alleppey",
       desc: "Canals & luxury houseboats",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuCYPNVnb3b2brXIdXvZD39zc2boe9fKbfbQnD6l4sw-goG_3lHiykczKP8zXm6rxWmeYvsEST4E7XauXRjMEWcQagDpOglgaQ4upuyWu3EtuRA9AHXBsxLP9U1Lbg8fHUmrStCwiBreGfkiHI_KSrJbIYzGM9nTf1we1h-2hXTqggQ4nGYNxNT6LzRn-erjXKXY6g05G76ouClXiR9EfTHqETfJYmv1AR7iwuCH6ZplzAjKhpUhvemQqA",
     },
     {
       name: "Thekkady",
+      slug: "thekkady",
       desc: "Periyar wilderness & spice",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuB7DrmMZS3SiQWd7DM5OlxSlG62H5Ly1jkI-ybf5glHieyP0d_9EnZydFuRW8W7c9k3g3WQirq8p5hC2O6DKry-yM7ptY1xL2XMLvChQuFj65ESFiTCFw__XaOJJq9V1uWQVmQadvawd-duffdPSoD3Rnk5_oweRSG7Edif5lg93WrKv-05NTGkaMnSQO_hMQWNf2Gj_rW5Azm6QPYtPl2UONOkFnUcAutprqxol4MjUKb-PfIeYOasyA",
     },
     {
       name: "Kochi",
+      slug: "kochi",
       desc: "Colonial ports & culture",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuAlVyFqTk4aNYtEkC_r_Yda04E4nChyzI7VeNSSO-HHZQylo0VUKk5NePn3VeMJvjJhYF6fpc7w4SmT8lAJxRRJ4U4G6fZyRB0HQLCAWqgonYlW7WgSWnvPOUQSGY2wJ7kJ5Q8yNwCa-GXPFVjRhzYexf1k70s4xKuBjiXRV1DWxnH7tg4VfiNMnYyGicrA6jfSZs2FXEbaz9Idtg8FS6boR7YbYQzRk8JsGBJap_FOevzJrZgNfCIYWA",
     },
     {
       name: "Wayanad",
+      slug: "wayanad",
       desc: "Forest trails & treehouses",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuC3B2V2_xpkgSF_lsS9X3teq65onGeNyK-j97Tu7IveB9p8hvS9mGwzgujju2wpe-F0wIZ_yAberwzbQnZtX6KU1YD03prDxBFkQJ9-kCXz1Hei9vLvWul90e6F0GWR2Pdhu2pGk1IL_Tzx4D-EI90A9UvEfWXZlo511-oHbn7fnfZvwOx2CxUq96QXp0kSfm0Nbo6phuuJjz0BMPkW0zzic0Ax72gepYsiqxoj1gVFgIFZhPXP4_cEhA",
     },
     {
       name: "Varkala",
+      slug: "varkala",
       desc: "Red cliffs & oceanic dusk",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuDRdm9L0-nJwzJ5HQjYlUcQd8G5N22cFbx4pdzuttMxo5uzr6y1-MLT2WgqhMYpQYNSZ9-EAD-P-1CYqb1cG-X8V1RjwEutVuIDnxYdtJhGyK8F-kUDoh7A2K0Jktpv9JTzehIxzFEMoJ7J8MQKXsNTH1KkMCcQYSJmCDpf3rQkXkPV7wjd6hmWgsOArDd3xzY4BnlhxdfgLZJnwPz7tY1GHaOrqd7e9_jH3a-wHxf8CdFaj5FDiQx15w",
@@ -70,8 +82,15 @@ export default function Destinations() {
   ];
 
   return (
-    <section className="w-full py-24 px-6 lg:px-12 max-w-7xl mx-auto" id="destinations">
-      <div className="max-w-3xl mb-16 reveal-fade-up">
+    <section className="w-full py-24 px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden" id="destinations">
+      {/* Header with Viewport Scroll Entrance */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.8, ease: APPLE_EASE }}
+        className="max-w-3xl mb-16"
+      >
         <span className="font-label-sm text-label-sm uppercase tracking-widest text-primary font-semibold">
           Geographic Atlas
         </span>
@@ -81,77 +100,113 @@ export default function Destinations() {
         <p className="font-body-lg text-body-lg text-on-surface-variant">
           From the tranquil spice hills of Kerala to the imperial monuments and snowbound peaks of India.
         </p>
-      </div>
+      </motion.div>
 
       <div className="space-y-16">
         {/* Kerala Sanctuary Highlights */}
-        <div className="reveal-fade-up delay-150">
-          <div className="flex items-center justify-between mb-6">
+        <div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center justify-between mb-6"
+          >
             <h3 className="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
               <span className="material-symbols-outlined text-secondary text-[24px]">verified</span>
               Kerala Highlights
             </h3>
             <span className="font-body-sm text-body-sm text-outline">6 Prime Escapes</span>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {keralaDestinations.map((dest) => (
-              <a
+            {keralaDestinations.map((dest, idx) => (
+              <motion.div
                 key={dest.name}
-                className="group relative rounded-xl overflow-hidden aspect-[3/4] bg-surface-container-high flex flex-col justify-end p-4 shadow-sm hover:shadow-lg transition-all"
-                href="#plan-trip"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{
+                  duration: 0.65,
+                  delay: idx * 0.08,
+                  ease: APPLE_EASE,
+                }}
+                whileHover={{ y: -6, transition: { duration: 0.2 } }}
               >
-                <img
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
-                  alt={dest.name}
-                  src={dest.image}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-on-background/85 via-on-background/30 to-transparent" />
-                <div className="relative z-10 text-white">
-                  <h4 className="font-headline-sm text-headline-sm font-semibold text-white">{dest.name}</h4>
-                  <p className="font-body-sm text-body-sm text-surface-container-high line-clamp-1">{dest.desc}</p>
-                  <span className="inline-block mt-2 font-label-sm text-label-sm text-primary-fixed group-hover:underline">
-                    Explore →
-                  </span>
-                </div>
-              </a>
+                <Link
+                  className="group relative rounded-xl overflow-hidden aspect-[3/4] bg-surface-container-high flex flex-col justify-end p-4 shadow-sm hover:shadow-xl transition-all block border border-outline-variant/10"
+                  href={`/destinations/${dest.slug}`}
+                >
+                  <img
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-600 ease-out"
+                    alt={dest.name}
+                    src={dest.image}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-on-background/85 via-on-background/30 to-transparent" />
+                  <div className="relative z-10 text-white">
+                    <h4 className="font-headline-sm text-headline-sm font-semibold text-white">{dest.name}</h4>
+                    <p className="font-body-sm text-body-sm text-surface-container-high line-clamp-1">{dest.desc}</p>
+                    <span className="inline-block mt-2 font-label-sm text-label-sm text-primary-fixed group-hover:underline">
+                      Explore →
+                    </span>
+                  </div>
+                </Link>
+              </motion.div>
             ))}
           </div>
         </div>
 
         {/* India Highlights */}
-        <div className="reveal-fade-up delay-250">
-          <div className="flex items-center justify-between mb-6">
+        <div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center justify-between mb-6"
+          >
             <h3 className="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
               <span className="material-symbols-outlined text-primary text-[24px]">public</span>
               India Highlights
             </h3>
             <span className="font-body-sm text-body-sm text-outline">Pan-India Curations</span>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {indiaDestinations.map((dest) => (
-              <a
+            {indiaDestinations.map((dest, idx) => (
+              <motion.div
                 key={dest.name}
-                className="group relative rounded-2xl overflow-hidden aspect-[16/10] bg-surface-container-high flex flex-col justify-end p-6 shadow-sm hover:shadow-xl transition-all"
-                href="#plan-trip"
+                initial={{ opacity: 0, y: 35 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{
+                  duration: 0.75,
+                  delay: idx * 0.12,
+                  ease: APPLE_EASE,
+                }}
+                whileHover={{ y: -6, transition: { duration: 0.2 } }}
               >
-                <img
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                  alt={dest.name}
-                  src={dest.image}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-on-background/80 via-on-background/25 to-transparent" />
-                <div className="relative z-10 text-white">
-                  <div className="px-2.5 py-1 rounded bg-surface/20 backdrop-blur-md inline-block mb-2">
-                    <span className="font-label-sm text-label-sm uppercase tracking-wider text-surface-container-lowest font-medium">
-                      {dest.tag}
-                    </span>
+                <Link
+                  className="group relative rounded-2xl overflow-hidden aspect-[16/10] bg-surface-container-high flex flex-col justify-end p-6 shadow-sm hover:shadow-2xl transition-all block border border-outline-variant/10"
+                  href="/destinations"
+                >
+                  <img
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-108 transition-transform duration-600 ease-out"
+                    alt={dest.name}
+                    src={dest.image}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-on-background/80 via-on-background/25 to-transparent" />
+                  <div className="relative z-10 text-white">
+                    <div className="px-2.5 py-1 rounded bg-surface/20 backdrop-blur-md inline-block mb-2">
+                      <span className="font-label-sm text-label-sm uppercase tracking-wider text-surface-container-lowest font-medium">
+                        {dest.tag}
+                      </span>
+                    </div>
+                    <h4 className="font-headline-md text-headline-md font-semibold text-white">{dest.name}</h4>
+                    <p className="font-body-sm text-body-sm text-surface-container-high">{dest.desc}</p>
                   </div>
-                  <h4 className="font-headline-md text-headline-md font-semibold text-white">{dest.name}</h4>
-                  <p className="font-body-sm text-body-sm text-surface-container-high">{dest.desc}</p>
-                </div>
-              </a>
+                </Link>
+              </motion.div>
             ))}
           </div>
         </div>

@@ -1,3 +1,9 @@
+"use client";
+
+import { motion } from "motion/react";
+import Link from "next/link";
+import { APPLE_EASE } from "@/lib/animation";
+
 export default function FeaturedPackages() {
   const packages = [
     {
@@ -7,6 +13,7 @@ export default function FeaturedPackages() {
       price: "₹32,000",
       badge: "High Value",
       badgeClass: "bg-secondary-container text-on-secondary-container",
+      slug: "classic-kerala-grand-tour",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuBsEueUPJrI0O1sHnvIQdp-xgXpkaYKfOkgLG6MC7pdryUyfy__v92icO0eIqpBYlE15-9goslKClobZY9z8oaCniCTHIB5G5ssC8EhDlcIrNcgMgjqyfniZ5typYoNow0w1ZzunISf4YBooojKwq3dxn1-LaKsVNNA4fxmrTJ0YAEgLoQIlWtwVBhWM2MfH9ffWIfAfJ89oaPVDmMPsvCUj4WWokPYvJ0KhoTul8CRrbBTqKSw15J8jw",
       inclusions: [
@@ -15,7 +22,6 @@ export default function FeaturedPackages() {
         { icon: "theater_comedy", text: "Authentic Evening Kathakali Performance" },
         { icon: "airport_shuttle", text: "Dedicated Chauffeur & AC SUV Transfers" },
       ],
-      delay: "delay-150",
     },
     {
       title: "Golden Triangle & Rajasthan",
@@ -24,6 +30,7 @@ export default function FeaturedPackages() {
       price: "₹28,500",
       badge: "Heritage",
       badgeClass: "bg-tertiary-fixed text-on-tertiary-fixed",
+      slug: "golden-triangle-heritage",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuDvVABX4Y6jpzGgP2sYLLGWh5N-fDDHyeJg4EHWR23avMU0zO6OGgeAMUJv0833v7mEJvBUdyTsdGgK-a4p5sd8araMwsXVp_LN4fbT5IkXmPt0O85SJrGMy_7EYw-VkJFJdUCyc7Dnp3YshUDpj2FxTFGsyYXnD5GIVRbIfYqFgrBbDVy5_eFsOg9ZOsDoJwUjXm9xueRC1zCZurRuygbrmMTYYGNGOWgyjpK4dHMoJrhght8Rjo4gvQ",
       inclusions: [
@@ -32,7 +39,6 @@ export default function FeaturedPackages() {
         { icon: "hotel", text: "Heritage Restored Haveli Stays" },
         { icon: "local_taxi", text: "Private Intercity Transfers & Licensed Guides" },
       ],
-      delay: "delay-300",
     },
     {
       title: "Wayanad & Coorg Highlands",
@@ -41,6 +47,7 @@ export default function FeaturedPackages() {
       price: "₹22,400",
       badge: "Highland Trek",
       badgeClass: "bg-secondary-container text-on-secondary-container",
+      slug: "wayanad-rainforest-wildlife-retreat-draft",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuDHZFZCVDrJOtbPFmJ02LXvzZJwQCWNccpArTImJK-Owjd3RrzWKylxMdF3AUU6IK9Cd9GUw_liFfH6FWboas_5l5QIxJ_XrJJzFV54ibqAG49kyS8eGTznP5rBBenwpgXDvYI2Bbpw4nMKC-Sr_ykchVWEKVjYNkuwnWrKVT-PrWr1tWh341oQ6JTsR-vURqSSpHtQDZZdMRu3o3f8n6hVcYz8fZloUoMH5q-OWWXsRSLzH6ViJL_D0A",
       inclusions: [
@@ -49,14 +56,20 @@ export default function FeaturedPackages() {
         { icon: "kayaking", text: "River Bamboo Rafting & Spice Trails" },
         { icon: "restaurant", text: "Kodava & Malabar Culinary Experiences" },
       ],
-      delay: "delay-450",
     },
   ];
 
   return (
-    <section className="w-full py-20 bg-surface-container-low" id="featured-packages">
+    <section className="w-full py-24 bg-surface-container-low overflow-hidden" id="featured-packages">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6 reveal-fade-up">
+        {/* Section Header with Viewport Scroll Entrance */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, ease: APPLE_EASE }}
+          className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6"
+        >
           <div>
             <span className="font-label-sm text-label-sm uppercase tracking-widest text-primary font-semibold">
               Signature Curations
@@ -68,33 +81,42 @@ export default function FeaturedPackages() {
               Multi-destination balanced circuits crafted with luxury stays &amp; private transit.
             </p>
           </div>
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm shadow-sm border border-outline-variant/20">
             <span className="material-symbols-outlined text-[18px] text-secondary">tune</span>
             Fully customizable on request
           </div>
-        </div>
+        </motion.div>
 
-        {/* 3-Card Grid */}
+        {/* 3-Card Grid with Staggered Viewport Entrance */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {packages.map((pkg) => (
-            <div
+          {packages.map((pkg, idx) => (
+            <motion.div
               key={pkg.title}
-              className={`flex flex-col bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-xl transition-all overflow-hidden reveal-fade-up ${pkg.delay}`}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{
+                duration: 0.8,
+                delay: idx * 0.15,
+                ease: APPLE_EASE,
+              }}
+              whileHover={{ y: -8, transition: { duration: 0.25 } }}
+              className="flex flex-col bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-2xl transition-all overflow-hidden border border-outline-variant/20 group"
             >
               <div className="relative h-64 overflow-hidden">
                 <img
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
                   alt={pkg.title}
                   src={pkg.image}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-on-background/80 via-transparent to-transparent" />
-                <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-surface/90 backdrop-blur-md">
+                <div className="absolute inset-0 bg-gradient-to-t from-on-background/85 via-on-background/20 to-transparent" />
+                <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-surface/90 backdrop-blur-md shadow-sm">
                   <span className="font-label-sm text-label-sm text-on-surface font-semibold">
                     {pkg.duration}
                   </span>
                 </div>
                 <div className="absolute bottom-4 left-4 right-4 text-white">
-                  <p className="font-label-sm text-label-sm text-primary-fixed uppercase tracking-wider">
+                  <p className="font-label-sm text-label-sm text-primary-fixed uppercase tracking-wider mb-1">
                     {pkg.subtitle}
                   </p>
                   <h3 className="font-headline-md text-headline-md font-semibold text-white">
@@ -111,7 +133,7 @@ export default function FeaturedPackages() {
                   <ul className="space-y-2.5 font-body-sm text-body-sm text-on-surface-variant">
                     {pkg.inclusions.map((inc) => (
                       <li key={inc.text} className="flex items-center gap-2.5">
-                        <span className="material-symbols-outlined text-[18px] text-primary">
+                        <span className="material-symbols-outlined text-[18px] text-primary shrink-0">
                           {inc.icon}
                         </span>
                         <span>{inc.text}</span>
@@ -134,22 +156,22 @@ export default function FeaturedPackages() {
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
-                    <a
-                      className="py-2.5 text-center rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md transition-all active:scale-[0.98]"
-                      href="#plan-trip"
+                    <Link
+                      className="py-2.5 text-center rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md transition-all active:scale-[0.98] font-medium"
+                      href={`/packages/${pkg.slug}`}
                     >
-                      View Trip
-                    </a>
-                    <a
-                      className="py-2.5 text-center rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-all btn-shimmer active:scale-[0.98]"
-                      href="#plan-trip"
+                      View Details
+                    </Link>
+                    <Link
+                      className="py-2.5 text-center rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-all btn-shimmer active:scale-[0.98] font-medium shadow-sm"
+                      href={`/packages/${pkg.slug}#enquire`}
                     >
                       Quick Enquiry
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

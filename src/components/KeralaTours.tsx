@@ -1,3 +1,9 @@
+"use client";
+
+import { motion } from "motion/react";
+import Link from "next/link";
+import { APPLE_EASE } from "@/lib/animation";
+
 export default function KeralaTours() {
   const tours = [
     {
@@ -9,7 +15,7 @@ export default function KeralaTours() {
       price: "₹14,500",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuDCzwJauBQYcLbtjGtABpJpcaUOhNXWkeONV1e_6XO5-ecYvYrgSypw1qr2W0oslFPX81kUzt-ZHQ9CZsyx-Pp03zo0bUkargRdMM7g5Um5MInTOH01gD8CTKxyZMyMwXmdmw9Eo3tBaOBQde3kPrMl-P7qcC359ZFyTMtMvMlmduh2YTAjNbTzORzljYpB21iRDw0CrblpxqWsvWuDbrA7pMo26-MRd3xAIM2GAcn7NH5p8gYx4gWPDw",
-      delay: "delay-100",
+      slug: "munnar-tea-trails",
     },
     {
       title: "Alleppey Luxury Backwater Cruise",
@@ -20,7 +26,7 @@ export default function KeralaTours() {
       price: "₹18,000",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuDCXa4pkOq0ty9_41mIx9UTEheTGIuJxcg9o0D40EZJRkTZnoyL4hB1gCuk62Bvhd7lMOPIa26eBygCDhuweowtOxzg_CChGSVglWspZ0TZmJC7seoNVyu1DB_X_74wtIE5DbM2hvPryKN76goIUdONWjazCD4hkEN8ncjerEygEnCEFj6vYwl_fa-xKJwjOOE_eUwTDeFVCmWra8gE5fE72kVXD0LX-Nla2PYGEI6BnnTlwN9iwaGn0A",
-      delay: "delay-200",
+      slug: "alleppey-houseboat-retreat",
     },
     {
       title: "Wayanad Rainforest Sanctuary",
@@ -31,7 +37,7 @@ export default function KeralaTours() {
       price: "₹16,200",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuAIMzmHxxHFOG9GNcnOQIC8jw9II3muiJ05oxhHDw5vpL6yhcWWo5M68-qw0zQNNaSKkLS0FMrFd5pww0TROn3gijfgZ1fAE76cdQyDMASwwJYxNnm92bC_i3rpx-ZrPg0b6AB4Eu8OYG9i8xmR7mG76HG-3p1dAlJ3IbZSEx_Nlvh1pmaEkmlJoN0jK6Bs99SnsU8gwgoXqyV-IZgDEAQGtFXVWlDhl8GXIpHQhTcHIRC_xbT43MiBbw",
-      delay: "delay-300",
+      slug: "wayanad-rainforest-wildlife-retreat-draft",
     },
     {
       title: "Varkala Cliffside & Serenity",
@@ -42,13 +48,20 @@ export default function KeralaTours() {
       price: "₹12,800",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuDqhSF1rQ9FshAFS2pdPFJJkYF1bO1qPrjbRy6lVElxMJnextwpOP2W90i_2DPNINSQ63D756zhEGRRbvI8U4NIt6rwUVJ52KUxib39vCbj3HdvKYAf0Yua8lVYpb7ezdG9ohybcoqh2njLgOdU-vlBaIPeVYPekCGjjVZdSq1xo85WUX4IU6-_NnfKgd21rvgE9mpAWGdgzgrx8cI7NDmm6g3wYELlrdUBJ5ln4OPCNdGYTf5rKhRKVg",
-      delay: "delay-400",
+      slug: "varkala-cliffside-coastal-escape",
     },
   ];
 
   return (
-    <section className="w-full py-24 px-6 lg:px-12 max-w-7xl mx-auto" id="kerala-tours">
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6 reveal-fade-up">
+    <section className="w-full py-24 px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden" id="kerala-tours">
+      {/* Header with scroll reveal */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.8, ease: APPLE_EASE }}
+        className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6"
+      >
         <div className="max-w-2xl">
           <div className="flex items-center gap-2 mb-3">
             <span className="h-px w-8 bg-primary" />
@@ -63,25 +76,36 @@ export default function KeralaTours() {
             Handcrafted routes through God’s Own Country, from mist-kissed highlands to tranquil backwater lagoons.
           </p>
         </div>
-        <a
+        <motion.a
+          whileHover={{ scale: 1.03, x: 2 }}
+          whileTap={{ scale: 0.98 }}
           className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-sm transition-all self-start md:self-end btn-shimmer active:scale-[0.98]"
-          href="#plan-trip"
+          href="/packages?category=kerala"
         >
-          <span>Explore Kerala Tours</span>
+          <span>Explore All Kerala Tours</span>
           <span className="material-symbols-outlined text-[18px]">east</span>
-        </a>
-      </div>
+        </motion.a>
+      </motion.div>
 
-      {/* Editorial 4-Card Showcase Grid */}
+      {/* Editorial 4-Card Showcase Grid with Staggered Viewport Entrance */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {tours.map((tour) => (
-          <div
+        {tours.map((tour, idx) => (
+          <motion.div
             key={tour.title}
-            className={`group flex flex-col rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden reveal-fade-up ${tour.delay}`}
+            initial={{ opacity: 0, y: 35 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{
+              duration: 0.75,
+              delay: idx * 0.12,
+              ease: APPLE_EASE,
+            }}
+            whileHover={{ y: -6, transition: { duration: 0.25 } }}
+            className="group flex flex-col rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-outline-variant/15"
           >
             <div className="relative aspect-[4/3] overflow-hidden bg-surface-container-high">
               <img
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
                 alt={tour.title}
                 src={tour.image}
               />
@@ -118,16 +142,16 @@ export default function KeralaTours() {
                 </div>
                 <p className="font-label-sm text-label-sm text-outline mb-4">Sample estimate • Verified upon enquiry</p>
                 <div className="flex items-center gap-2">
-                  <a
-                    className="w-full py-2 text-center rounded-lg bg-surface-container-high hover:bg-primary hover:text-on-primary font-label-md text-label-md text-on-surface transition-all btn-shimmer active:scale-[0.98]"
-                    href="#plan-trip"
+                  <Link
+                    className="w-full py-2.5 text-center rounded-lg bg-surface-container-high hover:bg-primary hover:text-on-primary font-label-md text-label-md text-on-surface transition-all btn-shimmer active:scale-[0.98]"
+                    href={`/packages/${tour.slug}`}
                   >
-                    Enquire Now
-                  </a>
+                    View Tour Details
+                  </Link>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </section>

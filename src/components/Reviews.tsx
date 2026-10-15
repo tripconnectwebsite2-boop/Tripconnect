@@ -1,3 +1,8 @@
+"use client";
+
+import { motion } from "motion/react";
+import { APPLE_EASE } from "@/lib/animation";
+
 export default function Reviews() {
   const reviews = [
     {
@@ -9,7 +14,6 @@ export default function Reviews() {
       text: "“Thanks TRIP CONNECT HOLIDAY (GOURISHANKAR) for the excellent service! We enjoyed a lot. Good selection of Tree House, Resorts and Houseboat at Alleppey. The houseboat staff was very helpful and the food was awesome.”",
       circuit: "Alleppey & Wayanad Tour",
       likes: 2,
-      delay: "delay-150",
     },
     {
       author: "Suresh Jayakumar",
@@ -20,7 +24,6 @@ export default function Reviews() {
       text: "“Good journey. Trip was very good. Well arrangement done by Gowrish Shankar and driver was very polite. Positive approach throughout the trip.”",
       circuit: "Verified Booking",
       likes: 1,
-      delay: "delay-200",
     },
     {
       author: "Radhika Prabhakaran",
@@ -31,7 +34,6 @@ export default function Reviews() {
       text: "“Top-notch service from Trip Connect Kochi! Booked a taxi for a family trip and the experience was seamless. Driver was punctual, friendly, and super helpful. Highly recommend for reliable and comfortable travel in Kochi.”",
       circuit: "Family Tour",
       likes: 3,
-      delay: "delay-300",
     },
     {
       author: "Rithish Tours And Travels",
@@ -42,7 +44,6 @@ export default function Reviews() {
       text: "“Incredible Experience with Trip Connect Kochi! We booked a 3-day Munnar + Kochi tour with Trip Connect Kochi and it exceeded our expectations. Seamless coordination, courteous driver, and great care.”",
       circuit: "Munnar + Kochi Circuit",
       likes: 2,
-      delay: "delay-250",
     },
     {
       author: "Aswanth Pk",
@@ -53,7 +54,6 @@ export default function Reviews() {
       text: "“Had an excellent experience booking through this car rental website. The process was smooth, transparent, and very easy to use. The pricing was clear with no hidden charges, vehicle was clean and well maintained.”",
       circuit: "Clear & Transparent",
       likes: 4,
-      delay: "delay-350",
     },
     {
       author: "Gokul Raveendran",
@@ -64,13 +64,19 @@ export default function Reviews() {
       text: "“Smooth & Reliable Rides. Used Trip Connect for my whole Kochi trip. Driver showed up 10 mins early at Cochin Airport, car was clean and AC was freezing cold.”",
       circuit: "Airport Transfer & Tours",
       likes: 5,
-      delay: "delay-400",
     },
   ];
 
   return (
-    <section className="w-full py-24 px-6 lg:px-12 max-w-7xl mx-auto" id="guest-reviews">
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 reveal-fade-up">
+    <section className="w-full py-24 px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden" id="guest-reviews">
+      {/* Header with Viewport Entrance */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.8, ease: APPLE_EASE }}
+        className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6"
+      >
         <div className="max-w-2xl">
           <div className="flex items-center gap-2 mb-3">
             <span className="h-px w-8 bg-secondary" />
@@ -87,8 +93,10 @@ export default function Reviews() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3 self-start md:self-end">
-          <a
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/30 text-on-surface font-label-md text-label-md shadow-sm transition-all active:scale-[0.98]"
+          <motion.a
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/30 text-on-surface font-label-md text-label-md shadow-sm transition-all"
             href="https://maps.google.com"
             rel="noopener noreferrer"
             target="_blank"
@@ -112,15 +120,21 @@ export default function Reviews() {
               />
             </svg>
             <span>Write a review</span>
-          </a>
+          </motion.a>
         </div>
-      </div>
+      </motion.div>
 
       {/* Aggregate Rating Banner */}
-      <div className="p-6 md:p-8 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-sm mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 reveal-fade-up delay-100">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, ease: APPLE_EASE }}
+        className="p-6 md:p-8 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-sm mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6"
+      >
         <div className="flex flex-wrap items-center gap-6">
           <div className="flex items-center gap-4 shrink-0">
-            <div className="w-12 h-12 rounded-xl bg-surface-container-high/80 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-surface-container-high/80 flex items-center justify-center shadow-sm">
               <svg className="w-7 h-7" viewBox="0 0 24 24">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -181,14 +195,23 @@ export default function Reviews() {
             punctual &amp; reliable
           </span>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Reviews Grid */}
+      {/* Reviews Grid with Staggered Viewport Entrance */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {reviews.map((rev) => (
-          <div
+        {reviews.map((rev, idx) => (
+          <motion.div
             key={rev.author}
-            className={`p-6 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-sm hover:shadow-md transition-all flex flex-col justify-between reveal-fade-up ${rev.delay}`}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{
+              duration: 0.65,
+              delay: idx * 0.1,
+              ease: APPLE_EASE,
+            }}
+            whileHover={{ y: -6, transition: { duration: 0.2 } }}
+            className="p-6 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-sm hover:shadow-xl transition-all flex flex-col justify-between"
           >
             <div>
               <div className="flex items-start justify-between mb-4">
@@ -245,7 +268,7 @@ export default function Reviews() {
               </span>
               <span className="text-outline-variant font-label-sm">❤️ {rev.likes}</span>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </section>
