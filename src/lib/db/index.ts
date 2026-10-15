@@ -136,12 +136,16 @@ export async function getPackages(filters?: {
   maxPrice?: number;
   status?: string;
   search?: string;
+  includeUnverified?: boolean;
 }): Promise<TravelPackage[]> {
   const store = ensureStore();
   let result = store.packages;
 
   if (filters?.status) {
     result = result.filter((p) => p.status === filters.status);
+    if (!filters.includeUnverified) {
+      result = result.filter((p) => p.content_verified);
+    }
   } else {
     // Default public behavior: only published and verified
     result = result.filter((p) => p.status === "published" && p.content_verified);

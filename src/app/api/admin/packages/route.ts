@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   const search = searchParams.get("search") || undefined;
 
   // Admin gets all packages (drafts and published)
-  const packages = await getPackages({ status, search });
+  const packages = await getPackages({ status, search, includeUnverified: true });
   return NextResponse.json({ packages });
 }
 

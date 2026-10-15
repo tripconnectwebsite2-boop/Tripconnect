@@ -38,7 +38,7 @@ export default async function PackageDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const pkg = await getPackageBySlug(slug, true); // Allow preview if authenticated admin
+  const pkg = await getPackageBySlug(slug, false); // Only display published & verified packages to public
 
   if (!pkg) {
     notFound();

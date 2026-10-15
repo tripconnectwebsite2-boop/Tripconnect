@@ -147,7 +147,7 @@ export default function AdminReviewsPage() {
 
                     <h4 className="font-semibold text-on-surface">{rev.customer_display_name}</h4>
                     <p className="text-xs text-on-surface-variant leading-relaxed line-clamp-4">
-                      "{rev.review_text}"
+                      &ldquo;{rev.review_text}&rdquo;
                     </p>
                     {rev.source_or_verification_note && (
                       <span className="text-[11px] text-outline block">

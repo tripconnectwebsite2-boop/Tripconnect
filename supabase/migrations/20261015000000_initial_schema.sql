@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS public.enquiry_notes (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   enquiry_id UUID NOT NULL REFERENCES public.enquiries(id) ON DELETE CASCADE,
   note TEXT NOT NULL,
-  created_by TEXT NOT NULL DEFAULT 'dmtripconnectin@gmail.com',
+  created_by TEXT NOT NULL DEFAULT 'tripconnectwebsite2@gmail.com',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -190,11 +190,11 @@ CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS BOOLEAN AS $$
 BEGIN
   RETURN (
-    auth.jwt() ->> 'email' = 'dmtripconnectin@gmail.com'
+    auth.jwt() ->> 'email' = 'tripconnectwebsite2@gmail.com'
     OR EXISTS (
       SELECT 1 FROM public.profiles
       WHERE id = auth.uid()
-      AND email = 'dmtripconnectin@gmail.com'
+      AND email = 'tripconnectwebsite2@gmail.com'
       AND role = 'admin'
     )
   );
