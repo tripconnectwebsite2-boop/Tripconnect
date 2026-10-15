@@ -41,7 +41,7 @@ A modern, enquiry-led travel website and administrator CRM for **Trip Connect**,
 - **Language:** TypeScript 5.7 (Strict Type Checking)
 - **Styling:** Tailwind CSS with custom typography and color extensions
 - **Database:** Supabase PostgreSQL (Production) / Local Resilient JSON Database Engine (`.data/db.json` development fallback)
-- **Authentication:** Strict Session Guard with Google OAuth Allowlist for `dmtripconnectin@gmail.com`
+- **Authentication:** Firebase Authentication with Google Sign-In (`signInWithPopup`), backed by strict server-side Allowlist for `dmtripconnectin@gmail.com`
 - **Notifications:** Resend API email integration with HTML concierge notification templates, and pre-filled WhatsApp click-to-chat links
 - **SEO & Structured Data:** Next.js dynamic XML Sitemap (`/sitemap.xml`), Robots (`/robots.txt`), and Schema.org `TravelAgency` + `TouristTrip` JSON-LD
 - **Security:** In-memory rate limiting, hidden bot honeypots, and RFC 4180 CSV export with formula injection sanitization
@@ -99,6 +99,28 @@ To apply the schema to your hosted Supabase instance:
 2. Go to **SQL Editor** > **New Query**.
 3. Paste the contents of `supabase/migrations/20261015000000_initial_schema.sql` and run.
 4. The migration creates tables for `destinations`, `packages`, `enquiries`, `enquiry_notes`, `offers`, `reviews`, `package_media`, `notification_logs`, and `site_settings` with Row Level Security (RLS) enabled.
+
+---
+
+## 6b. Firebase Google Authentication Setup
+
+The administrator portal supports one-click **Sign in with Google** via Firebase Authentication.
+
+### Setup Instructions:
+1. Open the [Firebase Console](https://console.firebase.google.com/) and create a project or select an existing one.
+2. Under **Build > Authentication**, click **Get Started**.
+3. Under the **Sign-in method** tab, click **Google**, enable it, specify your project support email, and save.
+4. Under the **Settings > Authorized domains** tab, ensure `localhost` is listed (do not include `http://` or port numbers). In production, add your custom domain (e.g. `tripconnect.in`).
+5. Go to **Project Settings > General > Your Apps**, click the Web icon (`</>`), register your web app, and copy the `firebaseConfig` keys into `.env.local`:
+   ```bash
+   NEXT_PUBLIC_FIREBASE_API_KEY="AIzaSy..."
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="trip-connect-kerala.firebaseapp.com"
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID="trip-connect-kerala"
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="trip-connect-kerala.appspot.com"
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="..."
+   NEXT_PUBLIC_FIREBASE_APP_ID="1:..."
+   ```
+6. When signing in at `/admin/login`, users authenticate with their Google account. The backend strictly permits entry only to accounts matching `dmtripconnectin@gmail.com`. All other accounts are safely rejected with HTTP 403.
 
 ---
 
