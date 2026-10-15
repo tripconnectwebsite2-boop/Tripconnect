@@ -83,14 +83,14 @@ export default function Destinations() {
   ];
 
   return (
-    <section className="w-full py-24 px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden" id="destinations">
+    <section className="w-full py-16 lg:py-24 px-4 sm:px-6 lg:px-12 max-w-7xl 2xl:max-w-[1360px] mx-auto overflow-hidden" id="destinations">
       {/* Header with Viewport Scroll Entrance */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.8, ease: APPLE_EASE }}
-        className="max-w-3xl mb-16"
+        className="max-w-3xl mb-12 lg:mb-16"
       >
         <span className="font-label-sm text-label-sm uppercase tracking-widest text-primary font-semibold">
           Geographic Atlas
@@ -103,7 +103,7 @@ export default function Destinations() {
         </p>
       </motion.div>
 
-      <div className="space-y-16">
+      <div className="space-y-14 lg:space-y-16">
         {/* Kerala Sanctuary Highlights */}
         <div>
           <motion.div
@@ -120,7 +120,7 @@ export default function Destinations() {
             <span className="font-body-sm text-body-sm text-outline">6 Prime Escapes</span>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
             {keralaDestinations.map((dest, idx) => (
               <motion.div
                 key={dest.name}
@@ -135,7 +135,7 @@ export default function Destinations() {
                 whileHover={{ y: -6, transition: { duration: 0.2 } }}
               >
                 <Link
-                  className="group relative rounded-xl overflow-hidden aspect-[3/4] bg-surface-container-high flex flex-col justify-end p-4 shadow-sm hover:shadow-xl transition-all block border border-outline-variant/10"
+                  className="group relative rounded-xl overflow-hidden aspect-[3/4] bg-surface-container-high flex flex-col justify-end p-4 shadow-sm hover:shadow-xl transition-all block border border-outline-variant/15 hover:border-primary/40"
                   href={`/destinations/${dest.slug}`}
                 >
                   <Image
@@ -148,10 +148,11 @@ export default function Destinations() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-on-background/85 via-on-background/30 to-transparent" />
                   <div className="relative z-10 text-white">
-                    <h4 className="font-headline-sm text-headline-sm font-semibold text-white">{dest.name}</h4>
+                    <h4 className="font-headline-sm text-headline-sm font-semibold text-white group-hover:text-primary-fixed transition-colors">{dest.name}</h4>
                     <p className="font-body-sm text-body-sm text-surface-container-high line-clamp-1">{dest.desc}</p>
-                    <span className="inline-block mt-2 font-label-sm text-label-sm text-primary-fixed group-hover:underline">
-                      Explore →
+                    <span className="inline-flex items-center gap-1 mt-2 font-label-sm text-label-sm text-primary-fixed group-hover:underline">
+                      <span>Explore</span>
+                      <span className="material-symbols-outlined text-[14px] transition-transform duration-200 group-hover:translate-x-1">arrow_forward</span>
                     </span>
                   </div>
                 </Link>
@@ -191,7 +192,7 @@ export default function Destinations() {
                 whileHover={{ y: -6, transition: { duration: 0.2 } }}
               >
                 <Link
-                  className="group relative rounded-2xl overflow-hidden aspect-[16/10] bg-surface-container-high flex flex-col justify-end p-6 shadow-sm hover:shadow-2xl transition-all block border border-outline-variant/10"
+                  className="laptop-card-hover group relative rounded-2xl overflow-hidden aspect-[16/10] bg-surface-container-high flex flex-col justify-end p-6 shadow-sm hover:shadow-2xl transition-all block border border-outline-variant/15 hover:border-primary/40"
                   href="/destinations"
                 >
                   <Image
@@ -200,16 +201,16 @@ export default function Destinations() {
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     loading="lazy"
-                    className="object-cover group-hover:scale-108 transition-transform duration-600 ease-out"
+                    className="object-cover group-hover:scale-110 transition-transform duration-600 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-on-background/80 via-on-background/25 to-transparent" />
                   <div className="relative z-10 text-white">
-                    <div className="px-2.5 py-1 rounded bg-surface/20 backdrop-blur-md inline-block mb-2">
+                    <div className="px-2.5 py-1 rounded bg-surface/20 backdrop-blur-md inline-block mb-2 border border-white/10">
                       <span className="font-label-sm text-label-sm uppercase tracking-wider text-surface-container-lowest font-medium">
                         {dest.tag}
                       </span>
                     </div>
-                    <h4 className="font-headline-md text-headline-md font-semibold text-white">{dest.name}</h4>
+                    <h4 className="font-headline-md text-headline-md font-semibold text-white group-hover:text-primary-fixed transition-colors">{dest.name}</h4>
                     <p className="font-body-sm text-body-sm text-surface-container-high">{dest.desc}</p>
                   </div>
                 </Link>

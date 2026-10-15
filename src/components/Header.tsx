@@ -27,6 +27,17 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
     setMobileMenuOpen(false);
   }, [pathname]);
 
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 15);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const activeContent = content || dynamicContent;
   const brandName = activeContent?.brand_name || "Trip Connect";
   const logoUrl =
@@ -43,8 +54,18 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
-      <div className="h-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between gap-4">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-surface/95 backdrop-blur-2xl border-b border-outline-variant/40 shadow-[0_4px_20px_rgba(0,0,0,0.06)]"
+          : "bg-surface/80 backdrop-blur-md border-b border-outline-variant/20 shadow-none"
+      }`}
+    >
+      <div
+        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between gap-4 transition-all duration-300 ${
+          scrolled ? "h-16" : "h-20"
+        }`}
+      >
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 shrink-0">
           <Image

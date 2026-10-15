@@ -61,14 +61,14 @@ export default function KeralaTours({ content }: { content?: Partial<SiteContent
   ];
 
   return (
-    <section className="w-full py-24 px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden" id="kerala-tours">
+    <section className="w-full py-16 lg:py-24 px-4 sm:px-6 lg:px-12 max-w-7xl 2xl:max-w-[1360px] mx-auto overflow-hidden" id="kerala-tours">
       {/* Header with scroll reveal */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.8, ease: APPLE_EASE }}
-        className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6"
+        className="flex flex-col md:flex-row md:items-end justify-between mb-12 lg:mb-16 gap-6"
       >
         <div className="max-w-2xl">
           <div className="flex items-center gap-2 mb-3">
@@ -109,7 +109,7 @@ export default function KeralaTours({ content }: { content?: Partial<SiteContent
               ease: APPLE_EASE,
             }}
             whileHover={{ y: -6, transition: { duration: 0.25 } }}
-            className="group flex flex-col rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-outline-variant/15"
+            className="laptop-card-hover group flex flex-col rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-outline-variant/15"
           >
             <div className="relative aspect-[4/3] overflow-hidden bg-surface-container-high">
               <Image
@@ -118,14 +118,14 @@ export default function KeralaTours({ content }: { content?: Partial<SiteContent
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 loading="lazy"
-                className="object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
+                className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
               />
-              <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-surface/90 backdrop-blur-md shadow-sm">
+              <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-surface/90 backdrop-blur-md shadow-sm border border-outline-variant/20">
                 <span className="font-label-sm text-label-sm text-on-surface font-semibold tracking-wide">
                   {tour.duration}
                 </span>
               </div>
-              <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-lg bg-surface/85 backdrop-blur-md">
+              <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-lg bg-surface/85 backdrop-blur-md border border-outline-variant/15">
                 <span className="font-label-sm text-label-sm text-primary font-medium flex items-center gap-1">
                   <span className="material-symbols-outlined text-[14px]">{tour.icon}</span>
                   {tour.tag}
@@ -133,31 +133,32 @@ export default function KeralaTours({ content }: { content?: Partial<SiteContent
               </div>
             </div>
 
-            <div className="p-6 flex flex-col flex-1 justify-between">
+            <div className="p-5 lg:p-6 flex flex-col flex-1 justify-between">
               <div>
                 <h3 className="font-headline-md text-headline-md text-on-surface mb-2 group-hover:text-primary transition-colors">
                   {tour.title}
                 </h3>
-                <p className="font-body-sm text-body-sm text-on-surface-variant mb-4 leading-relaxed">
+                <p className="font-body-sm text-body-sm text-on-surface-variant mb-4 leading-relaxed line-clamp-3">
                   {tour.desc}
                 </p>
               </div>
 
-              <div className="pt-4 mt-auto border-t-0 bg-surface-container-low/50 -mx-6 -mb-6 p-6">
+              <div className="pt-4 mt-auto border-t-0 bg-surface-container-low/50 -mx-5 lg:-mx-6 -mb-5 lg:-mb-6 p-5 lg:p-6">
                 <div className="flex items-baseline justify-between mb-1.5">
                   <span className="font-body-sm text-body-sm text-on-surface-variant">Starting from</span>
                   <div className="text-right">
-                    <span className="font-headline-sm text-headline-sm font-bold text-on-surface">{tour.price}</span>
+                    <span className="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors">{tour.price}</span>
                     <span className="font-body-sm text-body-sm text-outline">/person</span>
                   </div>
                 </div>
                 <p className="font-label-sm text-label-sm text-outline mb-4">Sample estimate • Verified upon enquiry</p>
                 <div className="flex items-center gap-2">
                   <Link
-                    className="w-full py-2.5 text-center rounded-lg bg-surface-container-high hover:bg-primary hover:text-on-primary font-label-md text-label-md text-on-surface transition-all btn-shimmer active:scale-[0.98]"
+                    className="group/btn w-full py-2.5 px-4 text-center rounded-lg bg-surface-container-high hover:bg-primary hover:text-on-primary font-label-md text-label-md text-on-surface transition-all btn-shimmer active:scale-[0.98] flex items-center justify-center gap-1.5"
                     href={`/packages/${tour.slug}`}
                   >
-                    View Tour Details
+                    <span>View Tour Details</span>
+                    <span className="material-symbols-outlined text-[16px] transition-transform duration-200 group-hover/btn:translate-x-1">arrow_forward</span>
                   </Link>
                 </div>
               </div>

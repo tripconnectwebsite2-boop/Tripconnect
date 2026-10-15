@@ -68,7 +68,7 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
       className="relative w-full -mt-20 overflow-hidden bg-surface"
       id="hero"
     >
-      <div className="relative min-h-[96vh] flex flex-col justify-between pt-28 pb-12 px-6 lg:px-12 max-w-7xl mx-auto">
+      <div className="relative min-h-[92vh] lg:min-h-[96vh] flex flex-col justify-between pt-24 lg:pt-28 pb-8 lg:pb-12 px-4 sm:px-6 lg:px-12 max-w-7xl 2xl:max-w-[1360px] mx-auto">
         {/* Ambient light aura with continuous floating motion */}
         <motion.div
           animate={{
@@ -104,11 +104,11 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="max-w-4xl pt-8 lg:pt-14 relative z-10"
+          className="max-w-4xl pt-6 lg:pt-10 relative z-10"
         >
           {/* Top Concierge Badge */}
           <motion.div variants={itemVariants} className="inline-block">
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-surface-container-high/80 backdrop-blur-md text-primary mb-8 shadow-sm border border-outline-variant/30 hover:border-primary/40 transition-colors">
+            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-surface-container-high/80 backdrop-blur-md text-primary mb-6 lg:mb-8 shadow-sm border border-outline-variant/30 hover:border-primary/40 transition-colors animate-float">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75" />
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary" />
@@ -122,7 +122,7 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
           {/* Main Headline */}
           <motion.h1
             variants={itemVariants}
-            className="font-display-hero text-display-hero text-on-surface tracking-tight leading-[1.08] mb-6"
+            className="font-display-hero text-headline-xl sm:text-display-hero text-on-surface tracking-tight leading-[1.08] mb-4 sm:mb-6"
           >
             {heroTitle}
           </motion.h1>
@@ -130,7 +130,7 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
           {/* Supporting Copy */}
           <motion.p
             variants={itemVariants}
-            className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed mb-10"
+            className="font-body-lg text-body-md sm:text-body-lg text-on-surface-variant max-w-2xl leading-relaxed mb-8 sm:mb-10"
           >
             {heroSubtitle}
           </motion.p>
@@ -138,9 +138,9 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
           {/* Call-to-Action Buttons */}
           <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-4">
             <motion.a
-              whileHover={{ scale: 1.03, y: -2 }}
+              whileHover={{ scale: 1.04, y: -2 }}
               whileTap={{ scale: 0.98 }}
-              className="group inline-flex items-center justify-center px-8 py-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-md transition-all hover:shadow-xl btn-shimmer active:scale-[0.98]"
+              className="group inline-flex items-center justify-center px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-md transition-all hover:shadow-xl btn-shimmer active:scale-[0.98]"
               href={primaryCtaLink}
             >
               <span>{primaryCtaText}</span>
@@ -154,9 +154,9 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
             </motion.a>
 
             <motion.a
-              whileHover={{ scale: 1.03, y: -2 }}
+              whileHover={{ scale: 1.04, y: -2 }}
               whileTap={{ scale: 0.98 }}
-              className="group inline-flex items-center justify-center px-8 py-4 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all hover:shadow-md border border-outline-variant/20"
+              className="group inline-flex items-center justify-center px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all hover:shadow-md border border-outline-variant/20"
               href={secondaryCtaLink}
             >
               <span className="material-symbols-outlined mr-2 text-[18px] text-primary transition-transform duration-300 group-hover:rotate-45">
@@ -173,7 +173,7 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
           initial={{ opacity: 0, y: 36 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.45, ease: APPLE_EASE }}
-          className="mt-12 lg:mt-16 relative rounded-2xl overflow-hidden shadow-2xl bg-surface-container-high aspect-[16/9] lg:aspect-[21/9] group"
+          className="mt-8 lg:mt-12 relative rounded-2xl lg:rounded-3xl overflow-hidden shadow-2xl hover:shadow-[0_30px_70px_-15px_rgba(0,97,147,0.22)] bg-surface-container-high aspect-[16/9] lg:aspect-[21/9] transition-all duration-700 group border border-outline-variant/20 hover:border-primary/40"
         >
           {/* Inner Parallax Image */}
           <motion.div

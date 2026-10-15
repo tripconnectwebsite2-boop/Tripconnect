@@ -37,9 +37,9 @@ export default function WhyTripConnect({ content }: { content?: Partial<SiteCont
   ];
 
   return (
-    <section className="w-full py-24 bg-surface-container-low overflow-hidden" id="why-us">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+    <section className="w-full py-16 lg:py-24 bg-surface-container-low overflow-hidden" id="why-us">
+      <div className="max-w-7xl 2xl:max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left Column with Viewport Entrance */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -71,7 +71,7 @@ export default function WhyTripConnect({ content }: { content?: Partial<SiteCont
           </motion.div>
 
           {/* Right Column Grid with Staggered Card Reveals */}
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-6">
             {pillars.map((pillar, idx) => (
               <motion.div
                 key={pillar.title}
@@ -84,15 +84,15 @@ export default function WhyTripConnect({ content }: { content?: Partial<SiteCont
                   ease: APPLE_EASE,
                 }}
                 whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                className="p-8 rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-xl transition-all border border-outline-variant/15 flex flex-col justify-between"
+                className="laptop-card-hover group p-7 lg:p-8 rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-xl transition-all border border-outline-variant/15 hover:border-primary/30 flex flex-col justify-between"
               >
                 <div>
-                  <div className="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center mb-6 shadow-sm">
-                    <span className={`material-symbols-outlined text-[26px] ${pillar.colorClass}`}>
+                  <div className="w-12 h-12 rounded-xl bg-surface-container-low group-hover:bg-primary/10 flex items-center justify-center mb-6 shadow-sm transition-colors duration-300">
+                    <span className={`material-symbols-outlined text-[26px] ${pillar.colorClass} transition-transform duration-300 group-hover:scale-110`}>
                       {pillar.icon}
                     </span>
                   </div>
-                  <h3 className="font-headline-sm text-headline-sm text-on-surface font-semibold mb-3">
+                  <h3 className="font-headline-sm text-headline-sm text-on-surface font-semibold mb-3 group-hover:text-primary transition-colors">
                     {pillar.title}
                   </h3>
                   <p className="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">

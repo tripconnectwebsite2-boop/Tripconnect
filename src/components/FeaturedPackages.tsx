@@ -61,15 +61,15 @@ export default function FeaturedPackages() {
   ];
 
   return (
-    <section className="w-full py-24 bg-surface-container-low overflow-hidden" id="featured-packages">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <section className="w-full py-16 lg:py-24 bg-surface-container-low overflow-hidden" id="featured-packages">
+      <div className="max-w-7xl 2xl:max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-12">
         {/* Section Header with Viewport Scroll Entrance */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8, ease: APPLE_EASE }}
-          className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6"
+          className="flex flex-col md:flex-row md:items-end justify-between mb-12 lg:mb-14 gap-6"
         >
           <div>
             <span className="font-label-sm text-label-sm uppercase tracking-widest text-primary font-semibold">
@@ -82,14 +82,14 @@ export default function FeaturedPackages() {
               Multi-destination balanced circuits crafted with luxury stays &amp; private transit.
             </p>
           </div>
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm shadow-sm border border-outline-variant/20">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm shadow-sm border border-outline-variant/20 hover:border-primary/40 transition-colors">
             <span className="material-symbols-outlined text-[18px] text-secondary">tune</span>
             Fully customizable on request
           </div>
         </motion.div>
 
         {/* 3-Card Grid with Staggered Viewport Entrance */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {packages.map((pkg, idx) => (
             <motion.div
               key={pkg.title}
@@ -102,7 +102,7 @@ export default function FeaturedPackages() {
                 ease: APPLE_EASE,
               }}
               whileHover={{ y: -8, transition: { duration: 0.25 } }}
-              className="flex flex-col bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-2xl transition-all overflow-hidden border border-outline-variant/20 group"
+              className="laptop-card-hover flex flex-col bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-2xl transition-all overflow-hidden border border-outline-variant/20 group"
             >
               <div className="relative h-64 overflow-hidden">
                 <Image
@@ -111,10 +111,10 @@ export default function FeaturedPackages() {
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   loading="lazy"
-                  className="object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
+                  className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-on-background/85 via-on-background/20 to-transparent" />
-                <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-surface/90 backdrop-blur-md shadow-sm">
+                <div className="absolute inset-0 bg-gradient-to-t from-on-background/85 via-on-background/25 to-transparent" />
+                <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-surface/90 backdrop-blur-md shadow-sm border border-outline-variant/20">
                   <span className="font-label-sm text-label-sm text-on-surface font-semibold">
                     {pkg.duration}
                   </span>
@@ -123,7 +123,7 @@ export default function FeaturedPackages() {
                   <p className="font-label-sm text-label-sm text-primary-fixed uppercase tracking-wider mb-1">
                     {pkg.subtitle}
                   </p>
-                  <h3 className="font-headline-md text-headline-md font-semibold text-white">
+                  <h3 className="font-headline-md text-headline-md font-semibold text-white group-hover:text-primary-fixed transition-colors">
                     {pkg.title}
                   </h3>
                 </div>
@@ -136,8 +136,8 @@ export default function FeaturedPackages() {
                   </span>
                   <ul className="space-y-2.5 font-body-sm text-body-sm text-on-surface-variant">
                     {pkg.inclusions.map((inc) => (
-                      <li key={inc.text} className="flex items-center gap-2.5">
-                        <span className="material-symbols-outlined text-[18px] text-primary shrink-0">
+                      <li key={inc.text} className="flex items-center gap-2.5 group/item transition-transform duration-200 hover:translate-x-1">
+                        <span className="material-symbols-outlined text-[18px] text-primary shrink-0 transition-transform duration-200 group-hover/item:scale-110">
                           {inc.icon}
                         </span>
                         <span>{inc.text}</span>
@@ -150,18 +150,18 @@ export default function FeaturedPackages() {
                   <div className="flex items-baseline justify-between">
                     <div>
                       <span className="font-body-sm text-body-sm text-outline">Starting Price</span>
-                      <p className="font-headline-sm text-headline-sm font-bold text-on-surface">
+                      <p className="font-headline-sm text-headline-sm font-bold text-on-surface group-hover:text-primary transition-colors">
                         {pkg.price}{" "}
                         <span className="text-sm font-normal text-outline">/person</span>
                       </p>
                     </div>
-                    <span className={`px-2.5 py-1 rounded-md font-label-sm text-label-sm ${pkg.badgeClass}`}>
+                    <span className={`px-2.5 py-1 rounded-md font-label-sm text-label-sm ${pkg.badgeClass} shadow-sm`}>
                       {pkg.badge}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <Link
-                      className="py-2.5 text-center rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md transition-all active:scale-[0.98] font-medium"
+                      className="py-2.5 text-center rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md transition-all active:scale-[0.98] font-medium border border-outline-variant/15 hover:border-outline-variant/40"
                       href={`/packages/${pkg.slug}`}
                     >
                       View Details
