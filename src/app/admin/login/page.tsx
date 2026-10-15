@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { auth, googleProvider, isFirebaseConfigured } from "@/lib/firebase/config";
 import { signInWithPopup } from "firebase/auth";
+import Admin3DLogoIntro from "@/components/admin/Admin3DLogoIntro";
 
 function AdminLoginForm() {
   const router = useRouter();
@@ -80,7 +81,14 @@ function AdminLoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/30 p-8">
+    <>
+      {isLoading && (
+        <Admin3DLogoIntro
+          forceShow={true}
+          autoClose={false}
+        />
+      )}
+      <div className="w-full max-w-md bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/30 p-8">
       <div className="text-center mb-8">
         <Image
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYJZOkBqsaeTOLbOEwhz53LmuCxqlx4FZCyvrnDINoyxkUn91Tsh4RgfoyI-eQ171uAkntsNBkuKDOx8dcghNLRyQ3Mbl7L2WNHMaE-6X3i91C5UykVqixmD9wV_FK7U416tlER4E8uXR_UkBo90roeRFK7pKMHlTdKTv8Iuxo8AfT9QcmL7jvcnluVXo0BsJb6EIZc7VTEAf-StYMbsp5A8FU2KewNVHerKfVC_W2_Ux4Rzjzy9e-LLOa2DRvH-59oaQ"
@@ -150,6 +158,7 @@ function AdminLoginForm() {
         </Link>
       </div>
     </div>
+    </>
   );
 }
 

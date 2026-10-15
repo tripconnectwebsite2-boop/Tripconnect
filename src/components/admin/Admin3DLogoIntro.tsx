@@ -9,6 +9,8 @@ interface Admin3DLogoIntroProps {
   onClose?: () => void;
   logoUrl?: string;
   brandName?: string;
+  autoClose?: boolean;
+  durationMs?: number;
 }
 
 export default function Admin3DLogoIntro({
@@ -16,66 +18,67 @@ export default function Admin3DLogoIntro({
   onClose,
   logoUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuDYJZOkBqsaeTOLbOEwhz53LmuCxqlx4FZCyvrnDINoyxkUn91Tsh4RgfoyI-eQ171uAkntsNBkuKDOx8dcghNLRyQ3Mbl7L2WNHMaE-6X3i91C5UykVqixmD9wV_FK7U416tlER4E8uXR_UkBo90roeRFK7pKMHlTdKTv8Iuxo8AfT9QcmL7jvcnluVXo0BsJb6EIZc7VTEAf-StYMbsp5A8FU2KewNVHerKfVC_W2_Ux4Rzjzy9e-LLOa2DRvH-59oaQ",
   brandName = "Trip Connect",
+  autoClose = true,
+  durationMs = 2000,
 }: Admin3DLogoIntroProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  // Always active on mount so it acts as the primary loading screen when entering
+  const [isOpen, setIsOpen] = useState(true);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [phase, setPhase] = useState<"loading" | "ready">("loading");
-  const [progress, setProgress] = useState(10);
-
-  useEffect(() => {
-    if (forceShow) {
-      setIsOpen(true);
-      setPhase("loading");
-      setProgress(15);
-      return;
-    }
-
-    // Check if intro was already shown during this browser session
-    try {
-      const alreadyShown = sessionStorage.getItem("tc_admin_3d_intro_played");
-      if (!alreadyShown) {
-        setIsOpen(true);
-        sessionStorage.setItem("tc_admin_3d_intro_played", "true");
-      }
-    } catch {
-      // Fallback if sessionStorage is blocked
-      setIsOpen(false);
-    }
-  }, [forceShow]);
+  const [statusText, setStatusText] = useState("Verifying Admin Clearance...");
+  const [progress, setProgress] = useState(15);
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
     if (onClose) onClose();
   }, [onClose]);
 
-  // Timed progress bar and automated entrance completion
   useEffect(() => {
-    if (!isOpen) return;
+    if (forceShow) {
+      setIsOpen(true);
+      setProgress(15);
+      setStatusText("Initializing Admin Workspace...");
+    }
+  }, [forceShow]);
 
-    const timer1 = setTimeout(() => setProgress(55), 400);
-    const timer2 = setTimeout(() => {
+  // Timed loading sequence
+  useEffect(() => {
+    if (!isOpen || !autoClose) return;
+
+    const t1 = setTimeout(() => {
+      setProgress(55);
+      setStatusText("Synchronizing Enquiries, Itineraries & CMS...");
+    }, durationMs * 0.28);
+
+    const t2 = setTimeout(() => {
+      setProgress(90);
+      setStatusText("Finalizing Workspace Security...");
+    }, durationMs * 0.65);
+
+    const t3 = setTimeout(() => {
       setProgress(100);
-      setPhase("ready");
-    }, 1300);
-    const timer3 = setTimeout(() => {
+      setStatusText("Workspace Ready • Entering Admin Portal");
+    }, durationMs * 0.88);
+
+    const t4 = setTimeout(() => {
       handleClose();
-    }, 2500);
+    }, durationMs);
 
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
     };
-  }, [isOpen, handleClose]);
+  }, [isOpen, autoClose, durationMs, handleClose]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2; // -1 to 1
+    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
     const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
     setMousePos({ x, y });
   };
 
-  // Keyboard dismiss (Escape or Space or Enter)
+  // Allow instant skip with Escape, Enter or Space
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -93,43 +96,42 @@ export default function Admin3DLogoIntro({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.05 }}
-          transition={{ duration: 0.45, ease: "easeInOut" }}
+          exit={{ opacity: 0, scale: 1.03 }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
           onMouseMove={handleMouseMove}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/92 backdrop-blur-2xl text-white select-none overflow-hidden cursor-pointer"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950 text-white select-none overflow-hidden cursor-pointer"
           onClick={handleClose}
           role="dialog"
-          aria-label="Admin 3D Logo Intro Animation"
+          aria-label="Admin Loading Screen with 3D Logo Animation"
         >
-          {/* Ambient 3D Depth Glow Orbs */}
+          {/* Ambient 3D Volumetric Lighting */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <motion.div
               animate={{
-                scale: [1, 1.25, 1],
-                opacity: [0.35, 0.6, 0.35],
-                x: [0, 20, 0],
-                y: [0, -30, 0],
+                scale: [1, 1.3, 1],
+                opacity: [0.35, 0.65, 0.35],
+                x: [0, 30, 0],
+                y: [0, -25, 0],
               }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-emerald-500/25 blur-[120px]"
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -top-36 -left-36 w-[450px] h-[450px] rounded-full bg-emerald-500/25 blur-[130px]"
             />
             <motion.div
               animate={{
-                scale: [1, 1.3, 1],
-                opacity: [0.3, 0.55, 0.3],
-                x: [0, -30, 0],
-                y: [0, 25, 0],
+                scale: [1, 1.25, 1],
+                opacity: [0.3, 0.6, 0.3],
+                x: [0, -35, 0],
+                y: [0, 30, 0],
               }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-cyan-500/25 blur-[120px]"
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-36 -right-36 w-[450px] h-[450px] rounded-full bg-cyan-500/25 blur-[130px]"
             />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] rounded-full bg-teal-600/10 blur-[140px]" />
-            {/* Grid Pattern overlay for tech depth */}
-            <div className="absolute inset-0 bg-[radial-gradient(#ffffff0d_1px,transparent_1px)] [background-size:24px_24px] opacity-40" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-teal-500/10 blur-[150px]" />
+            <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:20px_20px] opacity-40" />
           </div>
 
-          {/* Top Control Bar */}
-          <div className="absolute top-6 right-6 z-20 flex items-center gap-3">
+          {/* Quick Skip Button */}
+          <div className="absolute top-6 right-6 z-20">
             <button
               type="button"
               onClick={(e) => {
@@ -138,137 +140,153 @@ export default function Admin3DLogoIntro({
               }}
               className="px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white text-xs font-semibold backdrop-blur-md border border-white/15 transition-all flex items-center gap-1.5 shadow-lg active:scale-95"
             >
-              <span>Skip Intro</span>
+              <span>Skip Loading</span>
               <span className="material-symbols-outlined text-[16px]">close</span>
             </button>
           </div>
 
-          {/* Main 3D Stage Container */}
+          {/* 3D Stage */}
           <div
-            className="relative z-10 flex flex-col items-center max-w-lg px-6 w-full"
+            className="relative z-10 flex flex-col items-center max-w-md px-6 w-full"
             style={{ perspective: 1200 }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* 3D Holographic Orbit Ring Behind Logo */}
+            {/* 3D Dual Gyroscope Orbit Rings */}
             <motion.div
               animate={{
                 rotateZ: 360,
                 rotateX: [65, 75, 65],
               }}
               transition={{
-                rotateZ: { duration: 12, repeat: Infinity, ease: "linear" },
+                rotateZ: { duration: 10, repeat: Infinity, ease: "linear" },
                 rotateX: { duration: 4, repeat: Infinity, ease: "easeInOut" },
               }}
-              className="absolute top-20 w-72 h-72 rounded-full border-2 border-emerald-400/30 border-dashed pointer-events-none"
+              className="absolute -top-6 w-80 h-80 rounded-full border-2 border-emerald-400/35 border-dashed pointer-events-none"
               style={{
                 transformStyle: "preserve-3d",
-                boxShadow: "0 0 35px rgba(16, 185, 129, 0.2)",
+                boxShadow: "0 0 40px rgba(16, 185, 129, 0.25)",
               }}
             />
 
-            {/* 3D Rotating & Floating Logo Card */}
+            <motion.div
+              animate={{
+                rotateZ: -360,
+                rotateY: [65, 75, 65],
+              }}
+              transition={{
+                rotateZ: { duration: 14, repeat: Infinity, ease: "linear" },
+                rotateY: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+              }}
+              className="absolute -top-6 w-72 h-72 rounded-full border border-cyan-400/30 pointer-events-none"
+              style={{
+                transformStyle: "preserve-3d",
+                boxShadow: "0 0 30px rgba(6, 182, 212, 0.2)",
+              }}
+            />
+
+            {/* 3D Floating Glass Pedestal & Logo */}
             <motion.div
               initial={{
-                scale: 0.15,
-                rotateY: -135,
+                scale: 0.2,
+                rotateY: -140,
                 rotateX: 45,
                 opacity: 0,
-                z: -300,
+                z: -250,
               }}
               animate={{
                 scale: 1,
-                rotateY: mousePos.x * 16,
-                rotateX: -mousePos.y * 16,
+                rotateY: mousePos.x * 18,
+                rotateX: -mousePos.y * 18,
                 opacity: 1,
                 z: 0,
               }}
               transition={{
                 type: "spring",
-                stiffness: 140,
+                stiffness: 130,
                 damping: 18,
-                mass: 0.9,
+                mass: 0.85,
               }}
               style={{ transformStyle: "preserve-3d" }}
-              className="relative group p-8 rounded-3xl bg-gradient-to-b from-white/[0.14] to-white/[0.03] backdrop-blur-2xl border border-white/20 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7),0_0_40px_rgba(16,185,129,0.25)] flex flex-col items-center justify-center"
+              className="relative p-8 sm:p-10 rounded-3xl bg-gradient-to-b from-white/[0.15] to-white/[0.03] backdrop-blur-3xl border border-white/25 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.8),0_0_50px_rgba(16,185,129,0.3)] flex flex-col items-center justify-center"
             >
-              {/* Dynamic 3D Glare Light Reflection */}
+              {/* Dynamic 3D Glare Light */}
               <div
-                className="absolute inset-0 rounded-3xl pointer-events-none opacity-40 overflow-hidden"
+                className="absolute inset-0 rounded-3xl pointer-events-none opacity-45 overflow-hidden"
                 style={{
-                  background: `radial-gradient(circle at ${50 + mousePos.x * 30}% ${
-                    50 + mousePos.y * 30
-                  }%, rgba(255,255,255,0.4) 0%, transparent 60%)`,
+                  background: `radial-gradient(circle at ${50 + mousePos.x * 35}% ${
+                    50 + mousePos.y * 35
+                  }%, rgba(255,255,255,0.45) 0%, transparent 65%)`,
                 }}
               />
 
-              {/* Glowing 3D Corner Accent Brackets */}
-              <div className="absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 border-emerald-400/80 rounded-tl-sm" />
-              <div className="absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 border-emerald-400/80 rounded-tr-sm" />
-              <div className="absolute bottom-2 left-2 w-3 h-3 border-b-2 border-l-2 border-emerald-400/80 rounded-bl-sm" />
-              <div className="absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 border-emerald-400/80 rounded-br-sm" />
+              {/* Glowing 3D Corner Marks */}
+              <div className="absolute top-2.5 left-2.5 w-3.5 h-3.5 border-t-2 border-l-2 border-emerald-400/90 rounded-tl-sm shadow-[0_0_8px_#34d399]" />
+              <div className="absolute top-2.5 right-2.5 w-3.5 h-3.5 border-t-2 border-r-2 border-emerald-400/90 rounded-tr-sm shadow-[0_0_8px_#34d399]" />
+              <div className="absolute bottom-2.5 left-2.5 w-3.5 h-3.5 border-b-2 border-l-2 border-emerald-400/90 rounded-bl-sm shadow-[0_0_8px_#34d399]" />
+              <div className="absolute bottom-2.5 right-2.5 w-3.5 h-3.5 border-b-2 border-r-2 border-emerald-400/90 rounded-br-sm shadow-[0_0_8px_#34d399]" />
 
-              {/* Elevated 3D Logo Layer */}
+              {/* Elevated Floating 3D Logo Layer */}
               <motion.div
                 animate={{
-                  y: [-5, 5, -5],
-                  rotateZ: [0, 1, -1, 0],
+                  y: [-6, 6, -6],
+                  rotateZ: [0, 1.2, -1.2, 0],
                 }}
                 transition={{
-                  duration: 3.5,
+                  duration: 3.2,
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
                 style={{
-                  transform: "translateZ(60px)",
+                  transform: "translateZ(70px)",
                   transformStyle: "preserve-3d",
                 }}
-                className="relative w-48 sm:w-56 h-20 sm:h-24 flex items-center justify-center drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)]"
+                className="relative w-52 sm:w-60 h-22 sm:h-28 flex items-center justify-center drop-shadow-[0_20px_30px_rgba(0,0,0,0.7)]"
               >
                 <Image
                   src={logoUrl}
                   alt={brandName}
-                  width={220}
-                  height={80}
+                  width={240}
+                  height={90}
                   priority
-                  className="max-h-full w-auto object-contain brightness-110 filter drop-shadow-[0_0_12px_rgba(255,255,255,0.4)]"
+                  className="max-h-full w-auto object-contain brightness-110 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.45)]"
                 />
 
-                {/* Light streak sweep animation */}
+                {/* Laser Light Streak Sweep */}
                 <motion.div
-                  initial={{ x: "-150%" }}
-                  animate={{ x: "200%" }}
+                  initial={{ x: "-180%" }}
+                  animate={{ x: "220%" }}
                   transition={{
                     repeat: Infinity,
-                    duration: 2.8,
-                    repeatDelay: 1,
+                    duration: 2.2,
+                    repeatDelay: 0.8,
                     ease: "easeInOut",
                   }}
-                  className="absolute inset-0 w-24 bg-gradient-to-r from-transparent via-white/35 to-transparent skew-x-12 pointer-events-none"
+                  className="absolute inset-0 w-28 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12 pointer-events-none"
                 />
               </motion.div>
 
-              {/* 3D Depth Shadow on Floor */}
+              {/* 3D Floor Shadow */}
               <motion.div
                 animate={{
-                  scaleX: [1, 1.15, 1],
-                  opacity: [0.5, 0.25, 0.5],
+                  scaleX: [1, 1.2, 1],
+                  opacity: [0.55, 0.25, 0.55],
                 }}
                 transition={{
-                  duration: 3.5,
+                  duration: 3.2,
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-                className="w-40 h-4 mt-6 rounded-full bg-black/60 blur-md pointer-events-none"
+                className="w-44 h-4 mt-6 rounded-full bg-black/70 blur-md pointer-events-none"
                 style={{ transform: "translateZ(-30px)" }}
               />
             </motion.div>
 
-            {/* Typography & Status Information */}
+            {/* Typography & Loading Telemetry */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.6 }}
-              className="mt-8 text-center space-y-3"
+              transition={{ delay: 0.25, duration: 0.5 }}
+              className="mt-8 text-center space-y-3 w-full"
             >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-xs font-semibold uppercase tracking-widest shadow-inner">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
@@ -277,29 +295,27 @@ export default function Admin3DLogoIntro({
 
               <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center justify-center gap-2">
                 <span>{brandName}</span>
-                <span className="text-emerald-400 text-sm font-normal px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-800/40">
-                  v2.0
+                <span className="text-emerald-400 text-xs font-semibold px-2 py-0.5 rounded bg-emerald-950/70 border border-emerald-800/40">
+                  Secure CRM
                 </span>
               </h2>
 
-              <p className="text-xs text-white/70 tracking-wide font-medium">
-                {phase === "loading"
-                  ? "Authenticating Security Token & Initializing Workspace..."
-                  : "Workspace Ready • Entering Concierge CRM"}
+              <p className="text-xs text-emerald-200/80 tracking-wide font-medium min-h-[1.25rem]">
+                {statusText}
               </p>
 
-              {/* Futuristic Progress Bar */}
-              <div className="w-56 sm:w-64 h-1.5 bg-white/10 rounded-full overflow-hidden mx-auto mt-3 p-0.5 border border-white/10">
+              {/* Precision Loading Progress Bar */}
+              <div className="w-60 sm:w-72 h-2 bg-white/10 rounded-full overflow-hidden mx-auto mt-3 p-0.5 border border-white/15 shadow-inner">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 rounded-full shadow-[0_0_12px_rgba(52,211,153,0.8)]"
-                  initial={{ width: "10%" }}
+                  className="h-full bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 rounded-full shadow-[0_0_15px_rgba(52,211,153,0.9)]"
+                  initial={{ width: "15%" }}
                   animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
+                  transition={{ duration: 0.45, ease: "easeOut" }}
                 />
               </div>
 
               <p className="text-[11px] text-white/40 pt-1">
-                Click anywhere or press Esc to enter immediately
+                Loading dashboard • Click anywhere to skip
               </p>
             </motion.div>
           </div>
