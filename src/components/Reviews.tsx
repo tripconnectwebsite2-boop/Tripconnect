@@ -177,24 +177,7 @@ export default function Reviews() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 pt-4 lg:pt-0 border-t lg:border-t-0 border-outline-variant/20">
-          <span className="font-label-sm text-label-sm text-outline uppercase tracking-wider mr-1">Highlights:</span>
-          <span className="px-3 py-1 rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm border border-outline-variant/30">
-            friendly driver (18)
-          </span>
-          <span className="px-3 py-1 rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm border border-outline-variant/30">
-            clean cab (8)
-          </span>
-          <span className="px-3 py-1 rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm border border-outline-variant/30">
-            budget friendly rates (5)
-          </span>
-          <span className="px-3 py-1 rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm border border-outline-variant/30">
-            luxury car (3)
-          </span>
-          <span className="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">
-            punctual &amp; reliable
-          </span>
-        </div>
+
       </motion.div>
 
       {/* Reviews Grid with Staggered Viewport Entrance */}
