@@ -610,7 +610,7 @@ export const initialOffers: SpecialOffer[] = [
 export const initialSettings: SiteSettings = {
   business_name: "Trip Connect",
   contact_phone: "+91 9400886838",
-  contact_email: "dmtripconnectin@gmail.com",
+  contact_email: "tripconnectwebsite2@gmail.com",
   address: "Ayyappankavu, Kochi, Ernakulam, Kerala – 682018",
   whatsapp_number: "919400886838",
   instagram_handle: "tripconnectin",

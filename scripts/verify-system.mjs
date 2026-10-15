@@ -127,14 +127,14 @@ async function runTests() {
   console.log(`\n--- [3] Admin Auth & Strict Allowlist Guard ---`);
   let adminCookie = null;
 
-  // 3a. Unauthorized user rejection
+  // 3a. Unauthorized user rejection (including old email dmtripconnectin@gmail.com)
   try {
     const res = await fetch(`${BASE_URL}/api/admin/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'hacker@unauthorized-domain.com' })
+      body: JSON.stringify({ email: 'dmtripconnectin@gmail.com' })
     });
-    assert(res.status === 403, `Unauthorized email rejected with HTTP 403`);
+    assert(res.status === 403, `Unauthorized email (dmtripconnectin@gmail.com) rejected with HTTP 403`);
   } catch (err) {
     assert(false, `Auth rejection test failed: ${err.message}`);
   }
@@ -144,10 +144,10 @@ async function runTests() {
     const res = await fetch(`${BASE_URL}/api/admin/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'dmtripconnectin@gmail.com' })
+      body: JSON.stringify({ email: 'tripconnectwebsite2@gmail.com' })
     });
     const cookieHeader = res.headers.get('set-cookie');
-    assert(res.status === 200 && cookieHeader && cookieHeader.includes('tc_admin_session'), `Allowlisted email dmtripconnectin@gmail.com authenticated successfully & received session cookie`);
+    assert(res.status === 200 && cookieHeader && cookieHeader.includes('tc_admin_session'), `Allowlisted email tripconnectwebsite2@gmail.com authenticated successfully & received session cookie`);
     // Extract cookie value for subsequent requests
     adminCookie = cookieHeader ? cookieHeader.split(';')[0] : '';
   } catch (err) {
@@ -187,7 +187,7 @@ async function runTests() {
           },
           body: JSON.stringify({
             status: 'contacted',
-            assigned_to: 'dmtripconnectin@gmail.com'
+            assigned_to: 'tripconnectwebsite2@gmail.com'
           })
         });
         const data = await res.json();

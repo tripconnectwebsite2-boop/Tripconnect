@@ -10,41 +10,58 @@ function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from") || "/admin";
-  const [email, setEmail] = useState("dmtripconnectin@gmail.com");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [firebaseActive, setFirebaseActive] = useState(false);
-  const [infoNotice, setInfoNotice] = useState("");
 
   useEffect(() => {
     setFirebaseActive(isFirebaseConfigured());
   }, []);
 
-  // Firebase Google OAuth Sign-In handler
+  // Firebase Google OAuth Sign-In handler (Only allowed authentication method)
   const handleFirebaseGoogleSignIn = async () => {
     setIsLoading(true);
     setErrorMsg("");
-    setInfoNotice("");
 
-    // If Firebase configuration keys are not configured yet, notify user and provide direct login
     if (!firebaseActive || !auth || !googleProvider) {
-      setInfoNotice(
-        "Firebase credentials not yet detected in environment. Using Direct Allowlist Verification."
+      setErrorMsg(
+        "Google Authentication is initializing or unavailable. Please verify Firebase configuration."
       );
-      await submitBackendAuth("dmtripconnectin@gmail.com");
+      setIsLoading(false);
       return;
     }
 
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      const userEmail = user.email || "";
+      const userEmail = (user.email || "").trim().toLowerCase();
       const idToken = await user.getIdToken();
 
       // Submit authenticated Google token & email to backend allowlist check
-      await submitBackendAuth(userEmail, idToken);
+      const res = await fetch("/api/admin/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: userEmail,
+          idToken: idToken || null,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 403) {
+          router.push(`/admin/unauthorized?email=${encodeURIComponent(userEmail)}`);
+          return;
+        }
+        setErrorMsg(data.error || "Authentication failed. Unauthorized account.");
+        setIsLoading(false);
+        return;
+      }
+
+      router.push(from);
+      router.refresh();
     } catch (err: any) {
-      console.error("[Firebase Auth Error]:", err);
+      console.error("[Firebase Google Auth Error]:", err);
       setIsLoading(false);
 
       if (err.code === "auth/unauthorized-domain") {
@@ -59,44 +76,6 @@ function AdminLoginForm() {
         setErrorMsg(err.message || "Failed to complete Google authentication with Firebase.");
       }
     }
-  };
-
-  // Submit verified email/token to backend session creator
-  const submitBackendAuth = async (authEmail: string, idToken?: string) => {
-    try {
-      const res = await fetch("/api/admin/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: authEmail.trim(),
-          idToken: idToken || null,
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        if (res.status === 403) {
-          router.push(`/admin/unauthorized?email=${encodeURIComponent(authEmail)}`);
-          return;
-        }
-        setErrorMsg(data.error || "Authentication failed. Unauthorized account.");
-        setIsLoading(false);
-        return;
-      }
-
-      router.push(from);
-      router.refresh();
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Failed to connect to authentication service.");
-      setIsLoading(false);
-    }
-  };
-
-  const handleManualSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrorMsg("");
-    await submitBackendAuth(email);
   };
 
   return (
@@ -122,22 +101,19 @@ function AdminLoginForm() {
         </div>
       )}
 
-      {infoNotice && (
-        <div className="mb-6 p-4 rounded-xl bg-secondary-container text-on-secondary-container font-body-sm text-body-sm flex items-start gap-2.5">
-          <span className="material-symbols-outlined text-[20px] shrink-0 text-secondary">info</span>
-          <span>{infoNotice}</span>
-        </div>
-      )}
-
-      {/* Security Notice */}
+      {/* Strict Security Notice */}
       <div className="mb-6 p-3.5 rounded-xl bg-surface-container-high/60 border border-outline-variant/30 text-xs text-on-surface-variant flex items-start gap-2.5">
         <span className="material-symbols-outlined text-[18px] text-primary shrink-0 mt-0.5">verified_user</span>
-        <p>
-          Strict Access Control: Only designated Google accounts (<strong>dmtripconnectin@gmail.com</strong>) are authorized to access the management portal.
-        </p>
+        <div>
+          <p className="font-semibold text-on-surface mb-0.5">Google Authentication Required</p>
+          <p>
+            Access is strictly restricted to the authorized Trip Connect administrator Google account (
+            <strong className="text-primary font-mono">tripconnectwebsite2@gmail.com</strong>).
+          </p>
+        </div>
       </div>
 
-      {/* Primary: Sign in with Google (Firebase) */}
+      {/* Primary Action: Google Login ONLY */}
       <button
         type="button"
         onClick={handleFirebaseGoogleSignIn}
@@ -174,43 +150,10 @@ function AdminLoginForm() {
         )}
       </button>
 
-      <div className="relative flex items-center justify-center mb-6">
-        <div className="border-t border-outline-variant/30 w-full" />
-        <span className="bg-surface-container-lowest px-3 text-xs text-outline uppercase tracking-wider font-medium">
-          or direct allowlist verify
-        </span>
-        <div className="border-t border-outline-variant/30 w-full" />
-      </div>
-
-      <form onSubmit={handleManualSubmit} className="space-y-4">
-        <div className="space-y-1.5">
-          <label className="block text-xs font-semibold text-on-surface" htmlFor="admin-email">
-            Admin Allowlist Email
-          </label>
-          <input
-            id="admin-email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-lg bg-surface-container-low text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary border border-outline-variant/30 font-medium"
-            placeholder="dmtripconnectin@gmail.com"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full py-2.5 px-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary text-sm font-semibold transition-all shadow-sm hover:shadow flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-75"
-        >
-          <span>Verify &amp; Enter Dashboard</span>
-          <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-        </button>
-      </form>
-
-      <div className="mt-8 pt-6 border-t border-outline-variant/20 text-center">
-        <Link href="/" className="text-sm text-primary hover:underline font-medium">
-          ← Return to public website
+      <div className="pt-4 border-t border-outline-variant/20 text-center">
+        <Link href="/" className="text-sm text-primary hover:underline font-medium inline-flex items-center gap-1.5">
+          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+          <span>Return to public website</span>
         </Link>
       </div>
     </div>

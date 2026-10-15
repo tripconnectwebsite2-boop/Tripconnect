@@ -10,7 +10,7 @@ export interface EmailNotificationResult {
 
 export async function sendAdminEnquiryEmail(enquiry: Enquiry): Promise<EmailNotificationResult> {
   const apiKey = process.env.RESEND_API_KEY || process.env.EMAIL_API_KEY;
-  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || "dmtripconnectin@gmail.com";
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL || "tripconnectwebsite2@gmail.com";
   const fromEmail = process.env.NOTIFICATION_FROM_EMAIL || "notifications@tripconnect.in";
 
   const emailSubject = `[New Enquiry] ${enquiry.customer_name} — ${

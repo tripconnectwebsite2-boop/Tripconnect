@@ -126,8 +126,8 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2.5">
                 <span className="material-symbols-outlined text-outline text-[18px] shrink-0">mail</span>
-                <a className="hover:text-primary transition-colors" href="mailto:dmtripconnectin@gmail.com">
-                  dmtripconnectin@gmail.com
+                <a className="hover:text-primary transition-colors" href="mailto:tripconnectwebsite2@gmail.com">
+                  tripconnectwebsite2@gmail.com
                 </a>
               </div>
               <div className="flex items-center gap-2.5">

@@ -7,7 +7,7 @@ export default function StructuredData() {
     "@id": "https://tripconnect.in",
     url: "https://tripconnect.in",
     telephone: "+919400886838",
-    email: "dmtripconnectin@gmail.com",
+    email: "tripconnectwebsite2@gmail.com",
     priceRange: "₹₹₹",
     address: {
       "@type": "PostalAddress",

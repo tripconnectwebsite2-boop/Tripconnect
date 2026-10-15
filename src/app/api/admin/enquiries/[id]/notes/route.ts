@@ -32,6 +32,6 @@ export async function POST(
     return NextResponse.json({ error: "Note content cannot be empty." }, { status: 400 });
   }
 
-  const createdNote = await addEnquiryNote(id, note.trim(), session.email || "dmtripconnectin@gmail.com");
+  const createdNote = await addEnquiryNote(id, note.trim(), session.email || "tripconnectwebsite2@gmail.com");
   return NextResponse.json({ success: true, note: createdNote }, { status: 201 });
 }

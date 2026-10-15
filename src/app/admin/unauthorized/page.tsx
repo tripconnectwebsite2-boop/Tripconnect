@@ -11,7 +11,7 @@ export default function UnauthorizedPage() {
           Access Restricted
         </h1>
         <p className="font-body-md text-body-md text-on-surface-variant mb-6 leading-relaxed">
-          Your account is not on the authorized administrator allowlist. For security, only verified Trip Connect administrative staff (<code className="text-primary font-mono text-xs">dmtripconnectin@gmail.com</code>) have access to customer enquiries and portal operations.
+          Your account is not on the authorized administrator allowlist. For security, only verified Trip Connect administrative staff (<code className="text-primary font-mono text-xs">tripconnectwebsite2@gmail.com</code>) have access to customer enquiries and portal operations.
         </p>
         <div className="space-y-3">
           <Link

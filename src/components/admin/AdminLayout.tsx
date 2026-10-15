@@ -80,7 +80,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               TC
             </div>
             <div className="overflow-hidden">
-              <span className="text-xs font-semibold block truncate">dmtripconnectin@gmail.com</span>
+              <span className="text-xs font-semibold block truncate">tripconnectwebsite2@gmail.com</span>
               <span className="text-[10px] text-secondary font-medium flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-secondary"></span> Authorized Admin
               </span>

@@ -68,7 +68,7 @@ export default function PrivacyPolicyPage() {
             <section className="space-y-2">
               <h2 className="font-headline-sm text-sm font-bold text-on-surface">5. Data Retention &amp; Security</h2>
               <p>
-                Enquiry records and follow-up notes are maintained securely within an access-controlled database accessible only to authorized administrators (<code className="text-primary font-mono text-xs">dmtripconnectin@gmail.com</code>). Unverified public visitors and search engine crawlers have zero access to customer records.
+                Enquiry records and follow-up notes are maintained securely within an access-controlled database accessible only to authorized administrators (<code className="text-primary font-mono text-xs">tripconnectwebsite2@gmail.com</code>). Unverified public visitors and search engine crawlers have zero access to customer records.
               </p>
             </section>
 
@@ -76,8 +76,8 @@ export default function PrivacyPolicyPage() {
               <h2 className="font-headline-sm text-sm font-bold text-on-surface">6. Your Rights</h2>
               <p>
                 You have the right to request a copy of the information we hold about you, request corrections to your details, or request permanent deletion of your enquiry history from our records. To exercise any of these rights, contact our privacy desk at{" "}
-                <a href="mailto:dmtripconnectin@gmail.com" className="text-primary underline">
-                  dmtripconnectin@gmail.com
+                <a href="mailto:tripconnectwebsite2@gmail.com" className="text-primary underline">
+                  tripconnectwebsite2@gmail.com
                 </a>
                 .
               </p>

@@ -156,7 +156,7 @@ export default function AdminSettingsPage() {
                     <div>
                       <span className="font-bold text-on-surface block">Email Concierge Dispatcher</span>
                       <span className="text-[11px] text-outline">
-                        Sends new enquiry notifications to <code>dmtripconnectin@gmail.com</code>
+                        Sends new enquiry notifications to <code>tripconnectwebsite2@gmail.com</code>
                       </span>
                     </div>
                   </div>

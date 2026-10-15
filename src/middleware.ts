@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const ADMIN_ALLOWLIST = ["dmtripconnectin@gmail.com"];
+const ADMIN_ALLOWLIST = ["tripconnectwebsite2@gmail.com"];
 const SESSION_COOKIE_NAME = "tc_admin_session";
 
 export function middleware(request: NextRequest) {

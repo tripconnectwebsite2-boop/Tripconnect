@@ -85,7 +85,7 @@ function ensureStore(): DatabaseStore {
           id: "note-1",
           enquiry_id: "enq-sample-2",
           note: "Spoke with Rahul on WhatsApp. Sent custom itinerary with senior-friendly cottage options.",
-          created_by: "dmtripconnectin@gmail.com",
+          created_by: "tripconnectwebsite2@gmail.com",
           created_at: new Date(Date.now() - 3600000 * 20).toISOString(),
         },
       ],
@@ -413,7 +413,7 @@ export async function getEnquiryNotes(enquiryId: string): Promise<EnquiryNote[]>
 export async function addEnquiryNote(
   enquiryId: string,
   note: string,
-  createdBy = "dmtripconnectin@gmail.com"
+  createdBy = "tripconnectwebsite2@gmail.com"
 ): Promise<EnquiryNote> {
   const store = ensureStore();
   const newNote: EnquiryNote = {

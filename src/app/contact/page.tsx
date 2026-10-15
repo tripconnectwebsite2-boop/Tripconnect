@@ -93,10 +93,10 @@ export default async function ContactPage({
                     <div>
                       <strong className="text-on-surface block mb-0.5">Email Inquiries</strong>
                       <a
-                        href="mailto:dmtripconnectin@gmail.com"
+                        href="mailto:tripconnectwebsite2@gmail.com"
                         className="text-primary font-semibold hover:underline block"
                       >
-                        dmtripconnectin@gmail.com
+                        tripconnectwebsite2@gmail.com
                       </a>
                     </div>
                   </div>

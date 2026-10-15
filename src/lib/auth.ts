@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { createServerSupabaseClient } from "./supabase/server";
 
-export const ADMIN_ALLOWLIST = ["dmtripconnectin@gmail.com"];
+export const ADMIN_ALLOWLIST = ["tripconnectwebsite2@gmail.com"];
 export const SESSION_COOKIE_NAME = "tc_admin_session";
 
 export function isEmailAuthorized(email?: string | null): boolean {
