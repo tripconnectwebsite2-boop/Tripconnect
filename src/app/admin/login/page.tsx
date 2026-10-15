@@ -101,17 +101,6 @@ function AdminLoginForm() {
         </div>
       )}
 
-      {/* Strict Security Notice */}
-      <div className="mb-6 p-3.5 rounded-xl bg-surface-container-high/60 border border-outline-variant/30 text-xs text-on-surface-variant flex items-start gap-2.5">
-        <span className="material-symbols-outlined text-[18px] text-primary shrink-0 mt-0.5">verified_user</span>
-        <div>
-          <p className="font-semibold text-on-surface mb-0.5">Google Authentication Required</p>
-          <p>
-            Access is strictly restricted to the authorized Trip Connect administrator Google account (
-            <strong className="text-primary font-mono">tripconnectwebsite2@gmail.com</strong>).
-          </p>
-        </div>
-      </div>
 
       {/* Primary Action: Google Login ONLY */}
       <button
