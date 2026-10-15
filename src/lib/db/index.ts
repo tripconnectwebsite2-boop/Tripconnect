@@ -10,6 +10,10 @@ import {
   SiteSettings,
   SiteContent,
   EnquiryStatus,
+  BugReport,
+  BugStatus,
+  BugSeverity,
+  BugCategory,
 } from "../types";
 import {
   initialDestinations,
@@ -30,10 +34,56 @@ interface DatabaseStore {
   reviews: Review[];
   settings: SiteSettings;
   content: SiteContent;
+  bugs?: BugReport[];
 }
 
 const DATA_DIR = path.join(process.cwd(), ".data");
 const DB_FILE = path.join(DATA_DIR, "db.json");
+
+const initialBugs: BugReport[] = [
+  {
+    id: "bug-sample-1",
+    title: "Mobile menu drawer overlaps header on viewport < 380px",
+    description: "When viewing on smaller mobile devices like iPhone SE, the top navigation toggle drawer has a slight z-index conflict with the sticky header.",
+    steps_to_reproduce: "1. Open site on screen width 375px\n2. Tap burger icon\n3. Notice top 10px overlaps status bar.",
+    category: "mobile_issue",
+    severity: "medium",
+    status: "investigating",
+    page_url: "http://localhost:3000/",
+    reporter_name: "Rahul Verma",
+    reporter_email: "rahul.v@test.com",
+    device_info: {
+      browser: "Mobile Safari 17.4",
+      os: "iOS 17.4",
+      screen_resolution: "375x667",
+      user_agent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X)...",
+    },
+    admin_notes: "Checked CSS z-index stack. Planning fix for next styling patch.",
+    created_at: new Date(Date.now() - 3600000 * 18).toISOString(),
+    updated_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+  },
+  {
+    id: "bug-sample-2",
+    title: "Enquiry form submit button double-click triggers duplicate request",
+    description: "Rapidly clicking the 'Send Concierge Enquiry' button can send two submissions within milliseconds before button disable takes effect.",
+    steps_to_reproduce: "1. Fill in enquiry fields\n2. Rapidly double-click submit button\n3. Check console network tab.",
+    category: "booking_issue",
+    severity: "high",
+    status: "resolved",
+    page_url: "http://localhost:3000/contact",
+    reporter_name: "Priya Nair",
+    reporter_email: "priya.nair@example.com",
+    device_info: {
+      browser: "Chrome 123.0",
+      os: "Windows 11",
+      screen_resolution: "1920x1080",
+    },
+    admin_notes: "Fixed by adding submitting state lock and debounce check.",
+    created_at: new Date(Date.now() - 3600000 * 48).toISOString(),
+    updated_at: new Date(Date.now() - 3600000 * 24).toISOString(),
+    resolved_at: new Date(Date.now() - 3600000 * 24).toISOString(),
+  },
+];
 
 function ensureStore(): DatabaseStore {
   if (!fs.existsSync(DATA_DIR)) {
@@ -96,6 +146,7 @@ function ensureStore(): DatabaseStore {
       reviews: initialReviews,
       settings: initialSettings,
       content: initialSiteContent,
+      bugs: initialBugs,
     };
     fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), "utf-8");
     return initial;
@@ -104,8 +155,16 @@ function ensureStore(): DatabaseStore {
   try {
     const raw = fs.readFileSync(DB_FILE, "utf-8");
     const parsed = JSON.parse(raw);
+    let mutated = false;
     if (!parsed.content) {
       parsed.content = initialSiteContent;
+      mutated = true;
+    }
+    if (!parsed.bugs) {
+      parsed.bugs = initialBugs;
+      mutated = true;
+    }
+    if (mutated) {
       saveStore(parsed);
     }
     return parsed;
@@ -119,6 +178,7 @@ function ensureStore(): DatabaseStore {
       reviews: initialReviews,
       settings: initialSettings,
       content: initialSiteContent,
+      bugs: initialBugs,
     };
   }
 }
@@ -601,4 +661,91 @@ export async function updateSiteContent(
   };
   saveStore(store);
   return store.content;
+}
+
+// -----------------------------------------------------------------------------
+// Bug Reporting System
+// -----------------------------------------------------------------------------
+export async function getBugs(filters?: {
+  status?: string;
+  severity?: string;
+  category?: string;
+}): Promise<BugReport[]> {
+  const store = ensureStore();
+  let list = store.bugs || [];
+
+  if (filters?.status && filters.status !== "all") {
+    list = list.filter((b) => b.status === filters.status);
+  }
+  if (filters?.severity && filters.severity !== "all") {
+    list = list.filter((b) => b.severity === filters.severity);
+  }
+  if (filters?.category && filters.category !== "all") {
+    list = list.filter((b) => b.category === filters.category);
+  }
+
+  return [...list].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+}
+
+export async function getBugById(id: string): Promise<BugReport | null> {
+  const store = ensureStore();
+  const found = (store.bugs || []).find((b) => b.id === id);
+  return found || null;
+}
+
+export async function createBug(
+  data: Omit<BugReport, "id" | "status" | "created_at" | "updated_at">
+): Promise<BugReport> {
+  const store = ensureStore();
+  const newBug: BugReport = {
+    ...data,
+    id: `bug-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    status: "open",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  if (!store.bugs) store.bugs = [];
+  store.bugs.unshift(newBug);
+  saveStore(store);
+  return newBug;
+}
+
+export async function updateBug(
+  id: string,
+  updates: Partial<BugReport>
+): Promise<BugReport | null> {
+  const store = ensureStore();
+  if (!store.bugs) store.bugs = [];
+  const idx = store.bugs.findIndex((b) => b.id === id);
+  if (idx === -1) return null;
+
+  const now = new Date().toISOString();
+  const existing = store.bugs[idx];
+  const updatedStatus = updates.status || existing.status;
+  const resolvedAt =
+    updatedStatus === "resolved" || updatedStatus === "closed"
+      ? existing.resolved_at || now
+      : null;
+
+  store.bugs[idx] = {
+    ...existing,
+    ...updates,
+    status: updatedStatus,
+    resolved_at: resolvedAt,
+    updated_at: now,
+  };
+  saveStore(store);
+  return store.bugs[idx];
+}
+
+export async function deleteBug(id: string): Promise<boolean> {
+  const store = ensureStore();
+  if (!store.bugs) return false;
+  const initial = store.bugs.length;
+  store.bugs = store.bugs.filter((b) => b.id !== id);
+  saveStore(store);
+  return store.bugs.length < initial;
 }

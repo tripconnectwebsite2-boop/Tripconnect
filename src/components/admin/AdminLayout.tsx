@@ -17,6 +17,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: "Special Offers", href: "/admin/offers", icon: "local_offer" },
     { label: "Reviews", href: "/admin/reviews", icon: "star" },
     { label: "Content & Media", href: "/admin/content", icon: "edit_document" },
+    { label: "Bug Reports", href: "/admin/bugs", icon: "bug_report" },
     { label: "Settings", href: "/admin/settings", icon: "settings" },
   ];
 

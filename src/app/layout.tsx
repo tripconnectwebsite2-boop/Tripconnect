@@ -5,6 +5,7 @@ import StructuredData from "@/components/StructuredData";
 import ConsentBanner from "@/components/ConsentBanner";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import FirebaseAnalytics from "@/components/FirebaseAnalytics";
+import BugReportModal from "@/components/BugReportModal";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -60,6 +61,7 @@ export default function RootLayout({
         {children}
         <ConsentBanner />
         <FirebaseAnalytics />
+        <BugReportModal />
       </body>
     </html>
   );

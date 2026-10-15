@@ -204,3 +204,41 @@ export interface SiteContent {
   footer_copyright: string;
   updated_at: string;
 }
+
+// -----------------------------------------------------------------------------
+// Bug Reporting System
+// -----------------------------------------------------------------------------
+export type BugSeverity = "low" | "medium" | "high" | "critical";
+export type BugStatus = "open" | "investigating" | "resolved" | "closed";
+export type BugCategory =
+  | "booking_issue"
+  | "visual_glitch"
+  | "broken_link"
+  | "performance"
+  | "content_error"
+  | "mobile_issue"
+  | "other";
+
+export interface BugReport {
+  id: string;
+  title: string;
+  description: string;
+  steps_to_reproduce?: string;
+  category: BugCategory;
+  severity: BugSeverity;
+  status: BugStatus;
+  page_url?: string;
+  reporter_name?: string;
+  reporter_email?: string;
+  screenshot_url?: string;
+  device_info?: {
+    browser?: string;
+    os?: string;
+    screen_resolution?: string;
+    user_agent?: string;
+  };
+  admin_notes?: string;
+  created_at: string;
+  updated_at: string;
+  resolved_at?: string | null;
+}

@@ -172,6 +172,10 @@ export default async function Footer({ content }: { content?: Partial<SiteConten
             <Link className="hover:text-on-surface transition-colors" href="/terms">
               Terms &amp; Conditions
             </Link>
+            <Link className="hover:text-error transition-colors flex items-center gap-1" href="/report-bug">
+              <span className="material-symbols-outlined text-[14px]">bug_report</span>
+              <span>Report a Bug</span>
+            </Link>
           </div>
           <p className="text-center md:text-right font-label-sm text-label-sm text-outline-variant">
             Package prices are starting estimates. Inquiries do not constitute confirmed reservations.
