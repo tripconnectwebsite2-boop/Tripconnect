@@ -9,6 +9,7 @@ import SpecialOffer from "@/components/SpecialOffer";
 import PlanTripForm from "@/components/PlanTripForm";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
+import AmbientBackgroundMotion from "@/components/AmbientBackgroundMotion";
 import { getOffers, getReviews, getPackages, getSiteContent, getSiteSettings } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +26,8 @@ export default async function Home() {
   return (
     <>
       <Header content={siteContent} />
-      <main className="w-full pt-20 bg-surface min-h-[calc(100vh-280px)]">
+      <AmbientBackgroundMotion />
+      <main className="relative z-10 w-full pt-20 bg-transparent min-h-[calc(100vh-280px)]">
         <div className="flex flex-col w-full">
           <Hero content={siteContent} />
           <KeralaTours content={siteContent} />

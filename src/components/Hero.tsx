@@ -65,7 +65,7 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
   return (
     <section
       ref={heroRef}
-      className="relative w-full -mt-20 overflow-hidden bg-surface"
+      className="relative w-full -mt-20 overflow-hidden bg-transparent"
       id="hero"
     >
       <div className="relative min-h-[92vh] lg:min-h-[96vh] flex flex-col justify-between pt-24 lg:pt-28 pb-8 lg:pb-12 px-4 sm:px-6 lg:px-12 max-w-7xl 2xl:max-w-[1360px] mx-auto">

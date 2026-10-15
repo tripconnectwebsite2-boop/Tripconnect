@@ -61,7 +61,7 @@ export default function FeaturedPackages() {
   ];
 
   return (
-    <section className="w-full py-16 lg:py-24 bg-surface-container-low overflow-hidden" id="featured-packages">
+    <section className="w-full py-16 lg:py-24 bg-surface-container-low/85 backdrop-blur-md overflow-hidden" id="featured-packages">
       <div className="max-w-7xl 2xl:max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-12">
         {/* Section Header with Viewport Scroll Entrance */}
         <motion.div
