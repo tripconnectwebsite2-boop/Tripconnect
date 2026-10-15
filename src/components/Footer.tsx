@@ -164,7 +164,16 @@ export default async function Footer({ content }: { content?: Partial<SiteConten
           <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <p>{copyright}</p>
             <span className="text-xs text-on-surface-variant font-medium inline-flex items-center gap-1">
-              Designed by <span className="text-primary font-semibold">Adharsh</span>
+              Designed by{" "}
+              <a
+                href="https://www.instagram.com/adhrashhhh?xtok=a2owcmZhejNyYW95"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary font-semibold hover:underline hover:opacity-80 transition-all cursor-pointer"
+                title="View Adharsh on Instagram"
+              >
+                Adharsh
+              </a>
             </span>
             <Link className="hover:text-on-surface transition-colors" href="/privacy-policy">
               Privacy Policy
