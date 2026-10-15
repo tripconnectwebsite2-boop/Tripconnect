@@ -32,3 +32,6 @@ next-env.d.ts
 
 # local persistent fallback data (optional to keep or ignore)
 .data/
+
+# vercel
+.vercel
