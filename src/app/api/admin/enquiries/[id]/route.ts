@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/auth";
-import { getEnquiryById, updateEnquiryStatus } from "@/lib/db";
+import { getEnquiryById, updateEnquiryStatus, deleteEnquiry } from "@/lib/db";
 import { EnquiryStatus } from "@/lib/types";
 
 export async function GET(
@@ -47,4 +47,22 @@ export async function PATCH(
   }
 
   return NextResponse.json({ success: true, enquiry: updated });
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await getAdminSession();
+  if (!session.authorized) {
+    return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const deleted = await deleteEnquiry(id);
+  if (!deleted) {
+    return NextResponse.json({ error: "Enquiry not found" }, { status: 404 });
+  }
+
+  return NextResponse.json({ success: true, message: "Enquiry deleted successfully" });
 }

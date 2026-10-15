@@ -513,6 +513,37 @@ export async function addEnquiryNote(
   return newNote;
 }
 
+export async function deleteEnquiry(id: string): Promise<boolean> {
+  const store = ensureStore();
+  const initialLength = store.enquiries.length;
+  store.enquiries = store.enquiries.filter((e) => e.id !== id);
+  if (store.enquiries.length === initialLength) return false;
+  // Also remove associated notes
+  store.enquiry_notes = store.enquiry_notes.filter((n) => n.enquiry_id !== id);
+  saveStore(store);
+  return true;
+}
+
+export async function deleteEnquiriesBulk(ids: string[]): Promise<{ count: number }> {
+  const store = ensureStore();
+  const idSet = new Set(ids);
+  const initialLength = store.enquiries.length;
+  store.enquiries = store.enquiries.filter((e) => !idSet.has(e.id));
+  const count = initialLength - store.enquiries.length;
+  store.enquiry_notes = store.enquiry_notes.filter((n) => !idSet.has(n.enquiry_id));
+  saveStore(store);
+  return { count };
+}
+
+export async function clearAllEnquiries(): Promise<{ count: number }> {
+  const store = ensureStore();
+  const count = store.enquiries.length;
+  store.enquiries = [];
+  store.enquiry_notes = [];
+  saveStore(store);
+  return { count };
+}
+
 // -----------------------------------------------------------------------------
 // Offers
 // -----------------------------------------------------------------------------
