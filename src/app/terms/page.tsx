@@ -22,7 +22,7 @@ export default function TermsPage() {
               Terms &amp; Conditions
             </h1>
             <p className="text-xs text-outline">
-              Effective: October 2026 • Trip Connect, Ayyappankavu, Kochi, Kerala – 682018
+              Effective: October 2026 • Trip Connect, <a href="https://share.google/V0eWcp5SrScZDVig4" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-primary">Ayyappankavu, Kochi, Kerala – 682018</a>
             </p>
           </div>
 

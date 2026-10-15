@@ -22,6 +22,7 @@ export default function StructuredData() {
       latitude: 9.9984,
       longitude: 76.2866,
     },
+    hasMap: "https://share.google/V0eWcp5SrScZDVig4",
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",
       dayOfWeek: [

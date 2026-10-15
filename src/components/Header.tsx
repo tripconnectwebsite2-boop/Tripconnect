@@ -96,15 +96,6 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
             Plan Your Trip
           </Link>
 
-          {/* Admin link shortcut */}
-          <Link
-            href="/admin"
-            className="w-8 h-8 rounded-full bg-surface-container-high hover:bg-surface-container-highest flex items-center justify-center shrink-0 text-on-surface"
-            title="Administrator Portal"
-          >
-            <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
-          </Link>
-
           {/* Mobile hamburger menu toggle */}
           <button
             type="button"
@@ -133,14 +124,6 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
                 {link.label}
               </Link>
             ))}
-            <Link
-              href="/admin"
-              onClick={() => setMobileMenuOpen(false)}
-              className="py-2 text-primary font-semibold font-label-md text-label-md border-b border-outline-variant/10 flex items-center gap-1.5"
-            >
-              <span className="material-symbols-outlined text-[18px]">admin_panel_settings</span>
-              <span>Administrator Portal</span>
-            </Link>
             <a
               className="mt-2 flex items-center gap-2 py-2.5 px-4 rounded-xl bg-secondary/10 text-secondary font-label-md text-label-md"
               href="https://wa.me/919400886838"

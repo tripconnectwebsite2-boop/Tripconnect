@@ -61,9 +61,15 @@ export default async function ContactPage({
                     </div>
                     <div>
                       <strong className="text-on-surface block mb-0.5">Physical Office Address</strong>
-                      <span className="leading-relaxed block">
+                      <a
+                        href="https://share.google/V0eWcp5SrScZDVig4"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="leading-relaxed block hover:text-primary transition-colors cursor-pointer"
+                        title="Open Trip Connect in Google Maps"
+                      >
                         {address}
-                      </span>
+                      </a>
                     </div>
                   </div>
 

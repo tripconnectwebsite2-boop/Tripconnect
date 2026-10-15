@@ -97,7 +97,7 @@ export default function Reviews() {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/30 text-on-surface font-label-md text-label-md shadow-sm transition-all"
-            href="https://maps.google.com"
+            href="https://www.google.com/search?sca_esv=a5849753dad976a5&sxsrf=APpeQnt0QHiXv1yeJwQ9xr75ioth2exqfw:1792074904272&si=APenkKm7iecQ4G6P-TsbSMFKIQtv3EFIqRAFw-i8uEbk55Z-_ycx-DTCj1xuY2o22e4ADWu-gAQ93o0pN1Babfm2IQHvGzW4cDIuWmeHU5d7op1kp2QGhaaGzVrZjVwLOIv2v1EKhNkoXu8QNEF34ufqcaxAjPyE0A%3D%3D&q=Trip+Connect+Kochi+Reviews&sa=X&ved=2ahUKEwjmrdGgn7yXAxWiR2wGHUUfAIgQ0bkNegQIPhAH&biw=1920&bih=911&dpr=1"
             rel="noopener noreferrer"
             target="_blank"
           >

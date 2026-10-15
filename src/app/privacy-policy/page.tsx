@@ -30,7 +30,7 @@ export default function PrivacyPolicyPage() {
             <section className="space-y-2">
               <h2 className="font-headline-sm text-sm font-bold text-on-surface">1. Introduction</h2>
               <p>
-                Trip Connect (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;), located in Ayyappankavu, Kochi, Kerala, is committed to safeguarding the personal privacy of our travelers and website visitors. This policy outlines our standards regarding the collection, storage, and processing of customer information submitted through our website (<code className="text-primary font-mono text-xs">tripconnect.in</code>) and official communication channels.
+                Trip Connect (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;), located in <a href="https://share.google/V0eWcp5SrScZDVig4" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-primary">Ayyappankavu, Kochi, Kerala</a>, is committed to safeguarding the personal privacy of our travelers and website visitors. This policy outlines our standards regarding the collection, storage, and processing of customer information submitted through our website (<code className="text-primary font-mono text-xs">tripconnect.in</code>) and official communication channels.
               </p>
             </section>
 

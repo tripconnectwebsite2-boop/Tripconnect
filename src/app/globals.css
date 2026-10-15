@@ -10,6 +10,12 @@
   body {
     overscroll-behavior: none;
   }
+  img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: high-quality;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
 }
 
 /* Hide scrollbars while maintaining functionality */

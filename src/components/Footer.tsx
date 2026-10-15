@@ -79,11 +79,6 @@ export default async function Footer({ content }: { content?: Partial<SiteConten
                   Contact Concierge
                 </Link>
               </li>
-              <li>
-                <Link className="hover:text-primary transition-colors" href="/admin">
-                  Staff Admin Portal
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -131,7 +126,15 @@ export default async function Footer({ content }: { content?: Partial<SiteConten
                 <span className="material-symbols-outlined text-outline text-[18px] shrink-0 mt-0.5">
                   location_on
                 </span>
-                <span>{address}</span>
+                <a
+                  href="https://share.google/V0eWcp5SrScZDVig4"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors cursor-pointer"
+                  title="View Trip Connect on Google Maps"
+                >
+                  {address}
+                </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <span className="material-symbols-outlined text-outline text-[18px] shrink-0">call</span>
