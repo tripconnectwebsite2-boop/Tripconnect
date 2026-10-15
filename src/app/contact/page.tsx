@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import { getPackages } from "@/lib/db";
+import { getPackages, getSiteContent } from "@/lib/db";
 import ContactFormClient from "./ContactFormClient";
 
 export const metadata = {
@@ -15,11 +15,21 @@ export default async function ContactPage({
   searchParams: Promise<{ package?: string; destination?: string; offer?: string }>;
 }) {
   const params = await searchParams;
-  const packages = await getPackages({ status: "published" });
+  const [packages, content] = await Promise.all([
+    getPackages({ status: "published" }),
+    getSiteContent(),
+  ]);
+
+  const address = content.contact_address || "Ayyappankavu, Kochi, Ernakulam, Kerala – 682018";
+  const phone = content.contact_phone || "+91 9400886838";
+  const email = content.contact_email || "tripconnectwebsite2@gmail.com";
+  const hours = content.business_hours || content.contact_hours || "Monday – Saturday: 9:00 AM – 8:00 PM IST";
+  const cleanPhone = phone.replace(/[^0-9+]/g, "");
+  const waPhone = cleanPhone.replace(/^\+/, "");
 
   return (
     <>
-      <Header />
+      <Header content={content} />
       <main className="w-full pt-28 pb-20 bg-surface min-h-screen">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 space-y-12">
           {/* Header */}
@@ -52,7 +62,7 @@ export default async function ContactPage({
                     <div>
                       <strong className="text-on-surface block mb-0.5">Physical Office Address</strong>
                       <span className="leading-relaxed block">
-                        Ayyappankavu, Kochi, Ernakulam, Kerala – 682018
+                        {address}
                       </span>
                     </div>
                   </div>
@@ -64,12 +74,12 @@ export default async function ContactPage({
                     <div>
                       <strong className="text-on-surface block mb-0.5">WhatsApp Concierge Desk</strong>
                       <a
-                        href="https://wa.me/919400886838"
+                        href={`https://wa.me/${waPhone}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-secondary font-semibold hover:underline block"
                       >
-                        +91 9400886838 (Typical response: &lt; 15 mins)
+                        {phone} (Typical response: &lt; 15 mins)
                       </a>
                     </div>
                   </div>
@@ -80,8 +90,8 @@ export default async function ContactPage({
                     </div>
                     <div>
                       <strong className="text-on-surface block mb-0.5">Direct Voice Line</strong>
-                      <a href="tel:+919400886838" className="text-primary font-semibold hover:underline block">
-                        +91 9400886838
+                      <a href={`tel:${cleanPhone}`} className="text-primary font-semibold hover:underline block">
+                        {phone}
                       </a>
                     </div>
                   </div>
@@ -93,10 +103,10 @@ export default async function ContactPage({
                     <div>
                       <strong className="text-on-surface block mb-0.5">Email Inquiries</strong>
                       <a
-                        href="mailto:tripconnectwebsite2@gmail.com"
+                        href={`mailto:${email}`}
                         className="text-primary font-semibold hover:underline block"
                       >
-                        tripconnectwebsite2@gmail.com
+                        {email}
                       </a>
                     </div>
                   </div>
@@ -107,7 +117,7 @@ export default async function ContactPage({
                     </div>
                     <div>
                       <strong className="text-on-surface block mb-0.5">Concierge Operating Hours</strong>
-                      <span className="block">Monday – Saturday: 9:00 AM – 8:00 PM IST</span>
+                      <span className="block">{hours}</span>
                       <span className="text-outline text-[11px] block mt-0.5">
                         24/7 on-ground emergency support for active travelers
                       </span>
@@ -117,7 +127,7 @@ export default async function ContactPage({
 
                 <div className="pt-4 border-t border-outline-variant/20">
                   <a
-                    href="https://wa.me/919400886838"
+                    href={`https://wa.me/${waPhone}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full py-3.5 rounded-xl bg-secondary hover:bg-on-secondary-container text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
@@ -141,7 +151,7 @@ export default async function ContactPage({
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer content={content} />
       <FloatingWhatsApp />
     </>
   );

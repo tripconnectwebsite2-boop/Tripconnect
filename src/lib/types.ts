@@ -131,3 +131,76 @@ export interface SiteSettings {
   search_console_id?: string;
   updated_at: string;
 }
+
+export interface SiteContent {
+  id?: string;
+  // Brand & Global
+  brand_name: string;
+  logo_url: string;
+  // Hero Section
+  hero_badge: string;
+  hero_title: string;
+  hero_subtitle: string;
+  hero_bg_image: string;
+  hero_primary_cta_text: string;
+  hero_primary_cta_link: string;
+  hero_secondary_cta_text: string;
+  hero_secondary_cta_link: string;
+  hero_floating_badge: string;
+  // Kerala Tours Section
+  kerala_badge: string;
+  kerala_title: string;
+  kerala_subtitle: string;
+  kerala_image: string;
+  kerala_feature_1_title: string;
+  kerala_feature_1_desc: string;
+  kerala_feature_2_title: string;
+  kerala_feature_2_desc: string;
+  kerala_feature_3_title: string;
+  kerala_feature_3_desc: string;
+  kerala_tour1_title?: string;
+  kerala_tour1_desc?: string;
+  kerala_tour1_price?: string;
+  kerala_tour1_image?: string;
+  kerala_tour2_title?: string;
+  kerala_tour2_desc?: string;
+  kerala_tour2_price?: string;
+  kerala_tour2_image?: string;
+  kerala_tour3_title?: string;
+  kerala_tour3_desc?: string;
+  kerala_tour3_price?: string;
+  kerala_tour3_image?: string;
+  // Why Choose Us Section
+  why_badge: string;
+  why_title: string;
+  why_subtitle: string;
+  why_image: string;
+  why_card_1_title: string;
+  why_card_1_desc: string;
+  why_card_2_title: string;
+  why_card_2_desc: string;
+  why_card_3_title: string;
+  why_card_3_desc: string;
+  why_card_4_title: string;
+  why_card_4_desc: string;
+  // About Page
+  about_badge: string;
+  about_title: string;
+  about_subtitle: string;
+  about_image: string;
+  about_story_title?: string;
+  about_story_p1: string;
+  about_story_p2: string;
+  about_mission_title: string;
+  about_mission_desc: string;
+  // Contact & Footer
+  contact_phone: string;
+  contact_email: string;
+  whatsapp_number: string;
+  contact_address: string;
+  business_hours: string;
+  contact_hours?: string;
+  footer_description: string;
+  footer_copyright: string;
+  updated_at: string;
+}

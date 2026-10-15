@@ -8,6 +8,7 @@ import {
   SpecialOffer,
   Review,
   SiteSettings,
+  SiteContent,
   EnquiryStatus,
 } from "../types";
 import {
@@ -16,6 +17,7 @@ import {
   initialReviews,
   initialOffers,
   initialSettings,
+  initialSiteContent,
 } from "./seed-data";
 import { createAdminClient } from "../supabase/admin";
 
@@ -27,6 +29,7 @@ interface DatabaseStore {
   offers: SpecialOffer[];
   reviews: Review[];
   settings: SiteSettings;
+  content: SiteContent;
 }
 
 const DATA_DIR = path.join(process.cwd(), ".data");
@@ -92,6 +95,7 @@ function ensureStore(): DatabaseStore {
       offers: initialOffers,
       reviews: initialReviews,
       settings: initialSettings,
+      content: initialSiteContent,
     };
     fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), "utf-8");
     return initial;
@@ -99,7 +103,12 @@ function ensureStore(): DatabaseStore {
 
   try {
     const raw = fs.readFileSync(DB_FILE, "utf-8");
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (!parsed.content) {
+      parsed.content = initialSiteContent;
+      saveStore(parsed);
+    }
+    return parsed;
   } catch {
     return {
       packages: initialPackages,
@@ -109,6 +118,7 @@ function ensureStore(): DatabaseStore {
       offers: initialOffers,
       reviews: initialReviews,
       settings: initialSettings,
+      content: initialSiteContent,
     };
   }
 }
@@ -570,4 +580,25 @@ export async function updateSiteSettings(
   };
   saveStore(store);
   return store.settings;
+}
+
+// -----------------------------------------------------------------------------
+// Site Content & Media CMS (All Text & Images)
+// -----------------------------------------------------------------------------
+export async function getSiteContent(): Promise<SiteContent> {
+  const store = ensureStore();
+  return store.content || initialSiteContent;
+}
+
+export async function updateSiteContent(
+  content: Partial<SiteContent>
+): Promise<SiteContent> {
+  const store = ensureStore();
+  store.content = {
+    ...(store.content || initialSiteContent),
+    ...content,
+    updated_at: new Date().toISOString(),
+  };
+  saveStore(store);
+  return store.content;
 }

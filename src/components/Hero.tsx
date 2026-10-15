@@ -4,9 +4,20 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform, useSpring, type Variants } from "motion/react";
 import Link from "next/link";
 import { APPLE_EASE } from "@/lib/animation";
+import { SiteContent } from "@/lib/types";
 
-export default function Hero() {
+export default function Hero({ content }: { content?: Partial<SiteContent> }) {
   const heroRef = useRef<HTMLElement>(null);
+
+  const heroBadge = content?.hero_badge || "Bespoke Concierge • Based in Kochi";
+  const heroTitle = content?.hero_title || "Your Next Journey Starts Here.";
+  const heroSubtitle = content?.hero_subtitle || "Discover Kerala and beyond with travel experiences planned around you. Quiet luxury, untamed nature, and native precision.";
+  const heroBgImage = content?.hero_bg_image || "https://lh3.googleusercontent.com/aida-public/AB6AXuASJNgmdoiZS-L2EeJH6bC_BJnjEyc-ps714Hvrrs1hcrJEl2ZyJC4wWWDzjURJSuRBsPKY-RAjO0M6M_UiktOdHDcQ5vlA9kuFvyCtaZqCgPEG5rcst98ta1hhUz2TNekWn6_J1_1IxA436qF-rzy4WVUPxKdoDVWeDBRRqt-5BOVhknH02JbQfYWaAVE55EFBq0CYXA9RvcaQPY1ypKD72jvMgsh53TqVVFKOiI8nV_M6Dlxhmn6qGg";
+  const primaryCtaText = content?.hero_primary_cta_text || "Explore Trips";
+  const primaryCtaLink = content?.hero_primary_cta_link || "#kerala-tours";
+  const secondaryCtaText = content?.hero_secondary_cta_text || "Plan Your Trip";
+  const secondaryCtaLink = content?.hero_secondary_cta_link || "#plan-trip";
+  const floatingBadge = content?.hero_floating_badge || "100% Curated Kerala Journeys";
 
   // Scroll animations linked directly to Hero container scroll progress
   const { scrollYProgress } = useScroll({
@@ -103,7 +114,7 @@ export default function Hero() {
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary" />
               </span>
               <span className="font-label-sm text-label-sm tracking-wider uppercase text-on-surface-variant font-semibold">
-                Bespoke Concierge • Based in Kochi
+                {heroBadge}
               </span>
             </div>
           </motion.div>
@@ -113,7 +124,7 @@ export default function Hero() {
             variants={itemVariants}
             className="font-display-hero text-display-hero text-on-surface tracking-tight leading-[1.08] mb-6"
           >
-            Your Next Journey Starts Here.
+            {heroTitle}
           </motion.h1>
 
           {/* Supporting Copy */}
@@ -121,7 +132,7 @@ export default function Hero() {
             variants={itemVariants}
             className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed mb-10"
           >
-            Discover Kerala and beyond with travel experiences planned around you. Quiet luxury, untamed nature, and native precision.
+            {heroSubtitle}
           </motion.p>
 
           {/* Call-to-Action Buttons */}
@@ -130,9 +141,9 @@ export default function Hero() {
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.98 }}
               className="group inline-flex items-center justify-center px-8 py-4 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md shadow-md transition-all hover:shadow-xl btn-shimmer active:scale-[0.98]"
-              href="#kerala-tours"
+              href={primaryCtaLink}
             >
-              <span>Explore Trips</span>
+              <span>{primaryCtaText}</span>
               <motion.span
                 animate={{ x: [0, 4, 0] }}
                 transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
@@ -146,12 +157,12 @@ export default function Hero() {
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.98 }}
               className="group inline-flex items-center justify-center px-8 py-4 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all hover:shadow-md border border-outline-variant/20"
-              href="#plan-trip"
+              href={secondaryCtaLink}
             >
               <span className="material-symbols-outlined mr-2 text-[18px] text-primary transition-transform duration-300 group-hover:rotate-45">
                 tune
               </span>
-              <span>Plan Your Trip</span>
+              <span>{secondaryCtaText}</span>
             </motion.a>
           </motion.div>
         </motion.div>
@@ -169,8 +180,7 @@ export default function Hero() {
             style={{
               y: heroImageY,
               scale: heroImageScale,
-              backgroundImage:
-                "url('https://lh3.googleusercontent.com/aida-public/AB6AXuASJNgmdoiZS-L2EeJH6bC_BJnjEyc-ps714Hvrrs1hcrJEl2ZyJC4wWWDzjURJSuRBsPKY-RAjO0M6M_UiktOdHDcQ5vlA9kuFvyCtaZqCgPEG5rcst98ta1hhUz2TNekWn6_J1_1IxA436qF-rzy4WVUPxKdoDVWeDBRRqt-5BOVhknH02JbQfYWaAVE55EFBq0CYXA9RvcaQPY1ypKD72jvMgsh53TqVVFKOiI8nV_M6Dlxhmn6qGg')",
+              backgroundImage: `url('${heroBgImage}')`,
             }}
             className="w-full h-[125%] -top-[12%] absolute inset-0 bg-cover bg-center origin-center transition-transform duration-700 ease-out"
           />
@@ -198,7 +208,7 @@ export default function Hero() {
                 className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-on-background/60 backdrop-blur-md text-white font-label-sm text-label-sm pointer-events-auto border border-white/10"
               >
                 <span className="material-symbols-outlined text-secondary-fixed text-[16px]">verified</span>
-                <span>100% Curated Kerala Journeys</span>
+                <span>{floatingBadge}</span>
               </motion.div>
 
               <motion.div

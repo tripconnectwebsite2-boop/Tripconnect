@@ -3,39 +3,46 @@
 import { motion } from "motion/react";
 import Link from "next/link";
 import { APPLE_EASE } from "@/lib/animation";
+import { SiteContent } from "@/lib/types";
 
-export default function KeralaTours() {
+export default function KeralaTours({ content }: { content?: Partial<SiteContent> }) {
+  const keralaBadge = content?.kerala_badge || "Flagship Journeys";
+  const keralaTitle = content?.kerala_title || "Discover the Beauty of Kerala";
+  const keralaSubtitle = content?.kerala_subtitle || "Handcrafted routes through God’s Own Country, from mist-kissed highlands to tranquil backwater lagoons.";
   const tours = [
     {
-      title: "Munnar Cloud Mist & Tea Trails",
+      title: content?.kerala_tour1_title || "Munnar Cloud Mist & Tea Trails",
       tag: "Highland Mist",
       icon: "landscape",
       duration: "3N / 4D",
-      desc: "Ascend to colonial tea estates, private tea-tasting sessions, and dawn treks across Anamudi foothills.",
-      price: "₹14,500",
+      desc: content?.kerala_tour1_desc || "Ascend to colonial tea estates, private tea-tasting sessions, and dawn treks across Anamudi foothills.",
+      price: content?.kerala_tour1_price || "₹14,500",
       image:
+        content?.kerala_tour1_image ||
         "https://lh3.googleusercontent.com/aida-public/AB6AXuDCzwJauBQYcLbtjGtABpJpcaUOhNXWkeONV1e_6XO5-ecYvYrgSypw1qr2W0oslFPX81kUzt-ZHQ9CZsyx-Pp03zo0bUkargRdMM7g5Um5MInTOH01gD8CTKxyZMyMwXmdmw9Eo3tBaOBQde3kPrMl-P7qcC359ZFyTMtMvMlmduh2YTAjNbTzORzljYpB21iRDw0CrblpxqWsvWuDbrA7pMo26-MRd3xAIM2GAcn7NH5p8gYx4gWPDw",
       slug: "munnar-tea-trails",
     },
     {
-      title: "Alleppey Luxury Backwater Cruise",
+      title: content?.kerala_tour2_title || "Alleppey Luxury Backwater Cruise",
       tag: "Backwater Cruise",
       icon: "sailing",
       duration: "2N / 3D",
-      desc: "Drift along palm-lined canals with dedicated private onboard chef, artisan village stops, and starry nights.",
-      price: "₹18,000",
+      desc: content?.kerala_tour2_desc || "Drift along palm-lined canals with dedicated private onboard chef, artisan village stops, and starry nights.",
+      price: content?.kerala_tour2_price || "₹18,000",
       image:
+        content?.kerala_tour2_image ||
         "https://lh3.googleusercontent.com/aida-public/AB6AXuDCXa4pkOq0ty9_41mIx9UTEheTGIuJxcg9o0D40EZJRkTZnoyL4hB1gCuk62Bvhd7lMOPIa26eBygCDhuweowtOxzg_CChGSVglWspZ0TZmJC7seoNVyu1DB_X_74wtIE5DbM2hvPryKN76goIUdONWjazCD4hkEN8ncjerEygEnCEFj6vYwl_fa-xKJwjOOE_eUwTDeFVCmWra8gE5fE72kVXD0LX-Nla2PYGEI6BnnTlwN9iwaGn0A",
       slug: "alleppey-houseboat-retreat",
     },
     {
-      title: "Wayanad Rainforest Sanctuary",
+      title: content?.kerala_tour3_title || "Wayanad Rainforest Sanctuary",
       tag: "Wild Rainforest",
       icon: "forest",
       duration: "3N / 4D",
-      desc: "Treehouse stays, prehistoric Edakkal rock caves exploration, and guided bamboo rafting on quiet rivers.",
-      price: "₹16,200",
+      desc: content?.kerala_tour3_desc || "Treehouse stays, prehistoric Edakkal rock caves exploration, and guided bamboo rafting on quiet rivers.",
+      price: content?.kerala_tour3_price || "₹16,200",
       image:
+        content?.kerala_tour3_image ||
         "https://lh3.googleusercontent.com/aida-public/AB6AXuAIMzmHxxHFOG9GNcnOQIC8jw9II3muiJ05oxhHDw5vpL6yhcWWo5M68-qw0zQNNaSKkLS0FMrFd5pww0TROn3gijfgZ1fAE76cdQyDMASwwJYxNnm92bC_i3rpx-ZrPg0b6AB4Eu8OYG9i8xmR7mG76HG-3p1dAlJ3IbZSEx_Nlvh1pmaEkmlJoN0jK6Bs99SnsU8gwgoXqyV-IZgDEAQGtFXVWlDhl8GXIpHQhTcHIRC_xbT43MiBbw",
       slug: "wayanad-rainforest-wildlife-retreat-draft",
     },
@@ -66,14 +73,14 @@ export default function KeralaTours() {
           <div className="flex items-center gap-2 mb-3">
             <span className="h-px w-8 bg-primary" />
             <span className="font-label-sm text-label-sm tracking-widest uppercase text-primary font-semibold">
-              Flagship Journeys
+              {keralaBadge}
             </span>
           </div>
           <h2 className="font-headline-xl text-headline-xl text-on-surface tracking-tight mb-4">
-            Discover the Beauty of Kerala
+            {keralaTitle}
           </h2>
           <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
-            Handcrafted routes through God’s Own Country, from mist-kissed highlands to tranquil backwater lagoons.
+            {keralaSubtitle}
           </p>
         </div>
         <motion.a

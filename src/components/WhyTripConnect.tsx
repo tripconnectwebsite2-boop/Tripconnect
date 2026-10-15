@@ -2,31 +2,35 @@
 
 import { motion } from "motion/react";
 import { APPLE_EASE } from "@/lib/animation";
+import { SiteContent } from "@/lib/types";
 
-export default function WhyTripConnect() {
+export default function WhyTripConnect({ content }: { content?: Partial<SiteContent> }) {
+  const whyBadge = content?.why_badge || "The Trip Connect Standard";
+  const whyTitle = content?.why_title || "Crafted with native precision, delivered with heartfelt warmth.";
+  const whySubtitle = content?.why_subtitle || "We reject the template-driven mass package model. Every journey is treated as an individual piece of curation designed specifically around how you like to travel.";
+
   const pillars = [
     {
-      title: "Personalised Trip Planning",
-      desc: "Every single itinerary is tailored to your exact pace, group dynamics, dietary needs, and luxury preferences. No rigid group buses.",
+      title: content?.why_card_1_title || "Personalised Trip Planning",
+      desc: content?.why_card_1_desc || "Every single itinerary is tailored to your exact pace, group dynamics, dietary needs, and luxury preferences. No rigid group buses.",
       icon: "edit_note",
       colorClass: "text-primary",
     },
     {
-      name: "Kerala Native Expertise",
-      title: "Kerala Native Expertise",
-      desc: "Planned directly by travel specialists living in Kochi who know the quietest backwater channels and most authentic mountain homestays.",
+      title: content?.why_card_2_title || "Kerala Native Expertise",
+      desc: content?.why_card_2_desc || "Planned directly by travel specialists living in Kochi who know the quietest backwater channels and most authentic mountain homestays.",
       icon: "pin_drop",
       colorClass: "text-secondary",
     },
     {
-      title: "Transparent Itineraries",
-      desc: "Detailed day-by-day breakdowns with explicit hotel categories, transport inclusions, driver allowances, and strictly zero hidden charges.",
+      title: content?.why_card_3_title || "Transparent Itineraries",
+      desc: content?.why_card_3_desc || "Detailed day-by-day breakdowns with explicit hotel categories, transport inclusions, driver allowances, and strictly zero hidden charges.",
       icon: "receipt_long",
       colorClass: "text-primary",
     },
     {
-      title: "Direct WhatsApp & Call Support",
-      desc: "A constant open line with your dedicated travel planner before departure and 24/7 on-ground assistance during your entire holiday.",
+      title: content?.why_card_4_title || "Direct WhatsApp & Call Support",
+      desc: content?.why_card_4_desc || "A constant open line with your dedicated travel planner before departure and 24/7 on-ground assistance during your entire holiday.",
       icon: "chat",
       colorClass: "text-secondary",
     },
@@ -46,14 +50,14 @@ export default function WhyTripConnect() {
           >
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-surface-container-highest text-primary shadow-sm border border-outline-variant/20">
               <span className="font-label-sm text-label-sm uppercase tracking-wider font-semibold">
-                The Trip Connect Standard
+                {whyBadge}
               </span>
             </div>
             <h2 className="font-headline-xl text-headline-xl text-on-surface tracking-tight leading-tight">
-              Crafted with native precision, delivered with heartfelt warmth.
+              {whyTitle}
             </h2>
             <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
-              We reject the template-driven mass package model. Every journey is treated as an individual piece of curation designed specifically around how you like to travel.
+              {whySubtitle}
             </p>
             {/* Grounded notice */}
             <div className="p-4 rounded-xl bg-surface-container border border-outline-variant/15 flex items-start gap-3">

@@ -1,4 +1,4 @@
-import { Destination, TravelPackage, Review, SpecialOffer, SiteSettings } from "../types";
+import { Destination, TravelPackage, Review, SpecialOffer, SiteSettings, SiteContent } from "../types";
 
 export const initialDestinations: Destination[] = [
   {
@@ -619,3 +619,62 @@ export const initialSettings: SiteSettings = {
   search_console_id: "",
   updated_at: new Date().toISOString(),
 };
+
+export const initialSiteContent: SiteContent = {
+  // Brand & Global
+  brand_name: "Trip Connect",
+  logo_url: "https://lh3.googleusercontent.com/aida-public/AB6AXuDYJZOkBqsaeTOLbOEwhz53LmuCxqlx4FZCyvrnDINoyxkUn91Tsh4RgfoyI-eQ171uAkntsNBkuKDOx8dcghNLRyQ3Mbl7L2WNHMaE-6X3i91C5UykVqixmD9wV_FK7U416tlER4E8uXR_UkBo90roeRFK7pKMHlTdKTv8Iuxo8AfT9QcmL7jvcnluVXo0BsJb6EIZc7VTEAf-StYMbsp5A8FU2KewNVHerKfVC_W2_Ux4Rzjzy9e-LLOa2DRvH-59oaQ",
+  // Hero Section
+  hero_badge: "Bespoke Concierge • Based in Kochi",
+  hero_title: "Your Next Journey Starts Here.",
+  hero_subtitle: "Discover Kerala and beyond with travel experiences planned around you. Quiet luxury, untamed nature, and native precision.",
+  hero_bg_image: "https://lh3.googleusercontent.com/aida-public/AB6AXuASJNgmdoiZS-L2EeJH6bC_BJnjEyc-ps714Hvrrs1hcrJEl2ZyJC4wWWDzjURJSuRBsPKY-RAjO0M6M_UiktOdHDcQ5vlA9kuFvyCtaZqCgPEG5rcst98ta1hhUz2TNekWn6_J1_1IxA436qF-rzy4WVUPxKdoDVWeDBRRqt-5BOVhknH02JbQfYWaAVE55EFBq0CYXA9RvcaQPY1ypKD72jvMgsh53TqVVFKOiI8nV_M6Dlxhmn6qGg",
+  hero_primary_cta_text: "Explore Trips",
+  hero_primary_cta_link: "#kerala-tours",
+  hero_secondary_cta_text: "Plan My Custom Trip",
+  hero_secondary_cta_link: "#plan-trip",
+  hero_floating_badge: "100% Curated Kerala Journeys",
+  // Kerala Tours Section
+  kerala_badge: "God's Own Country",
+  kerala_title: "Explore Kerala Tours",
+  kerala_subtitle: "Handcrafted journeys through misty tea hills, palm-fringed lagoons, untamed rainforests, and red cliff beaches.",
+  kerala_image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDCzwJauBQYcLbtjGtABpJpcaUOhNXWkeONV1e_6XO5-ecYvYrgSypw1qr2W0oslFPX81kUzt-ZHQ9CZsyx-Pp03zo0bUkargRdMM7g5Um5MInTOH01gD8CTKxyZMyMwXmdmw9Eo3tBaOBQde3kPrMl-P7qcC359ZFyTMtMvMlmduh2YTAjNbTzORzljYpB21iRDw0CrblpxqWsvWuDbrA7pMo26-MRd3xAIM2GAcn7NH5p8gYx4gWPDw",
+  kerala_feature_1_title: "Highland Tea Slopes",
+  kerala_feature_1_desc: "Colonial estates and mountain mist in Munnar",
+  kerala_feature_2_title: "Backwater Houseboats",
+  kerala_feature_2_desc: "Private luxury cruises along Alleppey lagoons",
+  kerala_feature_3_title: "Wild Rain Sanctuaries",
+  kerala_feature_3_desc: "Treehouses and bamboo rafting in Wayanad",
+  // Why Choose Us Section
+  why_badge: "The Trip Connect Standard",
+  why_title: "Crafted with native precision, delivered with heartfelt warmth.",
+  why_subtitle: "We reject the template-driven mass package model. Every journey is treated as an individual piece of curation designed specifically around how you like to travel.",
+  why_image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAlVyFqTk4aNYtEkC_r_Yda04E4nChyzI7VeNSSO-HHZQylo0VUKk5NePn3VeMJvjJhYF6fpc7w4SmT8lAJxRRJ4U4G6fZyRB0HQLCAWqgonYlW7WgSWnvPOUQSGY2wJ7kJ5Q8yNwCa-GXPFVjRhzYexf1k70s4xKuBjiXRV1DWxnH7tg4VfiNMnYyGicrA6jfSZs2FXEbaz9Idtg8FS6boR7YbYQzRk8JsGBJap_FOevzJrZgNfCIYWA",
+  why_card_1_title: "Personalised Trip Planning",
+  why_card_1_desc: "Every single itinerary is tailored to your exact pace, group dynamics, dietary needs, and luxury preferences. No rigid group buses.",
+  why_card_2_title: "Kerala Native Expertise",
+  why_card_2_desc: "Planned directly by travel specialists living in Kochi who know the quietest backwater channels and most authentic mountain homestays.",
+  why_card_3_title: "Transparent Itineraries",
+  why_card_3_desc: "Detailed day-by-day breakdowns with explicit hotel categories, transport inclusions, driver allowances, and strictly zero hidden charges.",
+  why_card_4_title: "Direct WhatsApp & Call Support",
+  why_card_4_desc: "A constant open line with your dedicated travel planner before departure and 24/7 on-ground assistance during your entire holiday.",
+  // About Page
+  about_badge: "Our Native Heritage",
+  about_title: "About Trip Connect",
+  about_subtitle: "An authentic, enquiry-led travel agency rooted in Kochi, Kerala. We curate private journeys, luxury retreats, and bespoke itineraries across India.",
+  about_image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDCXa4pkOq0ty9_41mIx9UTEheTGIuJxcg9o0D40EZJRkTZnoyL4hB1gCuk62Bvhd7lMOPIa26eBygCDhuweowtOxzg_CChGSVglWspZ0TZmJC7seoNVyu1DB_X_74wtIE5DbM2hvPryKN76goIUdONWjazCD4hkEN8ncjerEygEnCEFj6vYwl_fa-xKJwjOOE_eUwTDeFVCmWra8gE5fE72kVXD0LX-Nla2PYGEI6BnnTlwN9iwaGn0A",
+  about_story_p1: "Trip Connect was founded in Kochi with a singular philosophy: true travel cannot be mass-produced. While large commercial aggregators bundle passengers into generic cookie-cutter tours, we operate as your private on-ground concierge.",
+  about_story_p2: "Whether you are looking for a sunrise boat through quiet backwaters in Alleppey, a misty colonial tea estate bungalow in Munnar, or a cultural heritage walk through the spice warehouses of Mattancherry, our native Kerala team designs each route around your wishes.",
+  about_mission_title: "Our Travel Standard",
+  about_mission_desc: "We stand for absolute transparency, private chauffeur-driven vehicles, handpicked verified boutique accommodations, and fair local partnerships that honor Kerala's communities.",
+  // Contact & Footer
+  contact_phone: "+91 9400886838",
+  contact_email: "tripconnectwebsite2@gmail.com",
+  whatsapp_number: "919400886838",
+  contact_address: "Ayyappankavu, Kochi, Ernakulam, Kerala – 682018",
+  business_hours: "Monday – Saturday: 9:00 AM – 8:00 PM IST",
+  footer_description: "Trip Connect is an enquiry-led luxury travel agency based in Kochi, Kerala. Dedicated private chauffeur vehicles, boutique accommodations, and bespoke itineraries across God's Own Country and Pan-India.",
+  footer_copyright: "© 2026 Trip Connect. All rights reserved. Kochi, Kerala, India.",
+  updated_at: new Date().toISOString(),
+};
+

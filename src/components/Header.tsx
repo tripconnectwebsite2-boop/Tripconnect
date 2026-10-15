@@ -1,12 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SiteContent } from "@/lib/types";
 
-export default function Header() {
+export default function Header({ content }: { content?: Partial<SiteContent> }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [dynamicContent, setDynamicContent] = useState<Partial<SiteContent> | undefined>(content);
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (!content) {
+      fetch("/api/content")
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setDynamicContent(data);
+        })
+        .catch(() => {});
+    }
+  }, [content]);
+
+  const activeContent = content || dynamicContent;
+  const brandName = activeContent?.brand_name || "Trip Connect";
+  const logoUrl =
+    activeContent?.logo_url ||
+    "https://lh3.googleusercontent.com/aida-public/AB6AXuDYJZOkBqsaeTOLbOEwhz53LmuCxqlx4FZCyvrnDINoyxkUn91Tsh4RgfoyI-eQ171uAkntsNBkuKDOx8dcghNLRyQ3Mbl7L2WNHMaE-6X3i91C5UykVqixmD9wV_FK7U416tlER4E8uXR_UkBo90roeRFK7pKMHlTdKTv8Iuxo8AfT9QcmL7jvcnluVXo0BsJb6EIZc7VTEAf-StYMbsp5A8FU2KewNVHerKfVC_W2_Ux4Rzjzy9e-LLOa2DRvH-59oaQ";
 
   const navLinks = [
     { label: "Home", href: "/" },
@@ -24,12 +43,12 @@ export default function Header() {
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 shrink-0">
           <img
-            alt="Trip Connect Kochi"
+            alt={brandName}
             className="h-10 w-auto object-contain"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYJZOkBqsaeTOLbOEwhz53LmuCxqlx4FZCyvrnDINoyxkUn91Tsh4RgfoyI-eQ171uAkntsNBkuKDOx8dcghNLRyQ3Mbl7L2WNHMaE-6X3i91C5UykVqixmD9wV_FK7U416tlER4E8uXR_UkBo90roeRFK7pKMHlTdKTv8Iuxo8AfT9QcmL7jvcnluVXo0BsJb6EIZc7VTEAf-StYMbsp5A8FU2KewNVHerKfVC_W2_Ux4Rzjzy9e-LLOa2DRvH-59oaQ"
+            src={logoUrl}
           />
           <span className="font-headline-sm text-headline-sm text-on-surface tracking-tight hidden sm:inline-block font-semibold">
-            Trip Connect
+            {brandName}
           </span>
         </Link>
 

@@ -1,6 +1,21 @@
 import Link from "next/link";
+import { SiteContent } from "@/lib/types";
+import { getSiteContent } from "@/lib/db";
 
-export default function Footer() {
+export default async function Footer({ content }: { content?: Partial<SiteContent> }) {
+  const activeContent = content || (await getSiteContent().catch(() => null));
+  const brandName = activeContent?.brand_name || "Trip Connect";
+  const logoUrl =
+    activeContent?.logo_url ||
+    "https://lh3.googleusercontent.com/aida-public/AB6AXuDYJZOkBqsaeTOLbOEwhz53LmuCxqlx4FZCyvrnDINoyxkUn91Tsh4RgfoyI-eQ171uAkntsNBkuKDOx8dcghNLRyQ3Mbl7L2WNHMaE-6X3i91C5UykVqixmD9wV_FK7U416tlER4E8uXR_UkBo90roeRFK7pKMHlTdKTv8Iuxo8AfT9QcmL7jvcnluVXo0BsJb6EIZc7VTEAf-StYMbsp5A8FU2KewNVHerKfVC_W2_Ux4Rzjzy9e-LLOa2DRvH-59oaQ";
+  const footerDesc =
+    activeContent?.footer_description ||
+    "Curated bespoke journeys across Kerala and India, crafted from Kochi. Experience backwater serenity, misty highland estates, and iconic cultural sanctuaries with our dedicated travel concierges.";
+  const address = activeContent?.contact_address || "Ayyappankavu, Kochi, Ernakulam, Kerala – 682018";
+  const phone = activeContent?.contact_phone || "+91 9400886838";
+  const email = activeContent?.contact_email || "tripconnectwebsite2@gmail.com";
+  const copyright = activeContent?.footer_copyright || "© 2026 Trip Connect. All rights reserved.";
+
   return (
     <footer className="w-full bg-surface-container-low border-t border-outline-variant/30 text-on-surface pt-16 pb-12">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
@@ -9,16 +24,16 @@ export default function Footer() {
           <div className="lg:col-span-4 flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-3">
               <img
-                alt="Trip Connect Kochi"
+                alt={brandName}
                 className="h-10 w-auto object-contain"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYJZOkBqsaeTOLbOEwhz53LmuCxqlx4FZCyvrnDINoyxkUn91Tsh4RgfoyI-eQ171uAkntsNBkuKDOx8dcghNLRyQ3Mbl7L2WNHMaE-6X3i91C5UykVqixmD9wV_FK7U416tlER4E8uXR_UkBo90roeRFK7pKMHlTdKTv8Iuxo8AfT9QcmL7jvcnluVXo0BsJb6EIZc7VTEAf-StYMbsp5A8FU2KewNVHerKfVC_W2_Ux4Rzjzy9e-LLOa2DRvH-59oaQ"
+                src={logoUrl}
               />
               <span className="font-headline-sm text-headline-sm text-on-surface tracking-tight font-semibold">
-                Trip Connect
+                {brandName}
               </span>
             </Link>
             <p className="font-body-md text-body-md text-on-surface-variant max-w-sm leading-relaxed">
-              Curated bespoke journeys across Kerala and India, crafted from Kochi. Experience backwater serenity, misty highland estates, and iconic cultural sanctuaries with our dedicated travel concierges.
+              {footerDesc}
             </p>
             <div className="flex items-center gap-2 pt-2 text-on-surface-variant">
               <span className="material-symbols-outlined text-secondary text-[20px]">verified</span>
@@ -116,18 +131,18 @@ export default function Footer() {
                 <span className="material-symbols-outlined text-outline text-[18px] shrink-0 mt-0.5">
                   location_on
                 </span>
-                <span>Ayyappankavu, Kochi, Ernakulam, Kerala – 682018</span>
+                <span>{address}</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <span className="material-symbols-outlined text-outline text-[18px] shrink-0">call</span>
-                <a className="hover:text-primary transition-colors" href="tel:+919400886838">
-                  +91 9400886838
+                <a className="hover:text-primary transition-colors" href={`tel:${phone.replace(/\s+/g, '')}`}>
+                  {phone}
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <span className="material-symbols-outlined text-outline text-[18px] shrink-0">mail</span>
-                <a className="hover:text-primary transition-colors" href="mailto:tripconnectwebsite2@gmail.com">
-                  tripconnectwebsite2@gmail.com
+                <a className="hover:text-primary transition-colors" href={`mailto:${email}`}>
+                  {email}
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
@@ -147,7 +162,7 @@ export default function Footer() {
 
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-outline font-body-sm text-body-sm">
           <div className="flex flex-wrap items-center gap-6">
-            <p>© 2026 Trip Connect. All rights reserved.</p>
+            <p>{copyright}</p>
             <Link className="hover:text-on-surface transition-colors" href="/privacy-policy">
               Privacy Policy
             </Link>
