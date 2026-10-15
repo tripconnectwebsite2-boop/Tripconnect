@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import Link from "next/link";
+import Image from "next/image";
 import { APPLE_EASE } from "@/lib/animation";
 
 export default function Destinations() {
@@ -137,10 +138,13 @@ export default function Destinations() {
                   className="group relative rounded-xl overflow-hidden aspect-[3/4] bg-surface-container-high flex flex-col justify-end p-4 shadow-sm hover:shadow-xl transition-all block border border-outline-variant/10"
                   href={`/destinations/${dest.slug}`}
                 >
-                  <img
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-600 ease-out"
-                    alt={dest.name}
+                  <Image
                     src={dest.image}
+                    alt={dest.name}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 15vw"
+                    loading="lazy"
+                    className="object-cover group-hover:scale-110 transition-transform duration-600 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-on-background/85 via-on-background/30 to-transparent" />
                   <div className="relative z-10 text-white">
@@ -190,10 +194,13 @@ export default function Destinations() {
                   className="group relative rounded-2xl overflow-hidden aspect-[16/10] bg-surface-container-high flex flex-col justify-end p-6 shadow-sm hover:shadow-2xl transition-all block border border-outline-variant/10"
                   href="/destinations"
                 >
-                  <img
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-108 transition-transform duration-600 ease-out"
-                    alt={dest.name}
+                  <Image
                     src={dest.image}
+                    alt={dest.name}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    loading="lazy"
+                    className="object-cover group-hover:scale-108 transition-transform duration-600 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-on-background/80 via-on-background/25 to-transparent" />
                   <div className="relative z-10 text-white">

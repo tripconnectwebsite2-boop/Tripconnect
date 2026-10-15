@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useSpring, type Variants } from "motion/react";
 import Link from "next/link";
+import Image from "next/image";
 import { APPLE_EASE } from "@/lib/animation";
 import { SiteContent } from "@/lib/types";
 
@@ -179,10 +180,19 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
             style={{
               y: heroImageY,
               scale: heroImageScale,
-              backgroundImage: `url('${heroBgImage}')`,
             }}
-            className="w-full h-[125%] -top-[12%] absolute inset-0 bg-cover bg-center origin-center transition-transform duration-700 ease-out"
-          />
+            className="w-full h-[125%] -top-[12%] absolute inset-0 origin-center transition-transform duration-700 ease-out"
+          >
+            <Image
+              src={heroBgImage}
+              alt="The Sacred Palm Lagoons of Vembanad Lake"
+              fill
+              priority
+              quality={90}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 95vw, 1280px"
+              className="object-cover object-center"
+            />
+          </motion.div>
 
           {/* Vignette Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-on-background/75 via-on-background/20 to-transparent pointer-events-none" />

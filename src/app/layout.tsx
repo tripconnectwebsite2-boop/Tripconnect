@@ -1,18 +1,26 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import StructuredData from "@/components/StructuredData";
-import ConsentBanner from "@/components/ConsentBanner";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
 import FirebaseAnalytics from "@/components/FirebaseAnalytics";
-import BugReportModal from "@/components/BugReportModal";
+import ClientProviders from "@/components/ClientProviders";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-plus-jakarta-sans",
   display: "swap",
+  preload: true,
 });
+
+export const viewport: Viewport = {
+  themeColor: "#006193",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   title: "Trip Connect — Bespoke Kerala & India Journeys",
@@ -42,14 +50,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`scroll-smooth ${plusJakartaSans.variable}`}>
+    <html lang="en" className={`scroll-smooth ${plusJakartaSans.variable}`} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-          rel="stylesheet"
-        />
+        <link rel="preconnect" href="https://lh3.googleusercontent.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
         <StructuredData />
       </head>
       <body className="bg-surface font-sans text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
@@ -59,9 +65,8 @@ export default function RootLayout({
           <div className="h-full bg-gradient-to-r from-primary via-primary-fixed-dim to-secondary-fixed shadow-[0_0_8px_rgba(0,97,147,0.45)] animate-micro-bar" />
         </div>
         {children}
-        <ConsentBanner />
         <FirebaseAnalytics />
-        <BugReportModal />
+        <ClientProviders />
       </body>
     </html>
   );

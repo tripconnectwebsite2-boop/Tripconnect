@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import Link from "next/link";
+import Image from "next/image";
 import { getSiteContent } from "@/lib/db";
 
 export const metadata = {
@@ -64,11 +65,14 @@ export default async function AboutPage() {
               </div>
             </div>
 
-            <div className="lg:col-span-5 rounded-3xl overflow-hidden shadow-2xl bg-surface-container-high aspect-[4/5]">
-              <img
+            <div className="lg:col-span-5 rounded-3xl overflow-hidden shadow-2xl bg-surface-container-high aspect-[4/5] relative">
+              <Image
                 src={aboutImage}
                 alt="Houseboat on Vembanad Lake"
-                className="w-full h-full object-cover"
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                className="object-cover"
               />
             </div>
           </div>

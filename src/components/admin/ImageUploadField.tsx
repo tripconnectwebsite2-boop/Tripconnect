@@ -347,6 +347,7 @@ export default function ImageUploadField({
           <div
             className={`relative w-full ${previewHeight} rounded-xl overflow-hidden border border-outline-variant/30 bg-neutral-900 group shadow-sm`}
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={value}
               alt="Preview"

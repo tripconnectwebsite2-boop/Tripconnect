@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useCallback, useTransition } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Enquiry, EnquiryStatus, EnquiryNote } from "@/lib/types";
 import { buildAdminFollowUpWhatsAppUrl } from "@/lib/notifications/whatsapp";
@@ -16,7 +16,7 @@ export default function AdminEnquiriesCRMPage() {
   const [addingNote, setAddingNote] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  const fetchEnquiries = async () => {
+  const fetchEnquiries = useCallback(async () => {
     try {
       setLoading(true);
       const query = new URLSearchParams();
@@ -31,11 +31,11 @@ export default function AdminEnquiriesCRMPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, search]);
 
   useEffect(() => {
     fetchEnquiries();
-  }, [statusFilter]);
+  }, [fetchEnquiries]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();

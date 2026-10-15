@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { SiteContent } from "@/lib/types";
 import { getSiteContent } from "@/lib/db";
 
@@ -23,10 +24,12 @@ export default async function Footer({ content }: { content?: Partial<SiteConten
           {/* Brand info */}
           <div className="lg:col-span-4 flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-3">
-              <img
-                alt={brandName}
-                className="h-10 w-auto object-contain"
+              <Image
                 src={logoUrl}
+                alt={brandName}
+                width={160}
+                height={40}
+                className="h-10 w-auto object-contain"
               />
               <span className="font-headline-sm text-headline-sm text-on-surface tracking-tight font-semibold">
                 {brandName}

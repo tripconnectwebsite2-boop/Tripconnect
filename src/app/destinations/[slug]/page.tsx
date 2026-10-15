@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import { getDestinationBySlug, getDestinations, getPackages } from "@/lib/db";
 import Link from "next/link";
+import Image from "next/image";
 
 export async function generateStaticParams() {
   const destinations = await getDestinations(true);
@@ -68,10 +69,13 @@ export default async function DestinationDetailPage({
 
           {/* Hero Banner */}
           <div className="relative rounded-3xl overflow-hidden aspect-[16/7] bg-surface-container-high shadow-xl">
-            <img
+            <Image
               src={destination.cover_image}
               alt={destination.name}
-              className="w-full h-full object-cover"
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 1200px"
+              className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
             <div className="absolute bottom-6 left-6 right-6 lg:bottom-10 lg:left-10 lg:right-10 text-white space-y-2">
@@ -130,10 +134,13 @@ export default async function DestinationDetailPage({
                         className="rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-sm overflow-hidden flex flex-col justify-between"
                       >
                         <div className="relative aspect-[16/10] bg-surface-container-high">
-                          <img
+                          <Image
                             src={pkg.gallery[0]}
                             alt={pkg.title}
-                            className="w-full h-full object-cover"
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            loading="lazy"
+                            className="object-cover"
                           />
                           <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-surface/90 text-xs font-semibold">
                             {pkg.duration_days}D / {pkg.duration_nights}N

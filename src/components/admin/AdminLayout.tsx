@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -60,10 +61,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         } lg:block w-full lg:w-64 bg-surface-container-lowest border-r border-outline-variant/30 flex flex-col shrink-0 lg:min-h-screen lg:sticky lg:top-0 z-30`}
       >
         <div className="h-20 hidden lg:flex items-center gap-3 px-6 border-b border-outline-variant/20">
-          <img
-            alt="Trip Connect Kochi"
-            className="h-8 w-auto object-contain"
+          <Image
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYJZOkBqsaeTOLbOEwhz53LmuCxqlx4FZCyvrnDINoyxkUn91Tsh4RgfoyI-eQ171uAkntsNBkuKDOx8dcghNLRyQ3Mbl7L2WNHMaE-6X3i91C5UykVqixmD9wV_FK7U416tlER4E8uXR_UkBo90roeRFK7pKMHlTdKTv8Iuxo8AfT9QcmL7jvcnluVXo0BsJb6EIZc7VTEAf-StYMbsp5A8FU2KewNVHerKfVC_W2_Ux4Rzjzy9e-LLOa2DRvH-59oaQ"
+            alt="Trip Connect Kochi"
+            width={120}
+            height={32}
+            className="h-8 w-auto object-contain"
           />
           <div>
             <span className="font-headline-sm text-headline-sm font-bold text-on-surface block leading-tight">

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { TravelPackage, Destination, PackageCategory } from "@/lib/types";
 
 export default function PackageCatalogClient({
@@ -193,10 +194,13 @@ export default function PackageCatalogClient({
             >
               {/* Image & Badges */}
               <div className="relative aspect-[16/10] overflow-hidden bg-surface-container-high">
-                <img
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                  alt={pkg.title}
+                <Image
                   src={pkg.gallery[0]}
+                  alt={pkg.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  loading="lazy"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
                 <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-surface/90 backdrop-blur-md shadow-sm">
                   <span className="font-label-sm text-label-sm text-on-surface font-semibold">

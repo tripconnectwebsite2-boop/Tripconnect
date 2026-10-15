@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { SiteContent } from "@/lib/types";
 
@@ -21,6 +22,11 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
     }
   }, [content]);
 
+  // Close mobile menu automatically on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
   const activeContent = content || dynamicContent;
   const brandName = activeContent?.brand_name || "Trip Connect";
   const logoUrl =
@@ -29,8 +35,7 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
 
   const navLinks = [
     { label: "Home", href: "/" },
-    { label: "Kerala Tours", href: "/packages?category=Kerala+Tours" },
-    { label: "India Tours", href: "/packages?category=India+Tours" },
+    { label: "Packages", href: "/packages" },
     { label: "Destinations", href: "/destinations" },
     { label: "Special Offers", href: "/offers" },
     { label: "About", href: "/about" },
@@ -39,13 +44,16 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
-      <div className="h-20 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-4">
+      <div className="h-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between gap-4">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 shrink-0">
-          <img
-            alt={brandName}
-            className="h-10 w-auto object-contain"
+          <Image
             src={logoUrl}
+            alt={brandName}
+            width={160}
+            height={40}
+            priority
+            className="h-10 w-auto object-contain"
           />
           <span className="font-headline-sm text-headline-sm text-on-surface tracking-tight hidden sm:inline-block font-semibold">
             {brandName}
@@ -58,38 +66,41 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
             const isActive =
               link.href === "/"
                 ? pathname === "/"
-                : pathname.startsWith(link.href.split("?")[0]);
-
+                : pathname.startsWith(link.href);
             return (
               <Link
                 key={link.label}
                 href={link.href}
-                className={`transition-colors py-1 ${
+                className={`font-label-md text-label-md transition-colors relative py-1 ${
                   isActive
-                    ? "text-primary font-semibold relative after:absolute after:bottom-[-2px] after:left-0 after:right-0 after:h-[2px] after:bg-primary"
-                    : "font-label-md text-label-md text-on-surface-variant hover:text-primary"
+                    ? "text-primary font-semibold"
+                    : "text-on-surface-variant hover:text-primary"
                 }`}
               >
                 {link.label}
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full animate-fadeIn" />
+                )}
               </Link>
             );
           })}
         </nav>
 
-        {/* Right Action Buttons */}
-        <div className="flex items-center gap-3 lg:gap-4 shrink-0">
+        {/* Actions */}
+        <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0">
           <a
-            className="hidden md:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-high/60 hover:bg-surface-container-highest text-secondary hover:text-on-surface transition-all font-label-md text-label-md"
+            className="hidden md:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-high/60 hover:bg-surface-container-highest text-secondary hover:text-on-surface transition-all font-label-md text-label-md min-h-[44px]"
             href="https://wa.me/919400886838"
             rel="noopener noreferrer"
             target="_blank"
+            aria-label="Contact concierge on WhatsApp"
           >
             <span className="material-symbols-outlined text-[18px] text-secondary">chat</span>
             <span className="font-medium tracking-tight">+91 9400886838</span>
           </a>
 
           <Link
-            className="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-all shadow-sm btn-shimmer active:scale-[0.98]"
+            className="inline-flex items-center justify-center px-4 sm:px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-all shadow-sm btn-shimmer active:scale-[0.98] min-h-[44px]"
             href="/contact"
           >
             <span className="material-symbols-outlined text-[18px] mr-1.5">explore</span>
@@ -100,8 +111,9 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="xl:hidden w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors"
+            className="xl:hidden w-11 h-11 rounded-lg bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors active:scale-95 touch-manipulation min-h-[44px] min-w-[44px]"
             aria-label="Toggle navigation menu"
+            aria-expanded={mobileMenuOpen}
           >
             <span className="material-symbols-outlined text-[24px]">
               {mobileMenuOpen ? "close" : "menu"}
@@ -112,20 +124,30 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="xl:hidden bg-surface-container-lowest border-b border-outline-variant/30 px-6 py-4 shadow-lg animate-fadeIn">
-          <nav className="flex flex-col gap-3">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-2 text-on-surface hover:text-primary transition-colors font-label-md text-label-md border-b border-outline-variant/10"
-              >
-                {link.label}
-              </Link>
-            ))}
+        <div className="xl:hidden bg-surface-container-lowest border-b border-outline-variant/30 px-6 py-4 shadow-xl animate-fadeIn">
+          <nav className="flex flex-col gap-1">
+            {navLinks.map((link) => {
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href);
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center py-3 px-3 rounded-lg text-base font-medium transition-colors min-h-[44px] ${
+                    isActive
+                      ? "bg-primary/10 text-primary font-semibold"
+                      : "text-on-surface hover:bg-surface-container-high"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             <a
-              className="mt-2 flex items-center gap-2 py-2.5 px-4 rounded-xl bg-secondary/10 text-secondary font-label-md text-label-md"
+              className="mt-3 flex items-center gap-2.5 py-3 px-4 rounded-xl bg-secondary/10 text-secondary font-medium text-base min-h-[44px]"
               href="https://wa.me/919400886838"
               rel="noopener noreferrer"
               target="_blank"

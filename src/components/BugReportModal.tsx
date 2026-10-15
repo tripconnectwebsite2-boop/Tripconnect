@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { BugCategory, BugSeverity } from "@/lib/types";
 
 interface BugReportModalProps {
@@ -95,38 +96,56 @@ export default function BugReportModal({
     const file = e.target.files[0];
 
     if (!file.type.startsWith("image/")) {
-      setSubmitError("Please select a valid image file.");
+      setSubmitError("Please select a valid image file (PNG, JPG, WebP).");
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setSubmitError("Image size exceeds 10MB limit.");
       return;
     }
 
     setUploadingImage(true);
     setSubmitError("");
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-      if (res.ok && data.url) {
-        setScreenshotUrl(data.url);
-      } else {
-        // Fallback to data URL for preview if upload route requires session
-        const reader = new FileReader();
-        reader.onload = () => {
-          setScreenshotUrl(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      }
-    } catch {
-      // Local preview fallback
       const reader = new FileReader();
-      reader.onload = () => {
-        setScreenshotUrl(reader.result as string);
+      reader.onload = (event) => {
+        const img = new window.Image();
+        img.onload = () => {
+          const maxDim = 1200;
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressed = canvas.toDataURL("image/jpeg", 0.8);
+            setScreenshotUrl(compressed);
+          } else {
+            setScreenshotUrl(event.target?.result as string);
+          }
+          setUploadingImage(false);
+        };
+        img.onerror = () => {
+          setSubmitError("Could not process this image file.");
+          setUploadingImage(false);
+        };
+        img.src = event.target?.result as string;
       };
       reader.readAsDataURL(file);
-    } finally {
+    } catch {
+      setSubmitError("Failed to process screenshot.");
       setUploadingImage(false);
     }
   };
@@ -193,7 +212,7 @@ export default function BugReportModal({
         <button
           type="button"
           onClick={() => setInternalIsOpen(true)}
-          className="fixed bottom-6 left-6 z-40 bg-surface-container-high/90 hover:bg-primary hover:text-white text-on-surface backdrop-blur-md px-3.5 py-2 rounded-full border border-outline-variant/30 shadow-lg text-xs font-semibold flex items-center gap-2 transition-all duration-500 active:scale-95 group animate-in fade-in"
+          className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] left-6 z-40 bg-surface-container-high/90 hover:bg-primary hover:text-white text-on-surface backdrop-blur-md px-3.5 py-2.5 rounded-full border border-outline-variant/30 shadow-lg text-xs font-semibold flex items-center gap-2 transition-all duration-500 active:scale-95 touch-manipulation min-h-[44px] group animate-in fade-in"
           title="Found a glitch or issue? Click to report it."
         >
           <span className="material-symbols-outlined text-[18px] text-error group-hover:text-white transition-colors">
@@ -382,11 +401,17 @@ export default function BugReportModal({
                     </div>
                     {screenshotUrl && (
                       <div className="mt-2 relative w-24 h-16 rounded-lg overflow-hidden border border-outline-variant/30">
-                        <img src={screenshotUrl} alt="Uploaded screenshot" className="w-full h-full object-cover" />
+                        <Image
+                          src={screenshotUrl}
+                          alt="Uploaded screenshot"
+                          fill
+                          unoptimized
+                          className="object-cover"
+                        />
                         <button
                           type="button"
                           onClick={() => setScreenshotUrl("")}
-                          className="absolute top-1 right-1 bg-black/60 text-white rounded p-0.5 text-[10px]"
+                          className="absolute top-1 right-1 z-10 bg-black/60 text-white rounded p-0.5 text-[10px]"
                         >
                           ✕
                         </button>

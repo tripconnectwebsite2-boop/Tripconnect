@@ -5,6 +5,7 @@ import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import { getPackageBySlug, getPackages } from "@/lib/db";
 import { buildWhatsAppChatUrl } from "@/lib/notifications/whatsapp";
 import Link from "next/link";
+import Image from "next/image";
 import PackageDetailEnquiryForm from "./PackageDetailEnquiryForm";
 
 export async function generateStaticParams() {
@@ -111,26 +112,35 @@ export default async function PackageDetailPage({
 
               {/* Gallery Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-                <div className="md:col-span-2 rounded-2xl overflow-hidden aspect-[16/10] bg-surface-container-high shadow-md">
-                  <img
+                <div className="md:col-span-2 rounded-2xl overflow-hidden aspect-[16/10] bg-surface-container-high shadow-md relative">
+                  <Image
                     src={pkg.gallery[0]}
                     alt={pkg.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, 66vw"
+                    className="object-cover"
                   />
                 </div>
                 <div className="flex flex-col gap-4">
-                  <div className="rounded-2xl overflow-hidden aspect-[16/9] bg-surface-container-high shadow-sm">
-                    <img
+                  <div className="rounded-2xl overflow-hidden aspect-[16/9] bg-surface-container-high shadow-sm relative">
+                    <Image
                       src={pkg.gallery[1] || pkg.gallery[0]}
-                      alt="Gallery image"
-                      className="w-full h-full object-cover"
+                      alt="Gallery view 2"
+                      fill
+                      loading="lazy"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover"
                     />
                   </div>
                   <div className="rounded-2xl overflow-hidden aspect-[16/9] bg-surface-container-high shadow-sm relative">
-                    <img
+                    <Image
                       src={pkg.gallery[2] || pkg.gallery[0]}
-                      alt="Gallery image"
-                      className="w-full h-full object-cover"
+                      alt="Gallery view 3"
+                      fill
+                      loading="lazy"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover"
                     />
                   </div>
                 </div>

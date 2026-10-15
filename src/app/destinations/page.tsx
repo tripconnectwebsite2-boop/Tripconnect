@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import { getDestinations, getPackages } from "@/lib/db";
 import Link from "next/link";
+import Image from "next/image";
 
 export const metadata = {
   title: "Destinations Geographic Atlas | Trip Connect Kerala",
@@ -63,10 +64,13 @@ export default async function DestinationsPage() {
                     className="group flex flex-col rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden"
                   >
                     <div className="relative aspect-[16/10] overflow-hidden bg-surface-container-high">
-                      <img
+                      <Image
                         src={dest.cover_image}
                         alt={dest.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        loading="lazy"
+                        className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
                       <div className="absolute bottom-4 left-4 right-4 text-white">
@@ -123,10 +127,13 @@ export default async function DestinationsPage() {
                   className="group flex flex-col rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden bg-surface-container-high">
-                    <img
+                    <Image
                       src={dest.cover_image}
                       alt={dest.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      loading="lazy"
+                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4 text-white">

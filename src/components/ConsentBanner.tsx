@@ -28,7 +28,7 @@ export default function ConsentBanner() {
   return (
     <aside
       aria-label="Privacy and cookies"
-      className="fixed bottom-4 left-4 right-4 md:left-6 md:max-w-md z-50 p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-2xl space-y-3 animate-fadeIn"
+      className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-4 right-4 md:left-6 md:max-w-md z-50 p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-2xl space-y-3 animate-fadeIn"
     >
       <div className="flex items-start gap-3">
         <span className="material-symbols-outlined text-[20px] text-primary shrink-0 mt-0.5">
@@ -50,14 +50,14 @@ export default function ConsentBanner() {
         <button
           type="button"
           onClick={handleDecline}
-          className="px-3 py-1.5 rounded-lg text-xs font-medium text-outline hover:text-on-surface"
+          className="px-3.5 py-2 rounded-lg text-xs font-medium text-outline hover:text-on-surface min-h-[44px] touch-manipulation"
         >
           Essential Only
         </button>
         <button
           type="button"
           onClick={handleAccept}
-          className="px-4 py-1.5 rounded-lg bg-primary text-on-primary text-xs font-semibold hover:bg-primary-container shadow-sm"
+          className="px-4 py-2 rounded-lg bg-primary text-on-primary text-xs font-semibold hover:bg-primary-container shadow-sm min-h-[44px] touch-manipulation active:scale-95"
         >
           Accept All
         </button>

@@ -511,6 +511,7 @@ export default function AdminBugsPage() {
                       </a>
                     </div>
                     <div className="rounded-xl overflow-hidden border border-outline-variant/30 bg-neutral-900 max-h-48">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={selectedBug.screenshot_url}
                         alt="Bug Screenshot"

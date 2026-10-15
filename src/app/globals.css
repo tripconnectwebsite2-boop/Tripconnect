@@ -1,14 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  html, body {
-    margin: 0;
-    padding: 0;
+  html {
+    overflow-x: hidden;
+    max-width: 100vw;
+    -webkit-text-size-adjust: 100%;
   }
   body {
-    overscroll-behavior: none;
+    overflow-x: hidden;
+    max-width: 100vw;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overscroll-behavior-y: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  button, a, input, select, textarea {
+    touch-action: manipulation;
+  }
+  /* Prevent iOS Safari auto-zoom on input focus */
+  @media screen and (max-width: 767px) {
+    input, select, textarea {
+      font-size: 16px !important;
+    }
   }
   img {
     image-rendering: -webkit-optimize-contrast;

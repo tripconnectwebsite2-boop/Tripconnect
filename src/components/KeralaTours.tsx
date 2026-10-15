@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import Link from "next/link";
+import Image from "next/image";
 import { APPLE_EASE } from "@/lib/animation";
 import { SiteContent } from "@/lib/types";
 
@@ -111,10 +112,13 @@ export default function KeralaTours({ content }: { content?: Partial<SiteContent
             className="group flex flex-col rounded-2xl bg-surface-container-lowest shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-outline-variant/15"
           >
             <div className="relative aspect-[4/3] overflow-hidden bg-surface-container-high">
-              <img
-                className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
-                alt={tour.title}
+              <Image
                 src={tour.image}
+                alt={tour.title}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                loading="lazy"
+                className="object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
               />
               <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-surface/90 backdrop-blur-md shadow-sm">
                 <span className="font-label-sm text-label-sm text-on-surface font-semibold tracking-wide">

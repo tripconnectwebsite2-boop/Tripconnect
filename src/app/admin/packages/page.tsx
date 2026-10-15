@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import Image from "next/image";
 import { TravelPackage, PackageCategory } from "@/lib/types";
 import Link from "next/link";
 
@@ -16,7 +17,7 @@ export default function AdminPackagesPage() {
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
-  const fetchPackages = async () => {
+  const fetchPackages = useCallback(async () => {
     try {
       setLoading(true);
       const query = new URLSearchParams();
@@ -31,11 +32,11 @@ export default function AdminPackagesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, search]);
 
   useEffect(() => {
     fetchPackages();
-  }, [statusFilter]);
+  }, [fetchPackages]);
 
   const openCreateModal = () => {
     setEditingPkg({
@@ -227,12 +228,15 @@ export default function AdminPackagesPage() {
                   className="rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-sm hover:shadow-md transition-all flex flex-col overflow-hidden"
                 >
                   <div className="relative h-44 bg-surface-container-high overflow-hidden">
-                    <img
+                    <Image
                       src={pkg.gallery[0]}
                       alt={pkg.title}
-                      className="w-full h-full object-cover"
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      loading="lazy"
+                      className="object-cover"
                     />
-                    <div className="absolute top-3 left-3 flex items-center gap-2">
+                    <div className="absolute top-3 left-3 z-10 flex items-center gap-2">
                       <span
                         className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
                           isPublished

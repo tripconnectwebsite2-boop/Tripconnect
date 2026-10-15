@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import Link from "next/link";
+import Image from "next/image";
 import { APPLE_EASE } from "@/lib/animation";
 
 export default function FeaturedPackages() {
@@ -104,10 +105,13 @@ export default function FeaturedPackages() {
               className="flex flex-col bg-surface-container-lowest rounded-2xl shadow-sm hover:shadow-2xl transition-all overflow-hidden border border-outline-variant/20 group"
             >
               <div className="relative h-64 overflow-hidden">
-                <img
-                  className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
-                  alt={pkg.title}
+                <Image
                   src={pkg.image}
+                  alt={pkg.title}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  loading="lazy"
+                  className="object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-on-background/85 via-on-background/20 to-transparent" />
                 <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-surface/90 backdrop-blur-md shadow-sm">

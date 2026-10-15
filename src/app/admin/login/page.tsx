@@ -3,6 +3,7 @@
 import { useState, Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { auth, googleProvider, isFirebaseConfigured } from "@/lib/firebase/config";
 import { signInWithPopup } from "firebase/auth";
 
@@ -81,10 +82,13 @@ function AdminLoginForm() {
   return (
     <div className="w-full max-w-md bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/30 p-8">
       <div className="text-center mb-8">
-        <img
-          alt="Trip Connect Kochi"
-          className="h-12 w-auto mx-auto object-contain mb-4"
+        <Image
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYJZOkBqsaeTOLbOEwhz53LmuCxqlx4FZCyvrnDINoyxkUn91Tsh4RgfoyI-eQ171uAkntsNBkuKDOx8dcghNLRyQ3Mbl7L2WNHMaE-6X3i91C5UykVqixmD9wV_FK7U416tlER4E8uXR_UkBo90roeRFK7pKMHlTdKTv8Iuxo8AfT9QcmL7jvcnluVXo0BsJb6EIZc7VTEAf-StYMbsp5A8FU2KewNVHerKfVC_W2_Ux4Rzjzy9e-LLOa2DRvH-59oaQ"
+          alt="Trip Connect Kochi"
+          width={180}
+          height={48}
+          priority
+          className="h-12 w-auto mx-auto object-contain mb-4"
         />
         <h1 className="font-headline-lg text-headline-lg font-bold tracking-tight text-on-surface">
           Administrator Sign-In

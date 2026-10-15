@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import ImageUploadField from "@/components/admin/ImageUploadField";
+import Image from "next/image";
 import { Destination } from "@/lib/types";
 
 export default function AdminDestinationsPage() {
@@ -107,8 +108,15 @@ export default function AdminDestinationsPage() {
               >
                 <div>
                   <div className="relative h-40 bg-surface-container-high">
-                    <img src={d.cover_image} alt={d.name} className="w-full h-full object-cover" />
-                    <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/60 text-white text-xs font-semibold">
+                    <Image
+                      src={d.cover_image}
+                      alt={d.name}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      loading="lazy"
+                      className="object-cover"
+                    />
+                    <span className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-full bg-black/60 text-white text-xs font-semibold">
                       {d.region}
                     </span>
                   </div>

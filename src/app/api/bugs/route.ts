@@ -90,7 +90,15 @@ export async function POST(req: Request) {
       page_url: page_url ? String(page_url).trim().slice(0, 300) : undefined,
       reporter_name: reporter_name ? String(reporter_name).trim().slice(0, 80) : undefined,
       reporter_email: reporter_email ? String(reporter_email).trim().slice(0, 100) : undefined,
-      screenshot_url: screenshot_url ? String(screenshot_url).trim().slice(0, 500) : undefined,
+      screenshot_url: (() => {
+        if (!screenshot_url || typeof screenshot_url !== "string") return undefined;
+        const clean = screenshot_url.trim();
+        if (clean.startsWith("data:image/") || clean.startsWith("/") || clean.startsWith("http://") || clean.startsWith("https://")) {
+          // Allow up to 2.5MB data URL
+          return clean.slice(0, 2500000);
+        }
+        return undefined;
+      })(),
       device_info: device_info && typeof device_info === "object" ? {
         browser: device_info.browser ? String(device_info.browser).slice(0, 100) : undefined,
         os: device_info.os ? String(device_info.os).slice(0, 100) : undefined,

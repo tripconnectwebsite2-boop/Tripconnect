@@ -1,14 +1,14 @@
 import { cookies } from "next/headers";
 import { createServerSupabaseClient } from "./supabase/server";
+import {
+  ADMIN_ALLOWLIST,
+  SESSION_COOKIE_NAME,
+  isEmailAuthorized,
+  signSessionData,
+  verifySessionToken,
+} from "./auth-token";
 
-export const ADMIN_ALLOWLIST = ["tripconnectwebsite2@gmail.com"];
-export const SESSION_COOKIE_NAME = "tc_admin_session";
-
-export function isEmailAuthorized(email?: string | null): boolean {
-  if (!email) return false;
-  const normalized = email.trim().toLowerCase();
-  return ADMIN_ALLOWLIST.includes(normalized);
-}
+export { ADMIN_ALLOWLIST, SESSION_COOKIE_NAME, isEmailAuthorized, signSessionData, verifySessionToken };
 
 export async function getAdminSession(): Promise<{
   authenticated: boolean;
@@ -35,21 +35,17 @@ export async function getAdminSession(): Promise<{
     // Continue to fallback session
   }
 
-  // 2. Check local secure session cookie
+  // 2. Check local HMAC-signed session cookie
   const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value;
   if (sessionCookie) {
-    try {
-      const parsed = JSON.parse(Buffer.from(sessionCookie, "base64").toString("utf-8"));
-      if (parsed.email && parsed.exp && parsed.exp > Date.now()) {
-        const authorized = isEmailAuthorized(parsed.email);
-        return {
-          authenticated: true,
-          authorized,
-          email: parsed.email,
-        };
-      }
-    } catch {
-      // Invalid cookie
+    const session = await verifySessionToken(sessionCookie);
+    if (session && session.email) {
+      const authorized = isEmailAuthorized(session.email);
+      return {
+        authenticated: true,
+        authorized,
+        email: session.email,
+      };
     }
   }
 
@@ -70,10 +66,11 @@ export async function createLocalAdminSession(email: string): Promise<boolean> {
     email: email.trim().toLowerCase(),
     role: "admin",
     exp: Date.now() + 1000 * 60 * 60 * 24 * 7, // 7 days
+    iat: Date.now(),
   };
 
-  const encoded = Buffer.from(JSON.stringify(sessionData)).toString("base64");
-  cookieStore.set(SESSION_COOKIE_NAME, encoded, {
+  const signedToken = await signSessionData(sessionData);
+  cookieStore.set(SESSION_COOKIE_NAME, signedToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
