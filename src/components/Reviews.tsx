@@ -1,0 +1,253 @@
+export default function Reviews() {
+  const reviews = [
+    {
+      author: "Abilraj Kr",
+      avatar: "A",
+      avatarBg: "bg-primary/10 text-primary",
+      meta: "Local Guide • 12 reviews",
+      time: "8 months ago",
+      text: "“Thanks TRIP CONNECT HOLIDAY (GOURISHANKAR) for the excellent service! We enjoyed a lot. Good selection of Tree House, Resorts and Houseboat at Alleppey. The houseboat staff was very helpful and the food was awesome.”",
+      circuit: "Alleppey & Wayanad Tour",
+      likes: 2,
+      delay: "delay-150",
+    },
+    {
+      author: "Suresh Jayakumar",
+      avatar: "S",
+      avatarBg: "bg-secondary/15 text-secondary",
+      meta: "4 reviews",
+      time: "5 months ago",
+      text: "“Good journey. Trip was very good. Well arrangement done by Gowrish Shankar and driver was very polite. Positive approach throughout the trip.”",
+      circuit: "Verified Booking",
+      likes: 1,
+      delay: "delay-200",
+    },
+    {
+      author: "Radhika Prabhakaran",
+      avatar: "R",
+      avatarBg: "bg-primary-container/20 text-primary",
+      meta: "2 reviews",
+      time: "4 months ago",
+      text: "“Top-notch service from Trip Connect Kochi! Booked a taxi for a family trip and the experience was seamless. Driver was punctual, friendly, and super helpful. Highly recommend for reliable and comfortable travel in Kochi.”",
+      circuit: "Family Tour",
+      likes: 3,
+      delay: "delay-300",
+    },
+    {
+      author: "Rithish Tours And Travels",
+      avatar: "R",
+      avatarBg: "bg-secondary-container text-on-secondary-container",
+      meta: "Agency Collaboration",
+      time: "3 months ago",
+      text: "“Incredible Experience with Trip Connect Kochi! We booked a 3-day Munnar + Kochi tour with Trip Connect Kochi and it exceeded our expectations. Seamless coordination, courteous driver, and great care.”",
+      circuit: "Munnar + Kochi Circuit",
+      likes: 2,
+      delay: "delay-250",
+    },
+    {
+      author: "Aswanth Pk",
+      avatar: "A",
+      avatarBg: "bg-tertiary-fixed text-on-tertiary-fixed",
+      meta: "4 reviews",
+      time: "6 months ago",
+      text: "“Had an excellent experience booking through this car rental website. The process was smooth, transparent, and very easy to use. The pricing was clear with no hidden charges, vehicle was clean and well maintained.”",
+      circuit: "Clear & Transparent",
+      likes: 4,
+      delay: "delay-350",
+    },
+    {
+      author: "Gokul Raveendran",
+      avatar: "G",
+      avatarBg: "bg-primary/10 text-primary",
+      meta: "Local Guide • 5 reviews",
+      time: "3 months ago",
+      text: "“Smooth & Reliable Rides. Used Trip Connect for my whole Kochi trip. Driver showed up 10 mins early at Cochin Airport, car was clean and AC was freezing cold.”",
+      circuit: "Airport Transfer & Tours",
+      likes: 5,
+      delay: "delay-400",
+    },
+  ];
+
+  return (
+    <section className="w-full py-24 px-6 lg:px-12 max-w-7xl mx-auto" id="guest-reviews">
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 reveal-fade-up">
+        <div className="max-w-2xl">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="h-px w-8 bg-secondary" />
+            <span className="font-label-sm text-label-sm tracking-widest uppercase text-secondary font-semibold">
+              Client Stories
+            </span>
+          </div>
+          <h2 className="font-headline-xl text-headline-xl text-on-surface tracking-tight mb-3">
+            Guest Experiences &amp; Reviews
+          </h2>
+          <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+            Authentic reviews from travelers exploring Kerala and beyond with our bespoke concierge desk.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 self-start md:self-end">
+          <a
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-container-lowest hover:bg-surface-container-high border border-outline-variant/30 text-on-surface font-label-md text-label-md shadow-sm transition-all active:scale-[0.98]"
+            href="https://maps.google.com"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                fill="#EA4335"
+              />
+            </svg>
+            <span>Write a review</span>
+          </a>
+        </div>
+      </div>
+
+      {/* Aggregate Rating Banner */}
+      <div className="p-6 md:p-8 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-sm mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 reveal-fade-up delay-100">
+        <div className="flex flex-wrap items-center gap-6">
+          <div className="flex items-center gap-4 shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-surface-container-high/80 flex items-center justify-center">
+              <svg className="w-7 h-7" viewBox="0 0 24 24">
+                <path
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  fill="#34A853"
+                />
+                <path
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                  fill="#EA4335"
+                />
+              </svg>
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-headline-lg text-headline-lg font-bold text-on-surface">5.0</span>
+                <div className="flex items-center text-amber-500">
+                  <span className="material-symbols-outlined text-[20px]">star</span>
+                  <span className="material-symbols-outlined text-[20px]">star</span>
+                  <span className="material-symbols-outlined text-[20px]">star</span>
+                  <span className="material-symbols-outlined text-[20px]">star</span>
+                  <span className="material-symbols-outlined text-[20px]">star</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-outline font-body-sm text-body-sm">
+                <span className="font-semibold text-on-surface">122 reviews</span>
+                <span>•</span>
+                <span className="text-secondary font-medium flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[16px]">verified</span>
+                  Verified Google Reviews
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 pt-4 lg:pt-0 border-t lg:border-t-0 border-outline-variant/20">
+          <span className="font-label-sm text-label-sm text-outline uppercase tracking-wider mr-1">Highlights:</span>
+          <span className="px-3 py-1 rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm border border-outline-variant/30">
+            friendly driver (18)
+          </span>
+          <span className="px-3 py-1 rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm border border-outline-variant/30">
+            clean cab (8)
+          </span>
+          <span className="px-3 py-1 rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm border border-outline-variant/30">
+            budget friendly rates (5)
+          </span>
+          <span className="px-3 py-1 rounded-full bg-surface-container-low text-on-surface font-label-sm text-label-sm border border-outline-variant/30">
+            luxury car (3)
+          </span>
+          <span className="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">
+            punctual &amp; reliable
+          </span>
+        </div>
+      </div>
+
+      {/* Reviews Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {reviews.map((rev) => (
+          <div
+            key={rev.author}
+            className={`p-6 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-sm hover:shadow-md transition-all flex flex-col justify-between reveal-fade-up ${rev.delay}`}
+          >
+            <div>
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-11 h-11 rounded-full font-bold flex items-center justify-center font-headline-sm text-headline-sm ${rev.avatarBg}`}
+                  >
+                    {rev.avatar}
+                  </div>
+                  <div>
+                    <h4 className="font-label-md text-label-md text-on-surface font-semibold">{rev.author}</h4>
+                    <span className="font-body-sm text-body-sm text-outline block">{rev.meta}</span>
+                  </div>
+                </div>
+                <div className="w-6 h-6 rounded-full bg-surface-container-low flex items-center justify-center shrink-0">
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
+                    <path
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      fill="#4285F4"
+                    />
+                    <path
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      fill="#34A853"
+                    />
+                    <path
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                      fill="#FBBC05"
+                    />
+                    <path
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                      fill="#EA4335"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1 text-amber-500 mb-3">
+                <span className="material-symbols-outlined text-[18px]">star</span>
+                <span className="material-symbols-outlined text-[18px]">star</span>
+                <span className="material-symbols-outlined text-[18px]">star</span>
+                <span className="material-symbols-outlined text-[18px]">star</span>
+                <span className="material-symbols-outlined text-[18px]">star</span>
+                <span className="font-body-sm text-body-sm text-outline ml-2">{rev.time}</span>
+              </div>
+
+              <p className="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                {rev.text}
+              </p>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-outline-variant/20 flex items-center justify-between text-outline font-body-sm text-body-sm">
+              <span className="flex items-center gap-1.5 text-secondary">
+                <span className="material-symbols-outlined text-[16px]">verified</span> {rev.circuit}
+              </span>
+              <span className="text-outline-variant font-label-sm">❤️ {rev.likes}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
