@@ -85,7 +85,7 @@ export default async function ContactPage({
                         rel="noopener noreferrer"
                         className="text-secondary font-semibold hover:underline block"
                       >
-                        {phone} (Typical response: &lt; 15 mins)
+                        Chat on WhatsApp (Typical response: &lt; 15 mins)
                       </a>
                     </div>
                   </div>

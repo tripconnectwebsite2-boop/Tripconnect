@@ -85,7 +85,7 @@ export default function PlanTripForm() {
                 target="_blank"
               >
                 <span className="material-symbols-outlined text-[24px]">chat</span>
-                <span>Chat on WhatsApp (+91 9400886838)</span>
+                <span>Chat on WhatsApp</span>
               </motion.a>
               <p className="font-body-sm text-body-sm text-outline">
                 Typical response time: Under 15 minutes during daylight hours.

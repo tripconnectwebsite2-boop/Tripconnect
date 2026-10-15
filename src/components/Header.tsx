@@ -109,17 +109,6 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
 
         {/* Actions */}
         <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 shrink-0">
-          <a
-            className="hidden md:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-high/60 hover:bg-surface-container-highest text-secondary hover:text-on-surface transition-all font-label-md text-label-md min-h-[44px]"
-            href="https://wa.me/919400886838"
-            rel="noopener noreferrer"
-            target="_blank"
-            aria-label="Contact concierge on WhatsApp"
-          >
-            <span className="material-symbols-outlined text-[18px] text-secondary">chat</span>
-            <span className="font-medium tracking-tight">+91 9400886838</span>
-          </a>
-
           <Link
             className="inline-flex items-center justify-center px-4 sm:px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-all shadow-sm btn-shimmer active:scale-[0.98] min-h-[44px]"
             href="/contact"
@@ -167,15 +156,6 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
                 </Link>
               );
             })}
-            <a
-              className="mt-3 flex items-center gap-2.5 py-3 px-4 rounded-xl bg-secondary/10 text-secondary font-medium text-base min-h-[44px]"
-              href="https://wa.me/919400886838"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <span className="material-symbols-outlined text-[20px]">chat</span>
-              WhatsApp Concierge (+91 9400886838)
-            </a>
           </nav>
         </div>
       )}

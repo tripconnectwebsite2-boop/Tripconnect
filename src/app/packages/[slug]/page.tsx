@@ -181,7 +181,7 @@ export default async function PackageDetailPage({
                     className="w-full py-3.5 rounded-xl bg-secondary hover:bg-on-secondary-container text-white font-label-md text-sm font-semibold flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.98]"
                   >
                     <span className="material-symbols-outlined text-[20px]">chat</span>
-                    <span>Chat on WhatsApp (+91 9400886838)</span>
+                    <span>Chat on WhatsApp</span>
                   </a>
                 </div>
 
