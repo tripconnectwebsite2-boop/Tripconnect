@@ -36,7 +36,7 @@ const PHOTO_PRESETS = [
   },
 ];
 
-type ActiveTab = "hero" | "kerala" | "why" | "about" | "contact";
+type ActiveTab = "hero" | "transport" | "kerala" | "why" | "about" | "contact";
 
 export default function AdminContentPage() {
   const [content, setContent] = useState<SiteContent | null>(null);
@@ -183,6 +183,7 @@ export default function AdminContentPage() {
         <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-outline-variant/20 scrollbar-none">
           {[
             { id: "hero", label: "Hero & Branding", icon: "stars" },
+            { id: "transport", label: "Transportation Services", icon: "directions_car" },
             { id: "kerala", label: "Kerala Showcase", icon: "landscape" },
             { id: "why", label: "Why Choose Us", icon: "verified_user" },
             { id: "about", label: "About Page", icon: "info" },
@@ -376,7 +377,297 @@ export default function AdminContentPage() {
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 2: KERALA TOURS SHOWCASE */}
+        {/* TAB 2: HOMEPAGE TRANSPORTATION SERVICES */}
+        {/* ========================================================================= */}
+        {activeTab === "transport" && (
+          <div className="space-y-8 animate-in fade-in">
+            {/* Header info */}
+            <div className="p-6 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="font-headline-sm text-base font-bold text-on-surface flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[20px]">directions_car</span>
+                  <span>Homepage Transportation Services Section</span>
+                </h3>
+                <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-bold">
+                  Home Screen Service List
+                </span>
+              </div>
+              <p className="text-xs text-on-surface-variant">
+                ഹോംപേജിൽ ട്രാൻസ്പോർട്ടേഷൻ സർവീസുകൾ ലിസ്റ്റ് ചെയ്യാനും (കാറുകളുടെ ഫോട്ടോ ഇല്ലാതെ സർവീസ് വിവരങ്ങൾ മാത്രം) അവ എഡിറ്റ് ചെയ്യാനും ഈ ഫോം ഉപയോഗിക്കുക.
+              </p>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-on-surface mb-1.5">
+                    Section Top Badge (ബാഡ്ജ്)
+                  </label>
+                  <input
+                    type="text"
+                    value={content.home_transport_badge || ""}
+                    onChange={(e) => handleFieldChange("home_transport_badge", e.target.value)}
+                    placeholder="e.g. Kerala & Pan-India Mobility"
+                    className="w-full px-4 py-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-sm focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-on-surface mb-1.5">
+                    Section Heading (തലക്കെട്ട്)
+                  </label>
+                  <input
+                    type="text"
+                    value={content.home_transport_title || ""}
+                    onChange={(e) => handleFieldChange("home_transport_title", e.target.value)}
+                    placeholder="e.g. Transportation, Taxi & Luxury Chauffeur Services"
+                    className="w-full px-4 py-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-sm focus:ring-2 focus:ring-primary font-bold text-base"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-on-surface mb-1.5">
+                    Section Subtitle / Description (വിവരണം)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={content.home_transport_subtitle || ""}
+                    onChange={(e) => handleFieldChange("home_transport_subtitle", e.target.value)}
+                    placeholder="വിവരണം നൽകുക..."
+                    className="w-full px-4 py-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-sm focus:ring-2 focus:ring-primary resize-y"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-on-surface mb-1.5">
+                    Bottom Button CTA Label (ബട്ടൺ ടെക്സ്റ്റ്)
+                  </label>
+                  <input
+                    type="text"
+                    value={content.home_transport_cta_text || ""}
+                    onChange={(e) => handleFieldChange("home_transport_cta_text", e.target.value)}
+                    placeholder="e.g. വാഹനങ്ങൾ തിരഞ്ഞെടുത്ത് ബുക്ക് ചെയ്യുക (View Fleet & Book)"
+                    className="w-full px-4 py-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-sm focus:ring-2 focus:ring-primary font-medium"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 6 Individual Services Editor */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Service 1 */}
+              <div className="p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 space-y-4">
+                <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider">
+                  <span className="material-symbols-outlined text-[18px]">flight_takeoff</span>
+                  <span>Service 1: Airport Pickup & Drop</span>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Service Title</label>
+                  <input
+                    type="text"
+                    value={content.home_transport_service_1_title || ""}
+                    onChange={(e) => handleFieldChange("home_transport_service_1_title", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Description</label>
+                  <textarea
+                    rows={3}
+                    value={content.home_transport_service_1_desc || ""}
+                    onChange={(e) => handleFieldChange("home_transport_service_1_desc", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary resize-y"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Material Icon Name</label>
+                  <input
+                    type="text"
+                    value={content.home_transport_service_1_icon || "flight_takeoff"}
+                    onChange={(e) => handleFieldChange("home_transport_service_1_icon", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Service 2 */}
+              <div className="p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 space-y-4">
+                <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wider">
+                  <span className="material-symbols-outlined text-[18px]">local_taxi</span>
+                  <span>Service 2: Standard Taxi & Cab Service</span>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Service Title</label>
+                  <input
+                    type="text"
+                    value={content.home_transport_service_2_title || ""}
+                    onChange={(e) => handleFieldChange("home_transport_service_2_title", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Description</label>
+                  <textarea
+                    rows={3}
+                    value={content.home_transport_service_2_desc || ""}
+                    onChange={(e) => handleFieldChange("home_transport_service_2_desc", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary resize-y"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Material Icon Name</label>
+                  <input
+                    type="text"
+                    value={content.home_transport_service_2_icon || "local_taxi"}
+                    onChange={(e) => handleFieldChange("home_transport_service_2_icon", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Service 3 */}
+              <div className="p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 space-y-4">
+                <div className="flex items-center gap-2 text-amber-600 font-bold text-xs uppercase tracking-wider">
+                  <span className="material-symbols-outlined text-[18px]">hotel_class</span>
+                  <span>Service 3: Premium Luxury Chauffeur</span>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Service Title</label>
+                  <input
+                    type="text"
+                    value={content.home_transport_service_3_title || ""}
+                    onChange={(e) => handleFieldChange("home_transport_service_3_title", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Description</label>
+                  <textarea
+                    rows={3}
+                    value={content.home_transport_service_3_desc || ""}
+                    onChange={(e) => handleFieldChange("home_transport_service_3_desc", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary resize-y"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Material Icon Name</label>
+                  <input
+                    type="text"
+                    value={content.home_transport_service_3_icon || "hotel_class"}
+                    onChange={(e) => handleFieldChange("home_transport_service_3_icon", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Service 4 */}
+              <div className="p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 space-y-4">
+                <div className="flex items-center gap-2 text-indigo-600 font-bold text-xs uppercase tracking-wider">
+                  <span className="material-symbols-outlined text-[18px]">directions_bus</span>
+                  <span>Service 4: All-India Bus Booking & Charters</span>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Service Title</label>
+                  <input
+                    type="text"
+                    value={content.home_transport_service_4_title || ""}
+                    onChange={(e) => handleFieldChange("home_transport_service_4_title", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Description</label>
+                  <textarea
+                    rows={3}
+                    value={content.home_transport_service_4_desc || ""}
+                    onChange={(e) => handleFieldChange("home_transport_service_4_desc", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary resize-y"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Material Icon Name</label>
+                  <input
+                    type="text"
+                    value={content.home_transport_service_4_icon || "directions_bus"}
+                    onChange={(e) => handleFieldChange("home_transport_service_4_icon", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Service 5 */}
+              <div className="p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 space-y-4">
+                <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-wider">
+                  <span className="material-symbols-outlined text-[18px]">terrain</span>
+                  <span>Service 5: Outstation Hill-Station Tours</span>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Service Title</label>
+                  <input
+                    type="text"
+                    value={content.home_transport_service_5_title || ""}
+                    onChange={(e) => handleFieldChange("home_transport_service_5_title", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Description</label>
+                  <textarea
+                    rows={3}
+                    value={content.home_transport_service_5_desc || ""}
+                    onChange={(e) => handleFieldChange("home_transport_service_5_desc", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary resize-y"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Material Icon Name</label>
+                  <input
+                    type="text"
+                    value={content.home_transport_service_5_icon || "terrain"}
+                    onChange={(e) => handleFieldChange("home_transport_service_5_icon", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Service 6 */}
+              <div className="p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 space-y-4">
+                <div className="flex items-center gap-2 text-rose-600 font-bold text-xs uppercase tracking-wider">
+                  <span className="material-symbols-outlined text-[18px]">groups</span>
+                  <span>Service 6: Wedding & VIP Event Convoys</span>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Service Title</label>
+                  <input
+                    type="text"
+                    value={content.home_transport_service_6_title || ""}
+                    onChange={(e) => handleFieldChange("home_transport_service_6_title", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary font-semibold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Description</label>
+                  <textarea
+                    rows={3}
+                    value={content.home_transport_service_6_desc || ""}
+                    onChange={(e) => handleFieldChange("home_transport_service_6_desc", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary resize-y"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-outline mb-1">Material Icon Name</label>
+                  <input
+                    type="text"
+                    value={content.home_transport_service_6_icon || "groups"}
+                    onChange={(e) => handleFieldChange("home_transport_service_6_icon", e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low border border-outline-variant/30 text-xs focus:ring-2 focus:ring-primary font-mono"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* TAB 3: KERALA TOURS SHOWCASE */}
         {/* ========================================================================= */}
         {activeTab === "kerala" && (
           <div className="space-y-8 animate-in fade-in">

@@ -201,6 +201,29 @@ export interface SiteContent {
   about_story_p2: string;
   about_mission_title: string;
   about_mission_desc: string;
+  // Homepage Transportation Services Section
+  home_transport_badge?: string;
+  home_transport_title?: string;
+  home_transport_subtitle?: string;
+  home_transport_service_1_title?: string;
+  home_transport_service_1_desc?: string;
+  home_transport_service_1_icon?: string;
+  home_transport_service_2_title?: string;
+  home_transport_service_2_desc?: string;
+  home_transport_service_2_icon?: string;
+  home_transport_service_3_title?: string;
+  home_transport_service_3_desc?: string;
+  home_transport_service_3_icon?: string;
+  home_transport_service_4_title?: string;
+  home_transport_service_4_desc?: string;
+  home_transport_service_4_icon?: string;
+  home_transport_service_5_title?: string;
+  home_transport_service_5_desc?: string;
+  home_transport_service_5_icon?: string;
+  home_transport_service_6_title?: string;
+  home_transport_service_6_desc?: string;
+  home_transport_service_6_icon?: string;
+  home_transport_cta_text?: string;
   // Contact & Footer
   contact_phone: string;
   contact_email: string;

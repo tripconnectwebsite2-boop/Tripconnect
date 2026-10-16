@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import KeralaTours from "@/components/KeralaTours";
+import HomeTransportationServices from "@/components/HomeTransportationServices";
 import FeaturedPackages from "@/components/FeaturedPackages";
 import Destinations from "@/components/Destinations";
 import WhyTripConnect from "@/components/WhyTripConnect";
@@ -37,6 +38,7 @@ export default async function Home() {
         <div className="flex flex-col w-full">
           <Hero content={siteContent} />
           <KeralaTours content={siteContent} packages={publishedPackages} />
+          <HomeTransportationServices content={siteContent} />
           <FeaturedPackages packages={publishedPackages} />
           <Destinations destinations={destinations} />
           <WhyTripConnect content={siteContent} />

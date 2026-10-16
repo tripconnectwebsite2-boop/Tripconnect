@@ -164,6 +164,18 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
               </span>
               <span>{secondaryCtaText}</span>
             </motion.a>
+
+            <motion.a
+              whileHover={{ scale: 1.04, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="group inline-flex items-center justify-center px-6 sm:px-7 py-3.5 sm:py-4 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all hover:shadow-md border border-primary/30"
+              href="/transportation"
+            >
+              <span className="material-symbols-outlined mr-2 text-[18px] text-primary">
+                directions_car
+              </span>
+              <span>Taxi &amp; Bus Services</span>
+            </motion.a>
           </motion.div>
         </motion.div>
 
