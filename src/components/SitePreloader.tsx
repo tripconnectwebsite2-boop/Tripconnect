@@ -1,49 +1,51 @@
 "use client";
 
-import { useEffect, useState, useRef, Suspense } from "react";
+import { useEffect, useState, useRef, useCallback, Suspense } from "react";
 import { usePathname } from "next/navigation";
-import LuxuryTravelLoader from "./LuxuryTravelLoader";
+import TripConnectLogoLoader from "./TripConnectLogoLoader";
 
 function GlobalLoaderInner() {
   const pathname = usePathname();
   const [loading, setLoading] = useState(true);
   const [fading, setFading] = useState(false);
   const prevPathname = useRef(pathname);
-  const fadeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const fadeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const triggerLoader = (visibleDurationMs: number = 2400) => {
-    if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+  const clearTimers = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+  }, []);
 
+  const showLoader = useCallback((durationMs: number = 1400) => {
+    clearTimers();
     setLoading(true);
     setFading(false);
 
-    fadeTimeoutRef.current = setTimeout(() => {
+    timerRef.current = setTimeout(() => {
       setFading(true);
-      fadeTimeoutRef.current = setTimeout(() => {
+      fadeTimerRef.current = setTimeout(() => {
         setLoading(false);
         setFading(false);
-      }, 400);
-    }, visibleDurationMs);
-  };
+      }, 350);
+    }, durationMs);
+  }, [clearTimers]);
 
-  // 1. Initial Page Load (Full Refresh / direct visit to any page)
+  // 1. Initial Page Load / Full Refresh (2.2 seconds)
   useEffect(() => {
-    // Show full luxury loading animation on page refresh (2.4 seconds)
-    triggerLoader(2400);
-    return () => {
-      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
-    };
-  }, []);
+    showLoader(2200);
+    return () => clearTimers();
+  }, [showLoader, clearTimers]);
 
-  // 2. Route Changes (Whenever user lands on /transportation, /destinations, etc.)
+  // 2. Next.js Route changes (pathname updates)
   useEffect(() => {
     if (prevPathname.current !== pathname) {
       prevPathname.current = pathname;
-      triggerLoader(1300);
+      showLoader(1400);
     }
-  }, [pathname]);
+  }, [pathname, showLoader]);
 
-  // 3. Catch clicks on any internal navigation links (Header links, cards, buttons)
+  // 3. Catch all internal link clicks across the site (Header, cards, buttons)
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
       const anchor = (e.target as HTMLElement)?.closest("a");
@@ -64,21 +66,20 @@ function GlobalLoaderInner() {
 
       try {
         const url = new URL(href, window.location.href);
-        if (
-          url.origin === window.location.origin &&
-          url.pathname !== window.location.pathname
-        ) {
-          // Immediately activate loader on link click
-          triggerLoader(1400);
+        const cleanCurrent = window.location.pathname.replace(/\/$/, "");
+        const cleanTarget = url.pathname.replace(/\/$/, "");
+
+        if (url.origin === window.location.origin && cleanTarget !== cleanCurrent) {
+          // Immediately show loading animation when navigating to another page
+          showLoader(1500);
         }
       } catch {
         // ignore
       }
     };
 
-    // Also handle browser back/forward navigation
     const handlePopState = () => {
-      triggerLoader(1300);
+      showLoader(1300);
     };
 
     document.addEventListener("click", handleDocumentClick, { capture: true });
@@ -87,19 +88,20 @@ function GlobalLoaderInner() {
     return () => {
       document.removeEventListener("click", handleDocumentClick, { capture: true });
       window.removeEventListener("popstate", handlePopState);
+      clearTimers();
     };
-  }, []);
+  }, [showLoader, clearTimers]);
 
   if (!loading) return null;
 
   return (
     <div
-      aria-hidden="true"
-      className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl transition-opacity duration-400 ease-out select-none ${
+      aria-label="Loading Trip Connect"
+      className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl transition-opacity duration-350 ease-out select-none ${
         fading ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"
       }`}
     >
-      <LuxuryTravelLoader size="md" />
+      <TripConnectLogoLoader size="fullscreen" />
     </div>
   );
 }
