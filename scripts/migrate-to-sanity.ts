@@ -7,6 +7,9 @@
 import { createClient } from '@sanity/client';
 import fs from 'fs';
 import path from 'path';
+import { loadEnvConfig } from '@next/env';
+
+loadEnvConfig(process.cwd());
 
 async function runDirectMigration() {
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
