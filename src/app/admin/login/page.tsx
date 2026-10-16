@@ -47,9 +47,12 @@ function AdminLoginForm() {
       if (userEmail !== AUTHORIZED_ADMIN_EMAIL) {
         await signOut(auth);
         setErrorMsg(
-          `Access Denied: The account "${user.email}" is not authorized. Only ${AUTHORIZED_ADMIN_EMAIL} is permitted to access the admin portal.`
+          `Access Denied: "${user.email}" is not authorized. Redirecting to website...`
         );
         setIsLoading(false);
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1800);
         return;
       }
 
