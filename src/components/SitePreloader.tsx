@@ -8,10 +8,11 @@ function GlobalLoaderInner() {
   const pathname = usePathname();
   const isAdmin = pathname ? (pathname.startsWith("/admin") || pathname.startsWith("/studio")) : false;
 
-  // Never start in loading state for admin or studio
-  const [loading, setLoading] = useState(() => !isAdmin);
+  // ONLY when switching pages: initial load / refresh is NOT loading
+  const [loading, setLoading] = useState(false);
   const [fading, setFading] = useState(false);
   const prevPathname = useRef(pathname);
+  const isInitialMount = useRef(true);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const fadeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -41,19 +42,18 @@ function GlobalLoaderInner() {
     }, durationMs);
   }, [clearTimers, pathname]);
 
-  // 1. Initial Page Load / Full Refresh (Only for public website, never for admin)
+  // 1. Initial Page Load / Full Refresh: DO NOT SHOW LOADER
   useEffect(() => {
-    if (pathname && (pathname.startsWith("/admin") || pathname.startsWith("/studio"))) {
-      setLoading(false);
-      setFading(false);
+    isInitialMount.current = false;
+  }, []);
+
+  // 2. Route Changes (ONLY when switching pages):
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
       return;
     }
-    showLoader(3500);
-    return () => clearTimers();
-  }, [pathname, showLoader, clearTimers]);
 
-  // 2. Next.js Route changes (pathname updates)
-  useEffect(() => {
     if (prevPathname.current !== pathname) {
       prevPathname.current = pathname;
 
@@ -65,6 +65,7 @@ function GlobalLoaderInner() {
         return;
       }
 
+      // Show loader when changing pages
       showLoader(3500);
     }
   }, [pathname, showLoader, clearTimers]);
@@ -104,8 +105,8 @@ function GlobalLoaderInner() {
         const cleanCurrent = window.location.pathname.replace(/\/$/, "");
         const cleanTarget = url.pathname.replace(/\/$/, "");
 
+        // ONLY when switching to a DIFFERENT page!
         if (url.origin === window.location.origin && cleanTarget !== cleanCurrent) {
-          // Keep loader until logo drawing and fill animation completes (3.5s)
           showLoader(3500);
         }
       } catch {
