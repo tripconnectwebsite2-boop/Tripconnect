@@ -27,7 +27,14 @@ export default async function AdminDashboardOverview() {
               Trip Connect Kochi — Enquiries &amp; Package Pipeline
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/admin/content"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary text-white font-label-md text-label-md font-semibold hover:bg-on-secondary-container transition-all shadow-sm"
+            >
+              <span className="material-symbols-outlined text-[18px]">edit_document</span>
+              <span>Edit Website Text &amp; Images</span>
+            </Link>
             <Link
               href="/admin/packages"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-semibold hover:bg-primary-container transition-all shadow-sm"

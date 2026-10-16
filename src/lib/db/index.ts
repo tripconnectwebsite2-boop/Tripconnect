@@ -27,6 +27,7 @@ import {
   initialPages,
 } from "./seed-data";
 import { createAdminClient } from "../supabase/admin";
+import { fetchStoreFromFirestore, saveStoreToFirestore } from "../firebase/db";
 
 interface DatabaseStore {
   packages: TravelPackage[];
@@ -260,6 +261,31 @@ function ensureStore(): DatabaseStore {
   }
 }
 
+async function getStoreAsync(): Promise<DatabaseStore> {
+  const local = ensureStore();
+  try {
+    const cloud = await fetchStoreFromFirestore();
+    if (cloud && typeof cloud === "object") {
+      inMemoryStore = {
+        ...local,
+        ...cloud,
+        packages: cloud.packages || local.packages,
+        destinations: cloud.destinations || local.destinations,
+        content: cloud.content || local.content,
+        settings: cloud.settings || local.settings,
+        offers: cloud.offers || local.offers,
+        reviews: cloud.reviews || local.reviews,
+        enquiries: cloud.enquiries || local.enquiries,
+        pages: cloud.pages || local.pages,
+      };
+      return inMemoryStore!;
+    }
+  } catch {
+    // Cloud fetch silent fallback
+  }
+  return local;
+}
+
 function saveStore(store: DatabaseStore) {
   inMemoryStore = store;
   try {
@@ -270,6 +296,8 @@ function saveStore(store: DatabaseStore) {
   } catch (err) {
     console.warn("[DatabaseStore] Disk write skipped in serverless environment:", err);
   }
+  // Persist to Cloud Firestore across all Vercel serverless containers
+  saveStoreToFirestore(store).catch(() => {});
 }
 
 function isSupabaseConfigured(): boolean {
@@ -290,7 +318,7 @@ export async function getPackages(filters?: {
   search?: string;
   includeUnverified?: boolean;
 }): Promise<TravelPackage[]> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   let result = store.packages;
 
   if (filters?.status) {
@@ -339,7 +367,7 @@ export async function getPackageBySlug(
   slug: string,
   includeDrafts = false
 ): Promise<TravelPackage | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const pkg = store.packages.find((p) => p.slug === slug);
   if (!pkg) return null;
   if (!includeDrafts && (pkg.status !== "published" || !pkg.content_verified || pkg.slug.endsWith("-draft"))) {
@@ -349,12 +377,12 @@ export async function getPackageBySlug(
 }
 
 export async function getPackageById(id: string): Promise<TravelPackage | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   return store.packages.find((p) => p.id === id) || null;
 }
 
 export async function createPackage(data: Partial<TravelPackage>): Promise<TravelPackage> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const now = new Date().toISOString();
   const newPackage: TravelPackage = {
     id: `pkg-${Date.now()}`,
@@ -399,7 +427,7 @@ export async function updatePackage(
   id: string,
   data: Partial<TravelPackage>
 ): Promise<TravelPackage | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const index = store.packages.findIndex((p) => p.id === id);
   if (index === -1) return null;
 
@@ -420,7 +448,7 @@ export async function updatePackage(
 }
 
 export async function deletePackage(id: string): Promise<boolean> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const initialLength = store.packages.length;
   store.packages = store.packages.filter((p) => p.id !== id);
   saveStore(store);
@@ -431,7 +459,7 @@ export async function deletePackage(id: string): Promise<boolean> {
 // Destinations
 // -----------------------------------------------------------------------------
 export async function getDestinations(onlyPublished = true): Promise<Destination[]> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   if (onlyPublished) {
     return store.destinations.filter((d) => d.status === "published");
   }
@@ -439,12 +467,12 @@ export async function getDestinations(onlyPublished = true): Promise<Destination
 }
 
 export async function getDestinationBySlug(slug: string): Promise<Destination | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   return store.destinations.find((d) => d.slug === slug) || null;
 }
 
 export async function createDestination(data: Partial<Destination>): Promise<Destination> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const now = new Date().toISOString();
   const newDest: Destination = {
     id: `dest-${Date.now()}`,
@@ -473,7 +501,7 @@ export async function updateDestination(
   id: string,
   data: Partial<Destination>
 ): Promise<Destination | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const idx = store.destinations.findIndex((d) => d.id === id);
   if (idx === -1) return null;
   store.destinations[idx] = {
@@ -486,7 +514,7 @@ export async function updateDestination(
 }
 
 export async function deleteDestination(id: string): Promise<boolean> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const initial = store.destinations.length;
   store.destinations = store.destinations.filter((d) => d.id !== id);
   saveStore(store);
@@ -500,7 +528,7 @@ export async function getEnquiries(filters?: {
   status?: string;
   search?: string;
 }): Promise<Enquiry[]> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   let result = [...store.enquiries].sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   );
@@ -525,14 +553,14 @@ export async function getEnquiries(filters?: {
 }
 
 export async function getEnquiryById(id: string): Promise<Enquiry | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   return store.enquiries.find((e) => e.id === id) || null;
 }
 
 export async function createEnquiry(
   data: Omit<Enquiry, "id" | "created_at" | "updated_at">
 ): Promise<Enquiry> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const now = new Date().toISOString();
   const newEnquiry: Enquiry = {
     ...data,
@@ -551,7 +579,7 @@ export async function updateEnquiryStatus(
   id: string,
   status: EnquiryStatus
 ): Promise<Enquiry | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const idx = store.enquiries.findIndex((e) => e.id === id);
   if (idx === -1) return null;
 
@@ -562,7 +590,7 @@ export async function updateEnquiryStatus(
 }
 
 export async function getEnquiryNotes(enquiryId: string): Promise<EnquiryNote[]> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   return store.enquiry_notes.filter((n) => n.enquiry_id === enquiryId);
 }
 
@@ -571,7 +599,7 @@ export async function addEnquiryNote(
   note: string,
   createdBy = "tripconnectwebsite2@gmail.com"
 ): Promise<EnquiryNote> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const newNote: EnquiryNote = {
     id: `note-${Date.now()}`,
     enquiry_id: enquiryId,
@@ -585,7 +613,7 @@ export async function addEnquiryNote(
 }
 
 export async function deleteEnquiry(id: string): Promise<boolean> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const initialLength = store.enquiries.length;
   store.enquiries = store.enquiries.filter((e) => e.id !== id);
   if (store.enquiries.length === initialLength) return false;
@@ -596,7 +624,7 @@ export async function deleteEnquiry(id: string): Promise<boolean> {
 }
 
 export async function deleteEnquiriesBulk(ids: string[]): Promise<{ count: number }> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const idSet = new Set(ids);
   const initialLength = store.enquiries.length;
   store.enquiries = store.enquiries.filter((e) => !idSet.has(e.id));
@@ -607,7 +635,7 @@ export async function deleteEnquiriesBulk(ids: string[]): Promise<{ count: numbe
 }
 
 export async function clearAllEnquiries(): Promise<{ count: number }> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const count = store.enquiries.length;
   store.enquiries = [];
   store.enquiry_notes = [];
@@ -619,7 +647,7 @@ export async function clearAllEnquiries(): Promise<{ count: number }> {
 // Offers
 // -----------------------------------------------------------------------------
 export async function getOffers(onlyActiveAndCurrent = true): Promise<SpecialOffer[]> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const today = new Date().toISOString().split("T")[0];
 
   if (onlyActiveAndCurrent) {
@@ -635,7 +663,7 @@ export async function getOffers(onlyActiveAndCurrent = true): Promise<SpecialOff
 }
 
 export async function createOffer(data: Partial<SpecialOffer>): Promise<SpecialOffer> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const now = new Date().toISOString();
   const newOffer: SpecialOffer = {
     id: `offer-${Date.now()}`,
@@ -662,7 +690,7 @@ export async function updateOffer(
   id: string,
   data: Partial<SpecialOffer>
 ): Promise<SpecialOffer | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const idx = store.offers.findIndex((o) => o.id === id);
   if (idx === -1) return null;
   store.offers[idx] = {
@@ -675,7 +703,7 @@ export async function updateOffer(
 }
 
 export async function deleteOffer(id: string): Promise<boolean> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const initial = store.offers.length;
   store.offers = store.offers.filter((o) => o.id !== id);
   saveStore(store);
@@ -686,7 +714,7 @@ export async function deleteOffer(id: string): Promise<boolean> {
 // Reviews
 // -----------------------------------------------------------------------------
 export async function getReviews(onlyApproved = true): Promise<Review[]> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   if (onlyApproved) {
     return store.reviews.filter((r) => r.status === "approved");
   }
@@ -694,7 +722,7 @@ export async function getReviews(onlyApproved = true): Promise<Review[]> {
 }
 
 export async function createReview(data: Partial<Review>): Promise<Review> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const now = new Date().toISOString();
   const newReview: Review = {
     id: `rev-${Date.now()}`,
@@ -714,7 +742,7 @@ export async function createReview(data: Partial<Review>): Promise<Review> {
 }
 
 export async function updateReview(id: string, data: Partial<Review>): Promise<Review | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const idx = store.reviews.findIndex((r) => r.id === id);
   if (idx === -1) return null;
   store.reviews[idx] = {
@@ -727,7 +755,7 @@ export async function updateReview(id: string, data: Partial<Review>): Promise<R
 }
 
 export async function deleteReview(id: string): Promise<boolean> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const initial = store.reviews.length;
   store.reviews = store.reviews.filter((r) => r.id !== id);
   saveStore(store);
@@ -738,14 +766,14 @@ export async function deleteReview(id: string): Promise<boolean> {
 // Site Settings
 // -----------------------------------------------------------------------------
 export async function getSiteSettings(): Promise<SiteSettings> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   return store.settings;
 }
 
 export async function updateSiteSettings(
   settings: Partial<SiteSettings>
 ): Promise<SiteSettings> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   store.settings = {
     ...store.settings,
     ...settings,
@@ -759,14 +787,14 @@ export async function updateSiteSettings(
 // Site Content & Media CMS (All Text & Images)
 // -----------------------------------------------------------------------------
 export async function getSiteContent(): Promise<SiteContent> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   return store.content || initialSiteContent;
 }
 
 export async function updateSiteContent(
   content: Partial<SiteContent>
 ): Promise<SiteContent> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   store.content = {
     ...(store.content || initialSiteContent),
     ...content,
@@ -784,7 +812,7 @@ export async function getBugs(filters?: {
   severity?: string;
   category?: string;
 }): Promise<BugReport[]> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   let list = store.bugs || [];
 
   if (filters?.status && filters.status !== "all") {
@@ -803,7 +831,7 @@ export async function getBugs(filters?: {
 }
 
 export async function getBugById(id: string): Promise<BugReport | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const found = (store.bugs || []).find((b) => b.id === id);
   return found || null;
 }
@@ -811,7 +839,7 @@ export async function getBugById(id: string): Promise<BugReport | null> {
 export async function createBug(
   data: Omit<BugReport, "id" | "status" | "created_at" | "updated_at">
 ): Promise<BugReport> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const newBug: BugReport = {
     ...data,
     id: `bug-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
@@ -830,7 +858,7 @@ export async function updateBug(
   id: string,
   updates: Partial<BugReport>
 ): Promise<BugReport | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   if (!store.bugs) store.bugs = [];
   const idx = store.bugs.findIndex((b) => b.id === id);
   if (idx === -1) return null;
@@ -855,7 +883,7 @@ export async function updateBug(
 }
 
 export async function deleteBug(id: string): Promise<boolean> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   if (!store.bugs) return false;
   const initial = store.bugs.length;
   store.bugs = store.bugs.filter((b) => b.id !== id);
@@ -871,7 +899,7 @@ export async function getCustomPages(filters?: {
   show_in_header?: boolean;
   show_in_footer?: boolean;
 }): Promise<CustomPage[]> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   let pages = store.pages || [];
   if (filters?.status) {
     pages = pages.filter((p) => p.status === filters.status);
@@ -888,7 +916,7 @@ export async function getCustomPages(filters?: {
 }
 
 export async function getCustomPageBySlug(slug: string): Promise<CustomPage | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const page = (store.pages || []).find(
     (p) => p.slug.toLowerCase() === slug.toLowerCase()
   );
@@ -896,7 +924,7 @@ export async function getCustomPageBySlug(slug: string): Promise<CustomPage | nu
 }
 
 export async function getCustomPageById(id: string): Promise<CustomPage | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   const page = (store.pages || []).find((p) => p.id === id);
   return page || null;
 }
@@ -904,7 +932,7 @@ export async function getCustomPageById(id: string): Promise<CustomPage | null> 
 export async function createCustomPage(
   data: Omit<CustomPage, "id" | "created_at" | "updated_at">
 ): Promise<CustomPage> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   if (!store.pages) store.pages = [];
 
   // Generate clean slug
@@ -939,7 +967,7 @@ export async function updateCustomPage(
   id: string,
   data: Partial<CustomPage>
 ): Promise<CustomPage | null> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   if (!store.pages) store.pages = [];
   const idx = store.pages.findIndex((p) => p.id === id);
   if (idx === -1) return null;
@@ -974,7 +1002,7 @@ export async function updateCustomPage(
 }
 
 export async function deleteCustomPage(id: string): Promise<boolean> {
-  const store = ensureStore();
+  const store = await getStoreAsync();
   if (!store.pages) return false;
   const initial = store.pages.length;
   store.pages = store.pages.filter((p) => p.id !== id);

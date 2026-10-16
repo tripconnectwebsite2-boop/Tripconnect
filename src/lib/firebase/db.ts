@@ -1,0 +1,64 @@
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyC6STcc6a82EIrg7apay8QdsH24HobiTRw",
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "trip-connect-versel.firebaseapp.com",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "trip-connect-versel",
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "trip-connect-versel.firebasestorage.app",
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "913300034921",
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:913300034921:web:fafe1ed1ed98337b4a99f8",
+};
+
+function getFirestoreInstance() {
+  try {
+    const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+    return getFirestore(app);
+  } catch (err) {
+    console.warn("[Firestore] Initialization error:", err);
+    return null;
+  }
+}
+
+let lastFailedTime = 0;
+const RETRY_COOLDOWN_MS = 30000;
+
+/**
+ * Fetch persistent store from Cloud Firestore.
+ * Returns null if Firestore is not provisioned or offline, falling back safely to local memory.
+ */
+export async function fetchStoreFromFirestore(): Promise<any | null> {
+  if (Date.now() - lastFailedTime < RETRY_COOLDOWN_MS) {
+    return null;
+  }
+  try {
+    const db = getFirestoreInstance();
+    if (!db) return null;
+    const snap = await getDoc(doc(db, "tripconnect", "store"));
+    if (snap.exists()) {
+      return snap.data();
+    }
+  } catch (err: any) {
+    lastFailedTime = Date.now();
+  }
+  return null;
+}
+
+/**
+ * Persist store to Cloud Firestore across all Vercel serverless instances.
+ */
+export async function saveStoreToFirestore(store: any): Promise<boolean> {
+  try {
+    const db = getFirestoreInstance();
+    if (!db) return false;
+    // Clean undefined fields before writing to Firestore
+    const cleanStore = JSON.parse(JSON.stringify(store));
+    await setDoc(doc(db, "tripconnect", "store"), cleanStore);
+    return true;
+  } catch (err: any) {
+    if (err?.code !== "permission-denied" && !err?.message?.includes("PERMISSION_DENIED")) {
+      console.warn("[Firestore] Cloud store write notice:", err?.message || err);
+    }
+    return false;
+  }
+}
