@@ -1,57 +1,117 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+/**
+ * High-reliability Firestore Cloud Persistence layer for Vercel Serverless Functions.
+ * Uses direct Firestore REST API over standard HTTPS fetch.
+ * Completely eliminates gRPC/WebChannel stream drops, background task aborts, and Code 5 NOT_FOUND errors.
+ */
 
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyC6STcc6a82EIrg7apay8QdsH24HobiTRw",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "trip-connect-versel.firebaseapp.com",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "trip-connect-versel",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "trip-connect-versel.firebasestorage.app",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "913300034921",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:913300034921:web:fafe1ed1ed98337b4a99f8",
-};
+const FIREBASE_API_KEY = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyC6STcc6a82EIrg7apay8QdsH24HobiTRw";
+const FIREBASE_PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "trip-connect-versel";
 
-function getFirestoreInstance() {
-  try {
-    const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-    return getFirestore(app);
-  } catch (err) {
-    console.warn("[Firestore] Initialization error:", err);
-    return null;
+const REST_BASE_URL = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents`;
+
+function toFirestoreValue(val: any): any {
+  if (val === null || val === undefined) return { nullValue: null };
+  if (typeof val === "boolean") return { booleanValue: val };
+  if (typeof val === "number") {
+    if (Number.isInteger(val)) return { integerValue: String(val) };
+    return { doubleValue: val };
   }
+  if (typeof val === "string") return { stringValue: val };
+  if (Array.isArray(val)) {
+    return { arrayValue: { values: val.map(toFirestoreValue) } };
+  }
+  if (typeof val === "object") {
+    const fields: Record<string, any> = {};
+    for (const [k, v] of Object.entries(val)) {
+      if (v !== undefined) fields[k] = toFirestoreValue(v);
+    }
+    return { mapValue: { fields } };
+  }
+  return { stringValue: String(val) };
 }
 
-/**
- * Fetch persistent store from Cloud Firestore.
- * Always fetches the freshest store from cloud without cooldown locks.
- */
-export async function fetchStoreFromFirestore(): Promise<any | null> {
-  try {
-    const db = getFirestoreInstance();
-    if (!db) return null;
-    const snap = await getDoc(doc(db, "tripconnect", "store"));
-    if (snap.exists()) {
-      return snap.data();
+function fromFirestoreValue(val: any): any {
+  if (!val) return null;
+  if ("nullValue" in val) return null;
+  if ("booleanValue" in val) return val.booleanValue;
+  if ("integerValue" in val) return Number(val.integerValue);
+  if ("doubleValue" in val) return val.doubleValue;
+  if ("stringValue" in val) return val.stringValue;
+  if ("arrayValue" in val) return (val.arrayValue.values || []).map(fromFirestoreValue);
+  if ("mapValue" in val) {
+    const obj: Record<string, any> = {};
+    for (const [k, v] of Object.entries(val.mapValue.fields || {})) {
+      obj[k] = fromFirestoreValue(v);
     }
-  } catch (err: any) {
-    console.warn("[Firestore] Read error:", err?.message || err);
+    return obj;
   }
   return null;
 }
 
 /**
- * Persist store to Cloud Firestore across all Vercel serverless instances.
- * Awaited directly to guarantee persistence before serverless response termination.
+ * Fetch website store directly from Cloud Firestore via HTTPS.
+ * Guaranteed stateless, instant, and compatible across all Vercel serverless containers.
+ */
+export async function fetchStoreFromFirestore(): Promise<any | null> {
+  try {
+    const url = `${REST_BASE_URL}/tripconnect/store?key=${FIREBASE_API_KEY}`;
+    const res = await fetch(url, {
+      method: "GET",
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      if (res.status === 404) return null;
+      console.warn(`[Firestore REST] Fetch failed with status ${res.status}`);
+      return null;
+    }
+
+    const json = await res.json();
+    if (!json.fields) return null;
+
+    const store: Record<string, any> = {};
+    for (const [k, v] of Object.entries(json.fields)) {
+      store[k] = fromFirestoreValue(v);
+    }
+    return store;
+  } catch (err: any) {
+    console.warn("[Firestore REST] Read notice:", err?.message || err);
+    return null;
+  }
+}
+
+/**
+ * Save website store directly to Cloud Firestore via HTTPS PATCH.
+ * Completely awaited before serverless responses terminate.
  */
 export async function saveStoreToFirestore(store: any): Promise<boolean> {
   try {
-    const db = getFirestoreInstance();
-    if (!db) return false;
-    // Clean undefined fields before writing to Firestore
+    const url = `${REST_BASE_URL}/tripconnect/store?key=${FIREBASE_API_KEY}`;
     const cleanStore = JSON.parse(JSON.stringify(store));
-    await setDoc(doc(db, "tripconnect", "store"), cleanStore);
+
+    const fields: Record<string, any> = {};
+    for (const [k, v] of Object.entries(cleanStore)) {
+      fields[k] = toFirestoreValue(v);
+    }
+
+    const res = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ fields }),
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error(`[Firestore REST] Save failed (${res.status}):`, errText);
+      return false;
+    }
+
     return true;
   } catch (err: any) {
-    console.error("[Firestore] Cloud store write error:", err?.message || err);
+    console.error("[Firestore REST] Write notice:", err?.message || err);
     return false;
   }
 }
