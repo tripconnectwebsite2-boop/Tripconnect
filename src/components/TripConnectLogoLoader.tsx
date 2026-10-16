@@ -7,7 +7,7 @@ interface TripConnectLogoLoaderProps {
 
 export default function TripConnectLogoLoader({
   className = "",
-  size = "md",
+  size = "fullscreen",
 }: TripConnectLogoLoaderProps) {
   const sizeClasses = {
     sm: "w-[240px] max-w-[85vw]",
@@ -30,10 +30,10 @@ export default function TripConnectLogoLoader({
             overflow: visible;
           }
           .tc-logo-path {
-            fill: #000;
+            fill: #000000;
             fill-opacity: 0;
-            stroke: #000;
-            stroke-width: 1.25;
+            stroke: #000000;
+            stroke-width: 1.35;
             stroke-linejoin: round;
             stroke-linecap: round;
             stroke-dasharray: 1;
@@ -46,16 +46,6 @@ export default function TripConnectLogoLoader({
             animation-iteration-count: infinite, infinite;
             animation-timing-function: cubic-bezier(.4,0,.2,1), ease-out;
             animation-fill-mode: both, both;
-          }
-          @media (prefers-color-scheme: dark) {
-            .tc-logo-path {
-              fill: #ffffff;
-              stroke: #ffffff;
-            }
-          }
-          .dark .tc-logo-path {
-            fill: #ffffff;
-            stroke: #ffffff;
           }
           .tc-logo-path:nth-of-type(1) { --i: 0; }
           .tc-logo-path:nth-of-type(2) { --i: 1; }
@@ -82,14 +72,13 @@ export default function TripConnectLogoLoader({
           .tc-logo-path:nth-of-type(23) { --i: 22; }
           @keyframes tc-draw-line {
             0% { stroke-dashoffset: 1; }
-            65% { stroke-dashoffset: 0; }
-            100% { stroke-dashoffset: 0; }
+            60% { stroke-dashoffset: 0; }
+            90% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: 1; }
           }
           @keyframes tc-reveal-fill {
-            0% { fill-opacity: 0; }
-            45% { fill-opacity: 0; }
-            70% { fill-opacity: 1; }
-            90% { fill-opacity: 1; }
+            0%, 40% { fill-opacity: 0; }
+            65%, 90% { fill-opacity: 1; }
             100% { fill-opacity: 0; }
           }
           @media (prefers-reduced-motion: reduce) {

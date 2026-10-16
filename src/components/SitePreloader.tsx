@@ -8,43 +8,41 @@ function GlobalLoaderInner() {
   const pathname = usePathname();
   const [loading, setLoading] = useState(true);
   const [fading, setFading] = useState(false);
-  const isFirstMount = useRef(true);
   const prevPathname = useRef(pathname);
+  const fadeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 1. Initial Page Load Animation (on refresh or direct open of any page)
-  useEffect(() => {
-    const fadeTimer = setTimeout(() => {
+  const triggerLoader = (visibleDurationMs: number = 1300) => {
+    if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+
+    setLoading(true);
+    setFading(false);
+
+    fadeTimeoutRef.current = setTimeout(() => {
       setFading(true);
-      setTimeout(() => {
+      fadeTimeoutRef.current = setTimeout(() => {
         setLoading(false);
         setFading(false);
-        isFirstMount.current = false;
       }, 350);
-    }, 1100);
+    }, visibleDurationMs);
+  };
 
-    return () => clearTimeout(fadeTimer);
+  // 1. Initial Page Load (Refresh or direct open)
+  useEffect(() => {
+    triggerLoader(1400);
+    return () => {
+      if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
+    };
   }, []);
 
-  // 2. Subsequent Route Navigation (When pathname changes)
+  // 2. Route Changes (Whenever user lands on /transportation, /destinations, etc.)
   useEffect(() => {
-    if (isFirstMount.current) return;
-
     if (prevPathname.current !== pathname) {
       prevPathname.current = pathname;
-      // When new route arrives, hold for brief smooth view of logo then fade out
-      const fadeTimer = setTimeout(() => {
-        setFading(true);
-        setTimeout(() => {
-          setLoading(false);
-          setFading(false);
-        }, 350);
-      }, 700);
-
-      return () => clearTimeout(fadeTimer);
+      triggerLoader(1300);
     }
   }, [pathname]);
 
-  // 3. Catch user clicks on internal page navigation links (Transportation, Destinations, Packages, etc.)
+  // 3. Catch clicks on any internal links (Navigation links, buttons, cards)
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
       const anchor = (e.target as HTMLElement)?.closest("a");
@@ -69,21 +67,26 @@ function GlobalLoaderInner() {
           url.origin === window.location.origin &&
           url.pathname !== window.location.pathname
         ) {
-          // Navigating to another page (Transportation, Destinations, etc.)
-          // Immediately display the Trip Connect logo loader!
-          setLoading(true);
-          setFading(false);
+          // Immediately activate loader on click
+          triggerLoader(1500);
         }
       } catch {
         // ignore
       }
     };
 
+    // Also listen to back/forward browser button
+    const handlePopState = () => {
+      triggerLoader(1300);
+    };
+
     document.addEventListener("click", handleDocumentClick, { capture: true });
-    return () =>
-      document.removeEventListener("click", handleDocumentClick, {
-        capture: true,
-      });
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      document.removeEventListener("click", handleDocumentClick, { capture: true });
+      window.removeEventListener("popstate", handlePopState);
+    };
   }, []);
 
   if (!loading) return null;
@@ -91,7 +94,7 @@ function GlobalLoaderInner() {
   return (
     <div
       aria-hidden="true"
-      className={`fixed inset-0 z-[999999] flex items-center justify-center bg-surface/95 backdrop-blur-xl transition-opacity duration-350 select-none ${
+      className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-white/98 backdrop-blur-2xl transition-opacity duration-300 select-none ${
         fading ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"
       }`}
     >
