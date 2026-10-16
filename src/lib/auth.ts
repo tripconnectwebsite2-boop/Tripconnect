@@ -65,7 +65,7 @@ export async function createLocalAdminSession(email: string): Promise<boolean> {
   const sessionData = {
     email: email.trim().toLowerCase(),
     role: "admin",
-    exp: Date.now() + 1000 * 60 * 60 * 24 * 7, // 7 days
+    exp: Date.now() + 1000 * 60 * 60 * 2, // 2 hour max session limit
     iat: Date.now(),
   };
 
@@ -75,7 +75,6 @@ export async function createLocalAdminSession(email: string): Promise<boolean> {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7,
   });
 
   return true;

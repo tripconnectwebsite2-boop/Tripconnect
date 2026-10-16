@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -27,18 +27,54 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const handleLogout = async () => {
     try {
-      try {
-        sessionStorage.removeItem("tc_admin_passcode_verified");
-      } catch {
-        // Silent
-      }
+      sessionStorage.removeItem("tc_admin_session_active");
+      sessionStorage.removeItem("tc_admin_passcode_verified");
       await fetch("/api/admin/auth/logout", { method: "POST" });
-      router.push("/admin/login");
-      router.refresh();
     } catch {
-      router.push("/admin/login");
+      // Silent
     }
+    router.push("/admin/login");
+    router.refresh();
   };
+
+  // Automatic logout when user navigates back or leaves the admin section
+  useEffect(() => {
+    const active = sessionStorage.getItem("tc_admin_session_active");
+    if (!active) {
+      handleLogout();
+      return;
+    }
+
+    const handlePopState = () => {
+      if (!window.location.pathname.startsWith("/admin") || window.location.pathname === "/admin/login") {
+        sessionStorage.removeItem("tc_admin_session_active");
+        sessionStorage.removeItem("tc_admin_passcode_verified");
+        navigator.sendBeacon?.("/api/admin/auth/logout");
+      }
+    };
+
+    const handlePageHide = () => {
+      sessionStorage.removeItem("tc_admin_session_active");
+      sessionStorage.removeItem("tc_admin_passcode_verified");
+      navigator.sendBeacon?.("/api/admin/auth/logout");
+    };
+
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted || !sessionStorage.getItem("tc_admin_session_active")) {
+        handleLogout();
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    window.addEventListener("pagehide", handlePageHide);
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("pagehide", handlePageHide);
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-surface-container-low flex flex-col lg:flex-row text-on-surface">

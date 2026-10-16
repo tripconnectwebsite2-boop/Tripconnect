@@ -82,6 +82,7 @@ function AdminLoginForm() {
       }
 
       try {
+        sessionStorage.setItem("tc_admin_session_active", "true");
         sessionStorage.setItem("tc_admin_passcode_verified", "true");
       } catch {
         // Silent
