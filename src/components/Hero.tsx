@@ -19,6 +19,8 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
   const heroBgImage = content?.hero_bg_image || "https://lh3.googleusercontent.com/aida-public/AB6AXuASJNgmdoiZS-L2EeJH6bC_BJnjEyc-ps714Hvrrs1hcrJEl2ZyJC4wWWDzjURJSuRBsPKY-RAjO0M6M_UiktOdHDcQ5vlA9kuFvyCtaZqCgPEG5rcst98ta1hhUz2TNekWn6_J1_1IxA436qF-rzy4WVUPxKdoDVWeDBRRqt-5BOVhknH02JbQfYWaAVE55EFBq0CYXA9RvcaQPY1ypKD72jvMgsh53TqVVFKOiI8nV_M6Dlxhmn6qGg";
   const primaryCtaText = content?.hero_primary_cta_text || "Explore Trips";
   const primaryCtaLink = content?.hero_primary_cta_link || "#kerala-tours";
+  const secondaryCtaText = content?.hero_secondary_cta_text || "Plan Your Trip";
+  const secondaryCtaLink = content?.hero_secondary_cta_link || "#plan-trip";
 
   // Scroll animations linked directly to Hero container scroll progress
   const { scrollYProgress } = useScroll({
