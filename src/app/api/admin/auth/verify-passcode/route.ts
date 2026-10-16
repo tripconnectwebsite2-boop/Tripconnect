@@ -1,28 +1,38 @@
 import { NextResponse } from "next/server";
 import { clearAdminSession, createLocalAdminSession } from "@/lib/auth";
-import { verifyPasscode } from "@/lib/auth-token";
+import { verifyPasscode, isEmailAuthorized } from "@/lib/auth-token";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));
     const passcode = body?.passcode;
+    const email = (body?.email || "tripconnectwebsite2@gmail.com").trim().toLowerCase();
 
-    const isValid = verifyPasscode(passcode);
-
-    if (!isValid) {
-      // Immediately disconnect and clear admin session as requested by user
+    if (!isEmailAuthorized(email)) {
       await clearAdminSession();
       return NextResponse.json(
         {
           success: false,
-          error: "Invalid master security key. Admin session has been terminated.",
+          error: "Unauthorized email account. Access is restricted exclusively to authorized administrators.",
+        },
+        { status: 403 }
+      );
+    }
+
+    const isValid = verifyPasscode(passcode);
+
+    if (!isValid) {
+      await clearAdminSession();
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid master security passcode. Access denied.",
         },
         { status: 401 }
       );
     }
 
-    // Establish official admin session for all subsequent API calls
-    await createLocalAdminSession("tripconnectwebsite2@gmail.com");
+    await createLocalAdminSession(email);
 
     return NextResponse.json({
       success: true,
