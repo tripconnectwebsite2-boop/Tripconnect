@@ -393,13 +393,13 @@ export default function AdminContentPage() {
                 </span>
               </div>
               <p className="text-xs text-on-surface-variant">
-                ഹോംപേജിൽ ട്രാൻസ്പോർട്ടേഷൻ സർവീസുകൾ ലിസ്റ്റ് ചെയ്യാനും (കാറുകളുടെ ഫോട്ടോ ഇല്ലാതെ സർവീസ് വിവരങ്ങൾ മാത്രം) അവ എഡിറ്റ് ചെയ്യാനും ഈ ഫോം ഉപയോഗിക്കുക.
+                Customize the homepage transportation services section (services list without car photos).
               </p>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-on-surface mb-1.5">
-                    Section Top Badge (ബാഡ്ജ്)
+                    Section Top Badge
                   </label>
                   <input
                     type="text"
@@ -412,7 +412,7 @@ export default function AdminContentPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-on-surface mb-1.5">
-                    Section Heading (തലക്കെട്ട്)
+                    Section Heading
                   </label>
                   <input
                     type="text"
@@ -425,26 +425,26 @@ export default function AdminContentPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-on-surface mb-1.5">
-                    Section Subtitle / Description (വിവരണം)
+                    Section Subtitle / Description
                   </label>
                   <textarea
                     rows={2}
                     value={content.home_transport_subtitle || ""}
                     onChange={(e) => handleFieldChange("home_transport_subtitle", e.target.value)}
-                    placeholder="വിവരണം നൽകുക..."
+                    placeholder="Enter subtitle description..."
                     className="w-full px-4 py-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-sm focus:ring-2 focus:ring-primary resize-y"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-on-surface mb-1.5">
-                    Bottom Button CTA Label (ബട്ടൺ ടെക്സ്റ്റ്)
+                    Bottom Button CTA Label
                   </label>
                   <input
                     type="text"
                     value={content.home_transport_cta_text || ""}
                     onChange={(e) => handleFieldChange("home_transport_cta_text", e.target.value)}
-                    placeholder="e.g. വാഹനങ്ങൾ തിരഞ്ഞെടുത്ത് ബുക്ക് ചെയ്യുക (View Fleet & Book)"
+                    placeholder="e.g. View Full Fleet & Book Online"
                     className="w-full px-4 py-2.5 rounded-lg bg-surface-container-low border border-outline-variant/30 text-sm focus:ring-2 focus:ring-primary font-medium"
                   />
                 </div>

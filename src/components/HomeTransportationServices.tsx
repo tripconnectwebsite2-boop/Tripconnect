@@ -12,73 +12,72 @@ export default function HomeTransportationServices({ content }: HomeTransportati
   const title = content?.home_transport_title || "Transportation, Taxi & Luxury Chauffeur Services";
   const subtitle =
     content?.home_transport_subtitle ||
-    "കേരളത്തിലും ഇന്ത്യയിലുടനീളവും ഏറ്റവും വിശ്വസ്തതയോടെയുള്ള ടാക്സി, എയർപോർട്ട് പിക്കപ്പ്, പ്രീമിയം ലക്ഷ്വറി കാറുകൾ, ഓൾ ഇന്ത്യ ബസ് സർവീസുകൾ.";
+    "Trusted, transparent, and private mobility across Kerala and nationwide — from budget cabs and airport transfers to luxury Mercedes-Benz fleets and All-India tourist coaches.";
 
   const services = [
     {
-      title: content?.home_transport_service_1_title || "Airport Pickup & Drop (എയർപോർട്ട് പിക്കിംഗ്)",
+      title: content?.home_transport_service_1_title || "Airport Transfers & Meet & Greet",
       desc:
         content?.home_transport_service_1_desc ||
-        "കൊച്ചി (COK), തിരുവനന്തപുരം (TRV), കോഴിക്കോട് (CCJ) വിമാനത്താവളങ്ങളിൽ നിന്നുള്ള വിശ്വസ്തമായ പിക്കപ്പും ഡ്രോപ്പും. ഫ്ലൈറ്റ് ട്രാക്കിംഗും നെയിം ബോർഡ് സ്വീകരണവും.",
+        "Punctual airport arrivals and departures at Cochin (COK), Trivandrum (TRV), and Calicut (CCJ) with real-time flight tracking and name-board reception.",
       icon: content?.home_transport_service_1_icon || "flight_takeoff",
       tag: "24/7 Available",
       href: "/transportation#reserve-car",
       color: "from-blue-500/20 to-sky-500/10 text-blue-600 dark:text-blue-400",
     },
     {
-      title: content?.home_transport_service_2_title || "Standard Taxi & Cab Service (ടാക്സി സർവീസ്)",
+      title: content?.home_transport_service_2_title || "Standard Taxi & City Cabs",
       desc:
         content?.home_transport_service_2_desc ||
-        "ദമ്പതികൾക്കും കുടുംബങ്ങൾക്കും കേരളത്തിലെ കാഴ്ചകൾ കാണാനും എയർപോർട്ട് യാത്രകൾക്കും ഏറ്റവും അനുയോജ്യമായ ബഡ്ജറ്റ് ഫ്രണ്ട്‌ലി AC കാറുകൾ (Dzire, Etios, Swift).",
+        "Budget-friendly, sanitized, air-conditioned compact cars and sedans (Dzire, Etios, Swift) with verified polite chauffeurs for city commutes and family travel.",
       icon: content?.home_transport_service_2_icon || "local_taxi",
       tag: "Budget Friendly",
-      href: "/transportation#normal-fleet",
+      href: "/transportation#standard-cabs",
       color: "from-emerald-500/20 to-teal-500/10 text-emerald-600 dark:text-emerald-400",
     },
     {
-      title: content?.home_transport_service_3_title || "Premium Luxury Chauffeur (പ്രീമിയം ടാക്സി സർവീസ്)",
+      title: content?.home_transport_service_3_title || "Premium Luxury Chauffeur Fleet",
       desc:
         content?.home_transport_service_3_desc ||
-        "വി.ഐ.പി അതിഥികൾക്കായി ബെൻസ്, ഓഡി, ബിഎംഡബ്ല്യു, ടൊയോട്ട വെൽഫയർ തുടങ്ങിയ ലക്ഷ്വറി കാറുകൾ യൂണിഫോം ധരിച്ച പ്രൊഫഷണൽ ഷ്വാഫർമാർക്കൊപ്പം.",
+        "Executive chauffeur-driven Mercedes-Benz, Audi, BMW, and Toyota Vellfire with uniformed English-speaking drivers, bottled spring water, and high-speed Wi-Fi.",
       icon: content?.home_transport_service_3_icon || "hotel_class",
       tag: "VIP Luxury",
-      href: "/transportation#premium-fleet",
+      href: "/transportation#premium-segment",
       color: "from-amber-500/20 to-orange-500/10 text-amber-600 dark:text-amber-400",
     },
     {
-      title: content?.home_transport_service_4_title || "All-India Bus Booking & Charters (ബസ് സർവീസ്)",
+      title: content?.home_transport_service_4_title || "All-India Bus Booking & Charters",
       desc:
         content?.home_transport_service_4_desc ||
-        "ബെംഗളൂരു, ചെന്നൈ, ഹൈദരാബാദ് റൂട്ടുകളിലേക്കുള്ള വോൾവോ AC സ്ലീപ്പർ ബസ്സുകൾ, ഭാരത് ബെൻസ്, കൂടാതെ ഗ്രൂപ്പ് ടൂറുകൾക്കായുള്ള 49-സീറ്റർ ടൂറിസ്റ്റ് കോച്ചുകൾ.",
+        "Interstate Volvo 9600 Multi-Axle AC sleepers, BharatBenz coaches, and 49-seater tourist buses operating to Bangalore, Chennai, Hyderabad, and Pan-India charters.",
       icon: content?.home_transport_service_4_icon || "directions_bus",
       tag: "Pan-India Routes",
-      href: "/transportation#bus-fleet",
+      href: "/transportation#interstate-buses",
       color: "from-indigo-500/20 to-purple-500/10 text-indigo-600 dark:text-indigo-400",
     },
     {
-      title: content?.home_transport_service_5_title || "Outstation Hill-Station Tours (ഔട്ട്സ്റ്റേഷൻ ടൂർ സർവീസ്)",
+      title: content?.home_transport_service_5_title || "Outstation Hill-Station Tours",
       desc:
         content?.home_transport_service_5_desc ||
-        "മൂന്നാർ, വയനാട്, വാഗമൺ, ഊട്ടി തുടങ്ങിയ മലയോര പാതകളിൽ സുരക്ഷിതമായ ഡ്രൈവിംഗ് അനുഭവം നൽകുന്ന സീനിയർ ഡ്രൈവർമാർ.",
+        "Experienced mountain navigators for Munnar, Wayanad, Vagamon, Thekkady, and Ooty, ensuring smooth climbing with zero motion fatigue.",
       icon: content?.home_transport_service_5_icon || "terrain",
       tag: "Hill Certified Drivers",
-      href: "/transportation#normal-fleet",
+      href: "/transportation#standard-cabs",
       color: "from-emerald-500/20 to-green-500/10 text-emerald-600 dark:text-emerald-400",
     },
     {
-      title: content?.home_transport_service_6_title || "Wedding & VIP Delegation Fleet (വെഡിങ് & ഇവന്റ് ഫ്ലീറ്റ്)",
+      title: content?.home_transport_service_6_title || "Wedding & VIP Delegation Fleet",
       desc:
         content?.home_transport_service_6_desc ||
-        "ഡെസ്റ്റിനേഷൻ വെഡ്ഡിംഗുകൾ, കോൺഫറൻസുകൾ എന്നിവയ്ക്ക് ആവശ്യമായ ആഡംബര കാറുകളുടെയും ഫോഴ്സ് അർബാനിയ എക്സിക്യൂട്ടീവ് വാനുകളുടെയും സമ്പൂർണ്ണ കോൺവോയ്.",
+        "End-to-end luxury convoy management featuring executive sedans and Force Urbania VIP minibuses for destination weddings and corporate conferences.",
       icon: content?.home_transport_service_6_icon || "groups",
       tag: "Event Convoys",
-      href: "/transportation#premium-fleet",
+      href: "/transportation#premium-segment",
       color: "from-rose-500/20 to-pink-500/10 text-rose-600 dark:text-rose-400",
     },
   ];
 
-  const ctaText =
-    content?.home_transport_cta_text || "വാഹനങ്ങൾ തിരഞ്ഞെടുത്ത് ബുക്ക് ചെയ്യുക (View Fleet & Book)";
+  const ctaText = content?.home_transport_cta_text || "View Full Fleet & Book Online";
 
   return (
     <section id="transportation-services" className="py-20 lg:py-28 bg-surface-container-low/40 border-y border-outline-variant/20 relative overflow-hidden">
@@ -158,7 +157,7 @@ export default function HomeTransportationServices({ content }: HomeTransportati
         <div className="bg-gradient-to-r from-surface-container to-surface-container-high rounded-3xl p-6 sm:p-8 border border-outline-variant/30 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-md">
           <div className="space-y-1 text-center sm:text-left">
             <h4 className="font-bold text-base sm:text-lg text-on-surface">
-              Explore Our Complete Vehicle Fleet (ചെറിയ കാറുകൾ, പ്രീമിയം ബെൻസ്, ഓഡി &amp; ബസ്സുകൾ)
+              Explore Our Complete Vehicle Fleet (Economy Cabs, Luxury Benz &amp; Interstate Buses)
             </h4>
             <p className="text-xs sm:text-sm text-on-surface-variant">
               Detailed seating capacity, luggage limits, amenities, and starting rates for each car and bus.

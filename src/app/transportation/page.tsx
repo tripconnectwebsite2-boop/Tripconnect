@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
@@ -32,7 +31,6 @@ export const metadata: Metadata = {
 };
 
 export default async function TransportationPage() {
-  // Fetch dynamic vehicles from Firestore database
   const allVehicles: TransportationVehicle[] = await getTransportationVehicles({ activeOnly: true });
 
   const normalVehicles = allVehicles.filter((v) => v.category === "normal");
@@ -72,30 +70,30 @@ export default async function TransportationPage() {
           </h1>
 
           <p className="font-body-lg text-base sm:text-lg md:text-xl text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
-            ചെറിയ കാറുകൾ (Normal Cabs), പ്രീമിയം ലക്ഷ്വറി കാറുകൾ (Mercedes, Audi, BMW), ഇന്ത്യയിലുടനീളം സർവീസ് നടത്തുന്ന ലക്ഷ്വറി ബസ്സുകൾ (Volvo Sleeper, BharatBenz) എന്നിവ ഏറ്റവും വിശ്വസ്തതയോടെ ഓൺലൈനായി ബുക്ക് ചെയ്യാം.
+            From dependable city cabs and airport transfers to elite chauffeur-driven luxury sedans and nationwide interstate sleeper coaches.
           </p>
 
           {/* Quick Category Anchors */}
           <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
             <a
-              href="#normal-fleet"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30 text-xs sm:text-sm font-bold transition-all shadow-sm"
+              href="#standard-cabs"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface border border-outline-variant/30 text-xs sm:text-sm font-bold transition-all shadow-sm"
             >
-              <span>🚗 ചെറിയ കാറുകൾ (Normal Cabs)</span>
+              <span>Standard Cabs</span>
             </a>
 
             <a
-              href="#premium-fleet"
+              href="#premium-segment"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30 text-xs sm:text-sm font-bold transition-all shadow-sm"
             >
-              <span>⭐ പ്രീമിയം ലക്ഷ്വറി (Benz, Audi)</span>
+              <span>Premium Segment</span>
             </a>
 
             <a
-              href="#bus-fleet"
+              href="#interstate-buses"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-500/10 hover:bg-blue-500/20 text-blue-800 dark:text-blue-300 border border-blue-500/30 text-xs sm:text-sm font-bold transition-all shadow-sm"
             >
-              <span>🚌 ഓൾ ഇന്ത്യ ബസ്സുകൾ (Bus Booking)</span>
+              <span>Interstate Buses</span>
             </a>
 
             <a
@@ -109,28 +107,28 @@ export default async function TransportationPage() {
         </div>
       </section>
 
-      {/* Fleet Standards Banner */}
+      {/* Standards Bar */}
       <section className="border-y border-outline-variant/20 bg-surface-container-low/50 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div className="space-y-1">
               <span className="material-symbols-outlined text-primary text-2xl">security</span>
-              <h4 className="font-bold text-xs sm:text-sm text-on-surface">Verified Drivers</h4>
-              <p className="text-[11px] text-on-surface-variant">Police checked &amp; professional</p>
+              <h4 className="font-bold text-xs sm:text-sm text-on-surface">Verified Chauffeurs</h4>
+              <p className="text-[11px] text-on-surface-variant">Background checked &amp; courteous</p>
             </div>
             <div className="space-y-1">
               <span className="material-symbols-outlined text-primary text-2xl">flight_takeoff</span>
               <h4 className="font-bold text-xs sm:text-sm text-on-surface">Airport Flight Tracking</h4>
-              <p className="text-[11px] text-on-surface-variant">Zero wait charge on flight delays</p>
+              <p className="text-[11px] text-on-surface-variant">Zero wait charges on delayed arrivals</p>
             </div>
             <div className="space-y-1">
               <span className="material-symbols-outlined text-primary text-2xl">sanitizer</span>
-              <h4 className="font-bold text-xs sm:text-sm text-on-surface">Spotless Sanitized Fleet</h4>
-              <p className="text-[11px] text-on-surface-variant">Clean cabins with air conditioning</p>
+              <h4 className="font-bold text-xs sm:text-sm text-on-surface">Sanitized Fleet</h4>
+              <p className="text-[11px] text-on-surface-variant">Immaculate cabins with chilled AC</p>
             </div>
             <div className="space-y-1">
               <span className="material-symbols-outlined text-primary text-2xl">support_agent</span>
-              <h4 className="font-bold text-xs sm:text-sm text-on-surface">24/7 WhatsApp Hotline</h4>
+              <h4 className="font-bold text-xs sm:text-sm text-on-surface">24/7 Concierge Hotline</h4>
               <p className="text-[11px] text-on-surface-variant">Instant on-road assistance</p>
             </div>
           </div>
@@ -138,101 +136,200 @@ export default async function TransportationPage() {
       </section>
 
       {/* =====================================================================
-          SECTION 1: Standard & Economy Cabs (നോർമൽ ട്രാൻസ്പോർട്ടേഷൻ - ചെറിയ കാറുകൾ)
+          STANDARD CARS (Presented cleanly without awkward segment labels)
           ===================================================================== */}
-      <section id="normal-fleet" className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-label-sm text-xs font-bold uppercase tracking-wider">
-            <span className="material-symbols-outlined text-[16px]">directions_car</span>
-            Section 1: Standard &amp; Economy Cabs
-          </span>
-          <h2 className="font-display-hero text-2xl sm:text-4xl font-bold tracking-tight text-on-surface">
-            നോർമൽ ട്രാൻസ്പോർട്ടേഷൻ (ചെറിയ കാറുകൾ)
-          </h2>
-          <p className="font-body-md text-sm sm:text-base text-on-surface-variant">
-            ദമ്പതികൾക്കും ചെറിയ കുടുംബങ്ങൾക്കും കേരളത്തിലെ കാഴ്ചകൾ കാണാനും എയർപോർട്ട് യാത്രകൾക്കും ഏറ്റവും അനുയോജ്യമായ ബഡ്ജറ്റ് ഫ്രണ്ട്‌ലി AC കാറുകൾ.
-          </p>
-        </div>
+      <section id="standard-cabs" className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {normalVehicles.map((vehicle) => {
+            const carWhatsApp = buildWhatsAppChatUrl({
+              customMessage: `Hello Trip Connect, I would like to book: ${vehicle.name} (${vehicle.starting_price}). Please share driver availability and quote.`,
+            });
 
-        {normalVehicles.length === 0 ? (
-          <div className="text-center py-12 bg-surface-container-low rounded-3xl p-8 border border-outline-variant/20">
-            <p className="text-sm text-on-surface-variant">No standard vehicles listed yet.</p>
+            return (
+              <div
+                key={vehicle.id}
+                className="bg-surface-container-lowest rounded-3xl border border-outline-variant/30 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col group"
+              >
+                {/* Image */}
+                <div className="relative h-48 w-full bg-surface-container overflow-hidden">
+                  <Image
+                    src={vehicle.image}
+                    alt={vehicle.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                  />
+                  <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-black/60 text-white backdrop-blur-md">
+                      {vehicle.badge || "Standard Choice"}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-3 right-3 px-3 py-1 rounded-full bg-black/75 text-white backdrop-blur-md text-xs font-bold shadow-md">
+                    {vehicle.starting_price}
+                  </div>
+                </div>
+
+                {/* Body */}
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                  <div>
+                    <h3 className="font-bold text-base text-on-surface leading-tight">{vehicle.name}</h3>
+                    <p className="text-xs text-primary font-medium mt-0.5">{vehicle.subtitle}</p>
+
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-on-surface-variant bg-surface-container-low p-2 rounded-xl border border-outline-variant/20">
+                      <div className="flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-[16px] text-primary">group</span>
+                        <span>{vehicle.capacity_pax} Passengers</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-[16px] text-primary">luggage</span>
+                        <span>{vehicle.capacity_luggage} Luggage</span>
+                      </div>
+                    </div>
+
+                    {/* Features */}
+                    {vehicle.features && vehicle.features.length > 0 && (
+                      <ul className="mt-3 space-y-1.5 text-xs text-on-surface-variant">
+                        {vehicle.features.slice(0, 4).map((f, i) => (
+                          <li key={i} className="flex items-start gap-1.5">
+                            <span className="material-symbols-outlined text-emerald-600 text-[16px] shrink-0">check_circle</span>
+                            <span className="truncate">{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+
+                  <div className="pt-3 border-t border-outline-variant/20 flex items-center gap-2">
+                    <a
+                      href={carWhatsApp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 text-center py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">chat</span>
+                      WhatsApp Booking
+                    </a>
+                    <a
+                      href="#reserve-car"
+                      className="py-2.5 px-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs transition-all"
+                      title="Book via form"
+                    >
+                      Reserve
+                    </a>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* =====================================================================
+          PREMIUM SEGMENT (Starts clearly with the heading: Premium Segment)
+          ===================================================================== */}
+      <section id="premium-segment" className="py-20 md:py-28 bg-surface-container-low/40 border-y border-outline-variant/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          {/* Section Heading */}
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-300 font-label-sm text-xs font-bold uppercase tracking-wider">
+              <span className="material-symbols-outlined text-[16px]">hotel_class</span>
+              Executive Chauffeur Fleet
+            </span>
+            <h2 className="font-display-hero text-3xl sm:text-5xl font-bold tracking-tight text-on-surface">
+              Premium Segment
+            </h2>
+            <p className="font-body-md text-sm sm:text-base text-on-surface-variant">
+              Mercedes-Benz, Audi, BMW, and Toyota Vellfire. Uniformed English-speaking chauffeurs, bottled spring water, and immaculate presentation for VIP arrivals, corporate delegates, and luxury holidaymakers.
+            </p>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {normalVehicles.map((vehicle) => {
-              const carWhatsApp = buildWhatsAppChatUrl({
-                customMessage: `Hello Trip Connect, I would like to book the standard cab: ${vehicle.name} (${vehicle.starting_price}). Please share driver availability and quote.`,
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {premiumVehicles.map((vehicle) => {
+              const luxuryWhatsApp = buildWhatsAppChatUrl({
+                customMessage: `Hello Trip Connect VIP Concierge, I would like to reserve the luxury chauffeur vehicle: ${vehicle.name} (${vehicle.starting_price}). Please share availability and dispatch options.`,
               });
 
               return (
                 <div
                   key={vehicle.id}
-                  className="bg-surface-container-lowest rounded-3xl border border-outline-variant/30 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col group"
+                  className="bg-surface-container-lowest rounded-3xl border border-amber-500/30 overflow-hidden shadow-md hover:shadow-xl transition-all flex flex-col group relative"
                 >
+                  {/* Top Gold Accent */}
+                  <div className="h-1.5 w-full bg-gradient-to-r from-amber-500 via-primary to-amber-600" />
+
                   {/* Image */}
-                  <div className="relative h-48 w-full bg-surface-container overflow-hidden">
+                  <div className="relative h-56 w-full bg-surface-container overflow-hidden">
                     <Image
                       src={vehicle.image}
                       alt={vehicle.name}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 text-white shadow-sm">
-                        {vehicle.badge || "Budget Choice"}
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-600 text-white shadow-md">
+                        {vehicle.badge || "VIP Luxury"}
                       </span>
                     </div>
-                    <div className="absolute bottom-3 right-3 px-3 py-1 rounded-full bg-black/75 text-white backdrop-blur-md text-xs font-bold shadow-md">
+                    <div className="absolute bottom-3 right-3 px-3.5 py-1.5 rounded-full bg-black/80 text-amber-300 backdrop-blur-md text-xs font-bold border border-amber-500/30 shadow-lg">
                       {vehicle.starting_price}
                     </div>
                   </div>
 
                   {/* Body */}
-                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                  <div className="p-6 flex-1 flex flex-col justify-between space-y-5">
                     <div>
-                      <h3 className="font-bold text-base text-on-surface leading-tight">{vehicle.name}</h3>
-                      <p className="text-xs text-primary font-medium mt-0.5">{vehicle.subtitle}</p>
+                      <h3 className="font-bold text-lg text-on-surface leading-tight">{vehicle.name}</h3>
+                      <p className="text-xs text-amber-700 dark:text-amber-400 font-medium mt-1">
+                        {vehicle.subtitle}
+                      </p>
 
-                      <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-on-surface-variant bg-surface-container-low p-2 rounded-xl border border-outline-variant/20">
-                        <div className="flex items-center gap-1.5">
-                          <span className="material-symbols-outlined text-[16px] text-primary">group</span>
-                          <span>{vehicle.capacity_pax} Passengers</span>
+                      <p className="text-xs text-on-surface-variant mt-3 leading-relaxed">
+                        {vehicle.description}
+                      </p>
+
+                      <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-on-surface-variant bg-surface-container-low p-2.5 rounded-2xl border border-outline-variant/20">
+                        <div className="flex items-center gap-2">
+                          <span className="material-symbols-outlined text-[18px] text-amber-600">group</span>
+                          <span>{vehicle.capacity_pax} VIP Seats</span>
                         </div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="material-symbols-outlined text-[16px] text-primary">luggage</span>
+                        <div className="flex items-center gap-2">
+                          <span className="material-symbols-outlined text-[18px] text-amber-600">luggage</span>
                           <span>{vehicle.capacity_luggage} Luggage</span>
                         </div>
                       </div>
 
                       {/* Features */}
                       {vehicle.features && vehicle.features.length > 0 && (
-                        <ul className="mt-3 space-y-1.5 text-xs text-on-surface-variant">
-                          {vehicle.features.slice(0, 4).map((f, i) => (
-                            <li key={i} className="flex items-start gap-1.5">
-                              <span className="material-symbols-outlined text-emerald-600 text-[16px] shrink-0">check_circle</span>
-                              <span className="truncate">{f}</span>
-                            </li>
-                          ))}
-                        </ul>
+                        <div className="mt-4 space-y-2">
+                          <span className="text-[11px] uppercase tracking-wider font-bold text-on-surface-variant block">
+                            VIP Inclusions:
+                          </span>
+                          <ul className="grid grid-cols-1 gap-1.5 text-xs text-on-surface-variant">
+                            {vehicle.features.slice(0, 5).map((f, i) => (
+                              <li key={i} className="flex items-center gap-2">
+                                <span className="material-symbols-outlined text-amber-600 text-[16px] shrink-0">star</span>
+                                <span className="truncate">{f}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                       )}
                     </div>
 
-                    <div className="pt-3 border-t border-outline-variant/20 flex items-center gap-2">
+                    <div className="pt-4 border-t border-outline-variant/20 flex items-center gap-3">
                       <a
-                        href={carWhatsApp}
+                        href={luxuryWhatsApp}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 text-center py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5"
+                        className="flex-1 text-center py-3 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2"
                       >
-                        <span className="material-symbols-outlined text-[16px]">chat</span>
-                        WhatsApp ബുക്കിംഗ്
+                        <span className="material-symbols-outlined text-[18px]">chat</span>
+                        WhatsApp VIP Booking
                       </a>
                       <a
                         href="#reserve-car"
-                        className="py-2.5 px-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs transition-all"
-                        title="Book via form"
+                        className="py-3 px-4 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs transition-all"
                       >
                         Reserve
                       </a>
@@ -242,270 +339,133 @@ export default async function TransportationPage() {
               );
             })}
           </div>
-        )}
-      </section>
-
-      {/* =====================================================================
-          SECTION 2: Premium & Luxury Fleet (പ്രീമിയം സെക്ഷൻ - ബെൻസ്, ഓഡി, ബിഎംഡബ്ല്യു)
-          ===================================================================== */}
-      <section id="premium-fleet" className="py-16 md:py-24 bg-surface-container-low/40 border-y border-outline-variant/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-300 font-label-sm text-xs font-bold uppercase tracking-wider">
-              <span className="material-symbols-outlined text-[16px]">hotel_class</span>
-              Section 2: Premium Chauffeur Fleet
-            </span>
-            <h2 className="font-display-hero text-2xl sm:text-4xl font-bold tracking-tight text-on-surface">
-              പ്രീമിയം ലക്ഷ്വറി കാറുകൾ (Mercedes, Audi, BMW, Vellfire)
-            </h2>
-            <p className="font-body-md text-sm sm:text-base text-on-surface-variant">
-              വി.ഐ.പി ഗസ്റ്റുകൾ, വെഡിങ് ഇവന്റുകൾ, ആഡംബര കേരള ടൂറുകൾ എന്നിവയ്ക്കായി ബെൻസ്, ഓഡി, ബിഎംഡബ്ല്യു, വെൽഫയർ തുടങ്ങിയ പ്രീമിയം കാറുകൾ യൂണിഫോം ധരിച്ച പ്രൊഫഷണൽ ഷ്വാഫർമാരോടൊപ്പം ലഭ്യമാണ്.
-            </p>
-          </div>
-
-          {premiumVehicles.length === 0 ? (
-            <div className="text-center py-12 bg-surface-container-low rounded-3xl p-8 border border-outline-variant/20">
-              <p className="text-sm text-on-surface-variant">No premium luxury vehicles listed yet.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {premiumVehicles.map((vehicle) => {
-                const luxuryWhatsApp = buildWhatsAppChatUrl({
-                  customMessage: `Hello Trip Connect VIP Concierge, I would like to reserve the luxury chauffeur vehicle: ${vehicle.name} (${vehicle.starting_price}). Please connect me with your VIP fleet manager.`,
-                });
-
-                return (
-                  <div
-                    key={vehicle.id}
-                    className="bg-surface-container-lowest rounded-3xl border border-amber-500/30 overflow-hidden shadow-md hover:shadow-xl transition-all flex flex-col group relative"
-                  >
-                    {/* Top Glow Accent */}
-                    <div className="h-1.5 w-full bg-gradient-to-r from-amber-500 via-primary to-amber-600" />
-
-                    {/* Image */}
-                    <div className="relative h-56 w-full bg-surface-container overflow-hidden">
-                      <Image
-                        src={vehicle.image}
-                        alt={vehicle.name}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-700"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                      <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-600 text-white shadow-md">
-                          {vehicle.badge || "VIP Luxury"}
-                        </span>
-                      </div>
-                      <div className="absolute bottom-3 right-3 px-3.5 py-1.5 rounded-full bg-black/80 text-amber-300 backdrop-blur-md text-xs font-bold border border-amber-500/30 shadow-lg">
-                        {vehicle.starting_price}
-                      </div>
-                    </div>
-
-                    {/* Body */}
-                    <div className="p-6 flex-1 flex flex-col justify-between space-y-5">
-                      <div>
-                        <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <h3 className="font-bold text-lg text-on-surface leading-tight">{vehicle.name}</h3>
-                            <p className="text-xs text-amber-700 dark:text-amber-400 font-medium mt-1">
-                              {vehicle.subtitle}
-                            </p>
-                          </div>
-                        </div>
-
-                        <p className="text-xs text-on-surface-variant mt-3 leading-relaxed">
-                          {vehicle.description}
-                        </p>
-
-                        <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-on-surface-variant bg-surface-container-low p-2.5 rounded-2xl border border-outline-variant/20">
-                          <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined text-[18px] text-amber-600">group</span>
-                            <span>{vehicle.capacity_pax} VIP Seats</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined text-[18px] text-amber-600">luggage</span>
-                            <span>{vehicle.capacity_luggage} Luggage</span>
-                          </div>
-                        </div>
-
-                        {/* Features */}
-                        {vehicle.features && vehicle.features.length > 0 && (
-                          <div className="mt-4 space-y-2">
-                            <span className="text-[11px] uppercase tracking-wider font-bold text-on-surface-variant block">
-                              VIP Inclusions:
-                            </span>
-                            <ul className="grid grid-cols-1 gap-1.5 text-xs text-on-surface-variant">
-                              {vehicle.features.slice(0, 5).map((f, i) => (
-                                <li key={i} className="flex items-center gap-2">
-                                  <span className="material-symbols-outlined text-amber-600 text-[16px] shrink-0">star</span>
-                                  <span className="truncate">{f}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="pt-4 border-t border-outline-variant/20 flex items-center gap-3">
-                        <a
-                          href={luxuryWhatsApp}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 text-center py-3 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2"
-                        >
-                          <span className="material-symbols-outlined text-[18px]">chat</span>
-                          WhatsApp VIP റിസർവേഷൻ
-                        </a>
-                        <a
-                          href="#reserve-car"
-                          className="py-3 px-4 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs transition-all"
-                        >
-                          Book Chauffeur
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
         </div>
       </section>
 
       {/* =====================================================================
-          SECTION 3: All-India Bus Booking & Tourist Coaches (ഇന്ത്യൻ ബസ് സർവീസ്)
+          INTERSTATE BUS BOOKING & CHARTERS
           ===================================================================== */}
-      <section id="bus-fleet" className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section id="interstate-buses" className="py-20 md:py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-300 font-label-sm text-xs font-bold uppercase tracking-wider">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-700 dark:text-blue-300 font-label-sm text-xs font-bold uppercase tracking-wider">
             <span className="material-symbols-outlined text-[16px]">directions_bus</span>
-            Section 3: All-India Bus Booking &amp; Tourist Coaches
+            Pan-India Bus Fleet
           </span>
-          <h2 className="font-display-hero text-2xl sm:text-4xl font-bold tracking-tight text-on-surface">
-            ഓൾ ഇന്ത്യ ബസ് സർവീസ് &amp; ടൂറിസ്റ്റ് ബസ് ബുക്കിംഗ്
+          <h2 className="font-display-hero text-3xl sm:text-5xl font-bold tracking-tight text-on-surface">
+            Interstate Buses &amp; Tour Charters
           </h2>
           <p className="font-body-md text-sm sm:text-base text-on-surface-variant">
-            ഇന്ത്യയിലുടനീളം സർവീസ് നടത്തുന്ന ലക്ഷ്വറി എയർ സസ്പെൻഷൻ സ്ലീപ്പർ ബസ്സുകൾ (Volvo Multi-Axle, BharatBenz), കോളേജ് / കമ്പനി / വെഡിങ് ടൂറുകൾക്കായുള്ള 49-സീറ്റർ ടൂറിസ്റ്റ് കോച്ചുകൾ, ഫോഴ്സ് അർബാനിയ മിനി ബസ്സുകൾ എന്നിവ ഓൺലൈനായി ബുക്ക് ചെയ്യാം.
+            Luxury Volvo Multi-Axle AC sleepers, BharatBenz coaches, and 49-seater tourist buses with National Permits operating across South India and nationwide circuits.
           </p>
         </div>
 
-        {/* Bus Showcase Cards */}
-        {busVehicles.length === 0 ? (
-          <div className="text-center py-12 bg-surface-container-low rounded-3xl p-8 border border-outline-variant/20">
-            <p className="text-sm text-on-surface-variant">No buses listed yet.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {busVehicles.map((bus) => {
-              const busWhatsApp = buildWhatsAppChatUrl({
-                customMessage: `Hello Trip Connect, I would like to book the interstate luxury bus: ${bus.name} (${bus.starting_price}). Please share seat availability and route details.`,
-              });
+        {/* Bus Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {busVehicles.map((bus) => {
+            const busWhatsApp = buildWhatsAppChatUrl({
+              customMessage: `Hello Trip Connect, I would like to book the interstate luxury bus: ${bus.name} (${bus.starting_price}). Please share seat availability and route details.`,
+            });
 
-              return (
-                <div
-                  key={bus.id}
-                  className="bg-surface-container-lowest rounded-3xl border border-blue-500/30 overflow-hidden shadow-md hover:shadow-xl transition-all flex flex-col md:flex-row group"
-                >
-                  {/* Image side */}
-                  <div className="relative md:w-5/12 h-64 md:h-auto bg-surface-container overflow-hidden shrink-0">
-                    <Image
-                      src={bus.image}
-                      alt={bus.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-700"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                    <div className="absolute top-3 left-3">
-                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-600 text-white shadow-md">
-                        {bus.badge || "All-India Bus"}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Details side */}
-                  <div className="p-6 md:w-7/12 flex flex-col justify-between space-y-4">
-                    <div>
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h3 className="font-bold text-lg text-on-surface leading-tight">{bus.name}</h3>
-                          <p className="text-xs text-blue-700 dark:text-blue-400 font-medium mt-1">
-                            {bus.subtitle}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="mt-3 inline-block px-3 py-1 rounded-full bg-blue-500/10 text-blue-700 dark:text-blue-300 font-bold text-xs border border-blue-500/20">
-                        {bus.starting_price}
-                      </div>
-
-                      <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-on-surface-variant bg-surface-container-low p-2 rounded-xl border border-outline-variant/20">
-                        <div className="flex items-center gap-1.5 truncate">
-                          <span className="material-symbols-outlined text-[16px] text-blue-600">group</span>
-                          <span>{bus.capacity_pax}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 truncate">
-                          <span className="material-symbols-outlined text-[16px] text-blue-600">luggage</span>
-                          <span>{bus.capacity_luggage}</span>
-                        </div>
-                      </div>
-
-                      {/* Routes */}
-                      {bus.routes && bus.routes.length > 0 && (
-                        <div className="mt-3 space-y-1">
-                          <span className="text-[11px] uppercase tracking-wider font-bold text-on-surface-variant block">
-                            പ്രധാന സർവീസ് റൂട്ടുകൾ (Popular Routes):
-                          </span>
-                          <div className="flex flex-wrap gap-1">
-                            {bus.routes.map((r, i) => (
-                              <span
-                                key={i}
-                                className="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-800 dark:text-blue-300 font-medium"
-                              >
-                                {r}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Features */}
-                      {bus.features && bus.features.length > 0 && (
-                        <ul className="mt-3 space-y-1 text-xs text-on-surface-variant">
-                          {bus.features.slice(0, 3).map((f, i) => (
-                            <li key={i} className="flex items-center gap-1.5">
-                              <span className="material-symbols-outlined text-blue-600 text-[15px] shrink-0">check</span>
-                              <span className="truncate">{f}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-
-                    <div className="pt-3 border-t border-outline-variant/20 flex items-center gap-2">
-                      <a
-                        href={busWhatsApp}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 text-center py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5"
-                      >
-                        <span className="material-symbols-outlined text-[16px]">chat</span>
-                        ബസ് ബുക്കിംഗ് (WhatsApp)
-                      </a>
-                      <a
-                        href="#reserve-car"
-                        className="py-2.5 px-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs transition-all"
-                      >
-                        Enquire
-                      </a>
-                    </div>
+            return (
+              <div
+                key={bus.id}
+                className="bg-surface-container-lowest rounded-3xl border border-blue-500/30 overflow-hidden shadow-md hover:shadow-xl transition-all flex flex-col md:flex-row group"
+              >
+                {/* Image side */}
+                <div className="relative md:w-5/12 h-64 md:h-auto bg-surface-container overflow-hidden shrink-0">
+                  <Image
+                    src={bus.image}
+                    alt={bus.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                  <div className="absolute top-3 left-3">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-600 text-white shadow-md">
+                      {bus.badge || "All-India Bus"}
+                    </span>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
 
-        {/* Popular Pan-India Bus Destinations Banner */}
+                {/* Details side */}
+                <div className="p-6 md:w-7/12 flex flex-col justify-between space-y-4">
+                  <div>
+                    <h3 className="font-bold text-lg text-on-surface leading-tight">{bus.name}</h3>
+                    <p className="text-xs text-blue-700 dark:text-blue-400 font-medium mt-1">
+                      {bus.subtitle}
+                    </p>
+
+                    <div className="mt-3 inline-block px-3 py-1 rounded-full bg-blue-500/10 text-blue-700 dark:text-blue-300 font-bold text-xs border border-blue-500/20">
+                      {bus.starting_price}
+                    </div>
+
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-on-surface-variant bg-surface-container-low p-2 rounded-xl border border-outline-variant/20">
+                      <div className="flex items-center gap-1.5 truncate">
+                        <span className="material-symbols-outlined text-[16px] text-blue-600">group</span>
+                        <span>{bus.capacity_pax}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 truncate">
+                        <span className="material-symbols-outlined text-[16px] text-blue-600">luggage</span>
+                        <span>{bus.capacity_luggage}</span>
+                      </div>
+                    </div>
+
+                    {/* Routes */}
+                    {bus.routes && bus.routes.length > 0 && (
+                      <div className="mt-3 space-y-1">
+                        <span className="text-[11px] uppercase tracking-wider font-bold text-on-surface-variant block">
+                          Popular Routes:
+                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {bus.routes.map((r, i) => (
+                            <span
+                              key={i}
+                              className="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-800 dark:text-blue-300 font-medium"
+                            >
+                              {r}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Features */}
+                    {bus.features && bus.features.length > 0 && (
+                      <ul className="mt-3 space-y-1 text-xs text-on-surface-variant">
+                        {bus.features.slice(0, 3).map((f, i) => (
+                          <li key={i} className="flex items-center gap-1.5">
+                            <span className="material-symbols-outlined text-blue-600 text-[15px] shrink-0">check</span>
+                            <span className="truncate">{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+
+                  <div className="pt-3 border-t border-outline-variant/20 flex items-center gap-2">
+                    <a
+                      href={busWhatsApp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 text-center py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">chat</span>
+                      WhatsApp Booking
+                    </a>
+                    <a
+                      href="#reserve-car"
+                      className="py-2.5 px-3 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs transition-all"
+                    >
+                      Reserve
+                    </a>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Popular Pan-India Routes Banner */}
         <div className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-3xl p-8 md:p-10 shadow-xl space-y-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-2 max-w-2xl">
@@ -513,10 +473,10 @@ export default async function TransportationPage() {
                 Interstate &amp; All-India Permits
               </span>
               <h3 className="text-xl sm:text-2xl md:text-3xl font-bold">
-                ഇന്ത്യയിലെ പ്രധാന നഗരങ്ങളിലേക്കുള്ള ബസ് സർവീസ് &amp; ഗ്രൂപ്പ് ചാർട്ടറുകൾ
+                Interstate Line Services &amp; Custom Tour Charters
               </h3>
               <p className="text-white/80 text-xs sm:text-sm">
-                ബെംഗളൂരു, ചെന്നൈ, ഹൈദരാബാദ്, മുംബൈ, ഗോവ, കോയമ്പത്തൂർ, മധുര, കൂടാതെ തിരുപ്പതി, വേളാങ്കണ്ണി, കാശി തീർത്ഥാടന യാത്രകൾക്കും കോളേജ് ടൂറുകൾക്കുമുള്ള സമ്പൂർണ്ണ ബസ് ബുക്കിംഗ് സൗകര്യം.
+                Daily departures and bespoke charters to Bangalore, Chennai, Hyderabad, Mumbai, Goa, Coimbatore, and pilgrimage circuits to Tirupati, Velankanni, and North India.
               </p>
             </div>
 
@@ -527,7 +487,7 @@ export default async function TransportationPage() {
               className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm shadow-lg transition-all shrink-0 active:scale-95"
             >
               <span className="material-symbols-outlined text-[20px]">chat</span>
-              ബസ് ചാർട്ടർ അന്വേഷണങ്ങൾക്ക്
+              Inquire for Bus Charters
             </a>
           </div>
 
@@ -542,7 +502,7 @@ export default async function TransportationPage() {
             </div>
             <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-sm">
               <span className="block font-bold text-white">Kerala ⇄ Coimbatore</span>
-              <span className="text-[10px] text-white/70">Express Seater</span>
+              <span className="text-[10px] text-white/70">Express Line</span>
             </div>
             <div className="p-2.5 rounded-xl bg-white/10 backdrop-blur-sm">
               <span className="block font-bold text-white">Kochi ⇄ Goa / Mumbai</span>
@@ -561,9 +521,9 @@ export default async function TransportationPage() {
       </section>
 
       {/* =====================================================================
-          RESERVATION FORM SECTION: Online Booking for Cars, Chauffeurs & Buses
+          RESERVATION FORM SECTION
           ===================================================================== */}
-      <section className="py-16 md:py-24 bg-surface-container-low/50 border-t border-outline-variant/20">
+      <section className="py-20 md:py-28 bg-surface-container-low/50 border-t border-outline-variant/20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <TransportationBookingForm vehicles={allVehicles} defaultCategory="normal" />
         </div>

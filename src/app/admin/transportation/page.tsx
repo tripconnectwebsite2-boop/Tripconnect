@@ -117,7 +117,7 @@ export default function AdminTransportationPage() {
         throw new Error(errorData.error || "Failed to save vehicle");
       }
 
-      setSuccessMessage(isEdit ? "വാഹനം വിജയകരമായി അപ്‌ഡേറ്റ് ചെയ്തു!" : "പുതിയ വാഹനം ലിസ്റ്റ് ചെയ്തു!");
+      setSuccessMessage(isEdit ? "Vehicle updated successfully!" : "New vehicle created successfully!");
       setTimeout(() => setSuccessMessage(null), 4000);
       setIsModalOpen(false);
       setEditingVeh(null);
@@ -130,16 +130,16 @@ export default function AdminTransportationPage() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`"${name}" നീക്കം ചെയ്യണമെന്ന് ഉറപ്പാണോ?`)) return;
+    if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
 
     try {
       const res = await fetch(`/api/admin/transportation/${id}`, { method: "DELETE" });
       if (res.ok) {
-        setSuccessMessage("വാഹനം ലിസ്റ്റിൽ നിന്ന് നീക്കം ചെയ്തു.");
+        setSuccessMessage("Vehicle deleted successfully.");
         setTimeout(() => setSuccessMessage(null), 3000);
         fetchVehicles();
       } else {
-        alert("ഡിലീറ്റ് ചെയ്യാൻ കഴിഞ്ഞില്ല.");
+        alert("Failed to delete vehicle.");
       }
     } catch {
       alert("Error deleting vehicle.");
@@ -184,7 +184,7 @@ export default function AdminTransportationPage() {
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Transportation Fleet Manager</h1>
             </div>
             <p className="text-sm text-on-surface-variant mt-1">
-              ചെറിയ കാറുകൾ (Normal), പ്രീമിയം കാറുകൾ (Premium), ഓൾ ഇന്ത്യ ബസ്സുകൾ (Bus Booking) എന്നിവ നിയന്ത്രിക്കുക.
+              Manage Standard Cabs, Premium Segment cars (Mercedes-Benz, Audi, BMW), and Interstate Buses.
             </p>
           </div>
           <button
@@ -192,7 +192,7 @@ export default function AdminTransportationPage() {
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-on-primary font-semibold shadow-md hover:bg-primary/90 transition-all text-sm shrink-0"
           >
             <span className="material-symbols-outlined text-[20px]">add</span>
-            + പുതിയ വാഹനം / ബസ് ചേർക്കുക
+            + Add Vehicle / Bus
           </button>
         </div>
 
@@ -216,7 +216,7 @@ export default function AdminTransportationPage() {
                   : "bg-surface-container hover:bg-surface-container-high text-on-surface-variant"
               }`}
             >
-              എല്ലാം (All)
+              All Vehicles
               <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/15 font-semibold">
                 {vehicles.length}
               </span>
@@ -230,7 +230,7 @@ export default function AdminTransportationPage() {
                   : "bg-surface-container hover:bg-surface-container-high text-on-surface-variant"
               }`}
             >
-              🚗 ചെറിയ കാറുകൾ (Normal)
+              Standard Cabs
               <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/15 font-semibold">
                 {normalCount}
               </span>
@@ -244,7 +244,7 @@ export default function AdminTransportationPage() {
                   : "bg-surface-container hover:bg-surface-container-high text-on-surface-variant"
               }`}
             >
-              ⭐ പ്രീമിയം കാറുകൾ (Premium)
+              Premium Segment
               <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/15 font-semibold">
                 {premiumCount}
               </span>
@@ -258,7 +258,7 @@ export default function AdminTransportationPage() {
                   : "bg-surface-container hover:bg-surface-container-high text-on-surface-variant"
               }`}
             >
-              🚌 ഓൾ ഇന്ത്യ ബസ്സുകൾ (Bus)
+              All-India Buses
               <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-black/15 font-semibold">
                 {busCount}
               </span>
@@ -284,14 +284,14 @@ export default function AdminTransportationPage() {
         {loading ? (
           <div className="text-center py-16">
             <span className="material-symbols-outlined animate-spin text-4xl text-primary">progress_activity</span>
-            <p className="text-sm text-on-surface-variant mt-2 font-medium">വാഹനങ്ങളുടെ വിവരങ്ങൾ ലോഡ് ചെയ്യുന്നു...</p>
+            <p className="text-sm text-on-surface-variant mt-2 font-medium">Loading fleet data...</p>
           </div>
         ) : filteredVehicles.length === 0 ? (
           <div className="text-center py-16 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-8">
             <span className="material-symbols-outlined text-5xl text-outline mb-2">directions_car</span>
-            <h3 className="text-lg font-bold">വാഹനങ്ങൾ ഒന്നും കണ്ടെത്തിയില്ല</h3>
+            <h3 className="text-lg font-bold">No vehicles found</h3>
             <p className="text-sm text-on-surface-variant mt-1">
-              പുതിയ കാറോ ബസ്സോ ചേർക്കാൻ മുകളിലെ &quot;+ പുതിയ വാഹനം ചേർക്കുക&quot; ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.
+              Click &quot;+ Add Vehicle / Bus&quot; above to list your first vehicle.
             </p>
           </div>
         ) : (
@@ -306,10 +306,10 @@ export default function AdminTransportationPage() {
 
               const categoryLabel =
                 veh.category === "normal"
-                  ? "Normal Cab"
+                  ? "Standard Cab"
                   : veh.category === "premium"
-                  ? "Luxury Premium"
-                  : "All-India Bus";
+                  ? "Premium Segment"
+                  : "Interstate Bus";
 
               return (
                 <div
@@ -407,7 +407,7 @@ export default function AdminTransportationPage() {
                         className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-xs font-semibold transition-all"
                       >
                         <span className="material-symbols-outlined text-[16px]">edit</span>
-                        എഡിറ്റ് ചെയ്യുക (Edit)
+                        Edit
                       </button>
                       <button
                         onClick={() => handleDelete(veh.id, veh.name)}
@@ -435,7 +435,7 @@ export default function AdminTransportationPage() {
                     {editingVeh.id ? "edit_note" : "add_circle"}
                   </span>
                   <h2 className="text-xl font-bold">
-                    {editingVeh.id ? "വാഹനം എഡിറ്റ് ചെയ്യുക" : "പുതിയ വാഹനം / ബസ് ചേർക്കുക"}
+                    {editingVeh.id ? "Edit Vehicle" : "Add Vehicle / Bus"}
                   </h2>
                 </div>
                 <button
@@ -460,7 +460,7 @@ export default function AdminTransportationPage() {
                 {/* Category Selection */}
                 <div>
                   <label className="block text-xs font-bold text-on-surface mb-2">
-                    സെക്ഷൻ / കാറ്റഗറി (Category) *
+                    Fleet Category *
                   </label>
                   <div className="grid grid-cols-3 gap-2.5">
                     <button
@@ -472,8 +472,7 @@ export default function AdminTransportationPage() {
                           : "bg-surface-container-low border-outline-variant/30 text-on-surface hover:bg-surface-container"
                       }`}
                     >
-                      <span className="block text-base mb-1">🚗</span>
-                      <span className="block font-semibold">ചെറിയ കാറുകൾ</span>
+                      <span className="block font-semibold">Standard Cabs</span>
                       <span className="text-[10px] opacity-80">(Normal)</span>
                     </button>
 
@@ -486,9 +485,8 @@ export default function AdminTransportationPage() {
                           : "bg-surface-container-low border-outline-variant/30 text-on-surface hover:bg-surface-container"
                       }`}
                     >
-                      <span className="block text-base mb-1">⭐</span>
-                      <span className="block font-semibold">പ്രീമിയം കാറുകൾ</span>
-                      <span className="text-[10px] opacity-80">(Premium)</span>
+                      <span className="block font-semibold">Premium Segment</span>
+                      <span className="text-[10px] opacity-80">(Luxury)</span>
                     </button>
 
                     <button
@@ -500,8 +498,7 @@ export default function AdminTransportationPage() {
                           : "bg-surface-container-low border-outline-variant/30 text-on-surface hover:bg-surface-container"
                       }`}
                     >
-                      <span className="block text-base mb-1">🚌</span>
-                      <span className="block font-semibold">ഓൾ ഇന്ത്യ ബസ്സുകൾ</span>
+                      <span className="block font-semibold">All-India Buses</span>
                       <span className="text-[10px] opacity-80">(Bus Booking)</span>
                     </button>
                   </div>
@@ -511,7 +508,7 @@ export default function AdminTransportationPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-on-surface mb-1">
-                      വാഹനത്തിന്റെ പേര് (Vehicle Name) *
+                      Vehicle Name *
                     </label>
                     <input
                       type="text"
@@ -525,11 +522,11 @@ export default function AdminTransportationPage() {
 
                   <div>
                     <label className="block text-xs font-semibold text-on-surface mb-1">
-                      ബ്രാൻഡ് (Brand)
+                      Brand / Manufacturer
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. Maruti, Toyota, Mercedes, Volvo, BharatBenz"
+                      placeholder="e.g. Maruti Suzuki, Toyota, Mercedes-Benz, Volvo"
                       value={editingVeh.brand || ""}
                       onChange={(e) => setEditingVeh({ ...editingVeh, brand: e.target.value })}
                       className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 text-xs"
@@ -541,7 +538,7 @@ export default function AdminTransportationPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-on-surface mb-1">
-                      സബ്‌ടൈറ്റിൽ (Subtitle / Type)
+                      Subtitle / Model Tagline
                     </label>
                     <input
                       type="text"
@@ -554,11 +551,11 @@ export default function AdminTransportationPage() {
 
                   <div>
                     <label className="block text-xs font-semibold text-on-surface mb-1">
-                      ഹൈലൈറ്റ് ബാഡ്ജ് (Badge)
+                      Badge Text
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. Most Popular / VIP Flagship / Interstate Sleeper"
+                      placeholder="e.g. Most Popular / VIP Luxury / Interstate Sleeper"
                       value={editingVeh.badge || ""}
                       onChange={(e) => setEditingVeh({ ...editingVeh, badge: e.target.value })}
                       className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 text-xs"
@@ -570,7 +567,7 @@ export default function AdminTransportationPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-on-surface mb-1">
-                      നിരക്ക് (Starting Price / Rate) *
+                      Starting Price / Rate *
                     </label>
                     <input
                       type="text"
@@ -584,7 +581,7 @@ export default function AdminTransportationPage() {
 
                   <div>
                     <label className="block text-xs font-semibold text-on-surface mb-1">
-                      യാത്രക്കാരുടെ എണ്ണം (Passenger Capacity)
+                      Passenger Capacity
                     </label>
                     <input
                       type="text"
@@ -597,7 +594,7 @@ export default function AdminTransportationPage() {
 
                   <div>
                     <label className="block text-xs font-semibold text-on-surface mb-1">
-                      ലഗ്ഗേജ് കപ്പാസിറ്റി (Luggage Capacity)
+                      Luggage Capacity
                     </label>
                     <input
                       type="text"
@@ -612,17 +609,17 @@ export default function AdminTransportationPage() {
                 {/* Image Upload Field */}
                 <div>
                   <ImageUploadField
-                    label="വാഹനത്തിന്റെ ഫോട്ടോ (Vehicle Image) *"
+                    label="Vehicle Photo *"
                     value={editingVeh.image || ""}
                     onChange={(url) => setEditingVeh({ ...editingVeh, image: url })}
-                    helperText="ഉയർന്ന ക്ലാരിറ്റിയുള്ള ഫോട്ടോ അപ്‌ലോഡ് ചെയ്യുക (WebP ആയി ക്ലൗഡിൽ സുരക്ഷിതമായി സൂക്ഷിക്കപ്പെടും)."
+                    helperText="Upload any high-res vehicle photo from your PC or paste an image URL."
                   />
                 </div>
 
                 {/* Best For */}
                 <div>
                   <label className="block text-xs font-semibold text-on-surface mb-1">
-                    ഏറ്റവും അനുയോജ്യം (Best For)
+                    Best For / Recommended Uses
                   </label>
                   <input
                     type="text"
@@ -636,7 +633,7 @@ export default function AdminTransportationPage() {
                 {/* Features (One per line) */}
                 <div>
                   <label className="block text-xs font-semibold text-on-surface mb-1">
-                    പ്രധാന സവിശേഷതകൾ (Features - ഓരോ വരിയിലും ഒരെണ്ണം വീതം)
+                    Key Features (One feature per line)
                   </label>
                   <textarea
                     rows={4}
@@ -651,7 +648,7 @@ export default function AdminTransportationPage() {
                 {editingVeh.category === "bus" && (
                   <div>
                     <label className="block text-xs font-semibold text-on-surface mb-1">
-                      ബസ് റൂട്ടുകൾ (Popular Routes - ഓരോ വരിയിലും ഒരെണ്ണം വീതം)
+                      Popular Routes (One route per line)
                     </label>
                     <textarea
                       rows={3}
@@ -666,11 +663,11 @@ export default function AdminTransportationPage() {
                 {/* Description */}
                 <div>
                   <label className="block text-xs font-semibold text-on-surface mb-1">
-                    വിവരണം (Description)
+                    Description
                   </label>
                   <textarea
                     rows={3}
-                    placeholder="വാഹനത്തെക്കുറിച്ചുള്ള കൂടുതൽ വിവരങ്ങൾ..."
+                    placeholder="Vehicle description, comfort details, and highlights..."
                     value={editingVeh.description || ""}
                     onChange={(e) => setEditingVeh({ ...editingVeh, description: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 text-xs"
@@ -686,11 +683,11 @@ export default function AdminTransportationPage() {
                       onChange={(e) => setEditingVeh({ ...editingVeh, is_active: e.target.checked })}
                       className="w-4 h-4 rounded text-primary focus:ring-primary"
                     />
-                    <span className="font-semibold text-on-surface">ലൈവ് ആയി വെബ്‌സൈറ്റിൽ കാണിക്കുക (Active)</span>
+                    <span className="font-semibold text-on-surface">Publish Live on Website</span>
                   </label>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-on-surface-variant font-medium">ഡിസ്‌പ്ലേ ഓർഡർ:</span>
+                    <span className="text-on-surface-variant font-medium">Display Order:</span>
                     <input
                       type="number"
                       value={editingVeh.order ?? 1}
@@ -707,7 +704,7 @@ export default function AdminTransportationPage() {
                     onClick={() => setIsModalOpen(false)}
                     className="px-5 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs transition-all"
                   >
-                    ക്യാൻസൽ (Cancel)
+                    Cancel
                   </button>
                   <button
                     type="submit"
@@ -717,12 +714,12 @@ export default function AdminTransportationPage() {
                     {isSaving ? (
                       <>
                         <span className="material-symbols-outlined animate-spin text-[16px]">progress_activity</span>
-                        സേവ് ചെയ്യുന്നു...
+                        Saving...
                       </>
                     ) : (
                       <>
                         <span className="material-symbols-outlined text-[16px]">check</span>
-                        സേവ് ചെയ്യുക (Save)
+                        Save Vehicle
                       </>
                     )}
                   </button>

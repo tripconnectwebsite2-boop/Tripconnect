@@ -204,7 +204,7 @@ export default function TransportationBookingForm({
           {/* Category Filter Pills */}
           <div>
             <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
-              Select Fleet Type (വാഹന വിഭാഗം തിരഞ്ഞെടുക്കുക)
+              Select Fleet Category
             </label>
             <div className="flex flex-wrap gap-2">
               <button
@@ -220,7 +220,7 @@ export default function TransportationBookingForm({
                     : "bg-surface-container hover:bg-surface-container-high text-on-surface"
                 }`}
               >
-                🚗 ചെറിയ കാറുകൾ (Normal Cabs)
+                Standard &amp; City Cabs
               </button>
 
               <button
@@ -236,7 +236,7 @@ export default function TransportationBookingForm({
                     : "bg-surface-container hover:bg-surface-container-high text-on-surface"
                 }`}
               >
-                ⭐ പ്രീമിയം ലക്ഷ്വറി (Benz, Audi, BMW)
+                Premium Segment (Benz, Audi, BMW)
               </button>
 
               <button
@@ -252,7 +252,7 @@ export default function TransportationBookingForm({
                     : "bg-surface-container hover:bg-surface-container-high text-on-surface"
                 }`}
               >
-                🚌 ഓൾ ഇന്ത്യ ബസ്സുകൾ (Bus Booking)
+                Interstate &amp; All-India Buses
               </button>
 
               <button
@@ -264,7 +264,7 @@ export default function TransportationBookingForm({
                     : "bg-surface-container hover:bg-surface-container-high text-on-surface"
                 }`}
               >
-                എല്ലാം (Show All)
+                All Vehicles
               </button>
             </div>
           </div>
