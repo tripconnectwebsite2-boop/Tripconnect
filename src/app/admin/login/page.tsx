@@ -124,15 +124,6 @@ function AdminLoginForm() {
         </div>
       )}
 
-      {/* Security Info Card */}
-      <div className="mb-6 p-4 rounded-xl bg-surface-container-high/60 border border-outline-variant/30 text-xs text-on-surface-variant leading-relaxed flex items-start gap-2.5">
-        <span className="material-symbols-outlined text-[18px] text-primary shrink-0 mt-0.5">verified_user</span>
-        <span>
-          Access is strictly restricted to the authorized administrator account (
-          <strong className="text-on-surface font-mono font-semibold">{AUTHORIZED_ADMIN_EMAIL}</strong>
-          ). All other accounts are automatically denied.
-        </span>
-      </div>
 
       {/* Google OAuth Action Button (ONLY SIGN-IN METHOD) */}
       <button
