@@ -3,8 +3,12 @@ import { getAdminSession } from "@/lib/auth";
 import path from "path";
 import fs from "fs/promises";
 import os from "os";
+import sharp from "sharp";
 
 export const dynamic = "force-dynamic";
+
+const FIREBASE_API_KEY = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyC6STcc6a82EIrg7apay8QdsH24HobiTRw";
+const FIREBASE_PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "trip-connect-versel";
 
 const ALLOWED_MIME_TYPES = new Set([
   "image/jpeg",
@@ -14,15 +18,6 @@ const ALLOWED_MIME_TYPES = new Set([
   "image/svg+xml",
   "image/avif",
 ]);
-
-const EXTENSION_MAP: Record<string, string> = {
-  "image/jpeg": ".jpg",
-  "image/png": ".png",
-  "image/webp": ".webp",
-  "image/gif": ".gif",
-  "image/svg+xml": ".svg",
-  "image/avif": ".avif",
-};
 
 function isValidImageSignature(buffer: Buffer, mime: string): boolean {
   if (buffer.length < 8) return false;
@@ -54,7 +49,6 @@ function isValidImageSignature(buffer: Buffer, mime: string): boolean {
   }
   if (mime === "image/svg+xml") {
     const text = buffer.toString("utf-8").toLowerCase();
-    // Validate SVG structure and reject any malicious active scripts/handlers
     const hasSvgTag = text.includes("<svg");
     const hasMaliciousPayload =
       text.includes("<script") ||
@@ -100,30 +94,49 @@ export async function POST(req: NextRequest) {
     }
 
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const rawBuffer = Buffer.from(bytes);
 
     // Deep binary signature validation
-    if (!isValidImageSignature(buffer, file.type)) {
+    if (!isValidImageSignature(rawBuffer, file.type)) {
       return NextResponse.json(
         { error: "File validation failed: Content does not match genuine image signature." },
         { status: 400 }
       );
     }
 
-    // Determine extension
-    let ext = path.extname(file.name).toLowerCase();
-    if (!ext || ext.length > 5 || !Object.values(EXTENSION_MAP).includes(ext)) {
-      ext = EXTENSION_MAP[file.type] || ".jpg";
+    // Process and optimize image
+    let finalBuffer: Buffer = rawBuffer;
+    let finalMime = file.type;
+    let ext = ".webp";
+
+    if (file.type === "image/svg+xml") {
+      ext = ".svg";
+      finalMime = "image/svg+xml";
+    } else {
+      try {
+        // High-definition WebP compression up to 1920px max dimension
+        finalBuffer = await sharp(rawBuffer)
+          .resize({ width: 1920, height: 1920, fit: "inside", withoutEnlargement: true })
+          .webp({ quality: 82, effort: 4 })
+          .toBuffer();
+        finalMime = "image/webp";
+        ext = ".webp";
+      } catch (sharpErr) {
+        console.warn("[Upload] Sharp optimization fallback:", sharpErr);
+        finalBuffer = rawBuffer;
+        ext = file.name.endsWith(".png") ? ".png" : ".jpg";
+      }
     }
 
     // Safe sanitized unique filename
     const safeBaseName = (file.name || "image")
-      .replace(ext, "")
+      .replace(/\.[^/.]+$/, "")
       .replace(/[^a-zA-Z0-9-_]/g, "-")
       .slice(0, 30);
     const uniqueSuffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const filename = `${safeBaseName || "upload"}-${uniqueSuffix}${ext}`;
 
+    // 1. Cache to local disk for instant subsequent serving
     const isServerless = Boolean(
       process.env.VERCEL ||
       process.env.AWS_LAMBDA_FUNCTION_NAME ||
@@ -136,13 +149,31 @@ export async function POST(req: NextRequest) {
     await fs.mkdir(uploadsDir, { recursive: true });
 
     const filePath = path.join(uploadsDir, filename);
+    await fs.writeFile(filePath, finalBuffer);
 
-    // Strict path containment check against directory traversal
-    if (!path.resolve(filePath).startsWith(path.resolve(uploadsDir))) {
-      return NextResponse.json({ error: "Invalid destination path" }, { status: 400 });
+    // 2. Persist to Cloud Firestore so it survives forever across all Vercel serverless containers
+    try {
+      const base64Data = finalBuffer.toString("base64");
+      // Sanitize docId for Firestore (letters, numbers, hyphens, underscores)
+      const cleanDocId = `img-${filename.replace(/[^a-zA-Z0-9-_]/g, "_")}`;
+      const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents/tripconnect/${cleanDocId}?key=${FIREBASE_API_KEY}`;
+
+      await fetch(firestoreUrl, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fields: {
+            data: { stringValue: base64Data },
+            contentType: { stringValue: finalMime },
+            filename: { stringValue: filename },
+            size: { integerValue: String(finalBuffer.length) },
+            created_at: { stringValue: new Date().toISOString() },
+          },
+        }),
+      });
+    } catch (cloudErr) {
+      console.warn("[Upload] Cloud Firestore image backup warning:", cloudErr);
     }
-
-    await fs.writeFile(filePath, buffer);
 
     const publicUrl = `/uploads/${filename}`;
 
@@ -150,8 +181,8 @@ export async function POST(req: NextRequest) {
       success: true,
       url: publicUrl,
       filename,
-      size: file.size,
-      type: file.type,
+      size: finalBuffer.length,
+      type: finalMime,
     });
   } catch (error: any) {
     console.error("Upload error:", error);

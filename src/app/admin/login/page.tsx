@@ -15,11 +15,16 @@ function AdminLoginForm() {
   const [errorMsg, setErrorMsg] = useState("");
   const [firebaseActive, setFirebaseActive] = useState(false);
 
+  // Passcode login state
+  const [passcode, setPasscode] = useState("");
+  const [showPasscode, setShowPasscode] = useState(false);
+  const [isPasscodeLoading, setIsPasscodeLoading] = useState(false);
+
   useEffect(() => {
     setFirebaseActive(isFirebaseConfigured());
   }, []);
 
-  // Firebase Google OAuth Sign-In handler (Only allowed authentication method)
+  // Firebase Google OAuth Sign-In handler
   const handleFirebaseGoogleSignIn = async () => {
     setIsLoading(true);
     setErrorMsg("");
@@ -31,7 +36,7 @@ function AdminLoginForm() {
 
     if (!firebaseActive || !auth || !googleProvider) {
       setErrorMsg(
-        "Google Authentication is initializing or unavailable. Please verify Firebase configuration."
+        "Google Authentication is initializing or unavailable. You can use your Master Security Passcode below."
       );
       setIsLoading(false);
       return;
@@ -43,7 +48,6 @@ function AdminLoginForm() {
       const userEmail = (user.email || "").trim().toLowerCase();
       const idToken = await user.getIdToken();
 
-      // Submit authenticated Google token & email to backend allowlist check
       const res = await fetch("/api/admin/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -64,6 +68,12 @@ function AdminLoginForm() {
         return;
       }
 
+      try {
+        sessionStorage.setItem("tc_admin_passcode_verified", "true");
+      } catch {
+        // Silent
+      }
+
       router.push(from);
       router.refresh();
     } catch (err: any) {
@@ -72,21 +82,57 @@ function AdminLoginForm() {
 
       if (err.code === "auth/unauthorized-domain") {
         setErrorMsg(
-          "Domain not authorized in Firebase Console. Please add 'localhost' to Authorized Domains under Firebase Console > Authentication > Settings."
+          "Domain not added to Firebase Authorized Domains. Please use the Master Passcode below."
         );
       } else if (err.code === "auth/popup-closed-by-user") {
         setErrorMsg("Google Sign-In was closed before completing. Please try again.");
-      } else if (err.code === "auth/cancelled-popup-request") {
-        setErrorMsg("Another authentication popup is already open.");
       } else {
-        setErrorMsg(err.message || "Failed to complete Google authentication with Firebase.");
+        setErrorMsg(err.message || "Failed to complete Google authentication. Try the Master Passcode below.");
       }
+    }
+  };
+
+  // Master Security Passcode handler
+  const handlePasscodeLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!passcode.trim() || isPasscodeLoading) return;
+
+    setIsPasscodeLoading(true);
+    setErrorMsg("");
+
+    try {
+      const res = await fetch("/api/admin/auth/verify-passcode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passcode: passcode.trim() }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setErrorMsg(data.error || "Invalid Master Passcode. Access denied.");
+        setIsPasscodeLoading(false);
+        return;
+      }
+
+      // Mark passcode verified in sessionStorage so the 3D Intro screen doesn't ask again
+      try {
+        sessionStorage.setItem("tc_admin_passcode_verified", "true");
+      } catch {
+        // Silent
+      }
+
+      router.push(from);
+      router.refresh();
+    } catch (err: any) {
+      setErrorMsg(err?.message || "Passcode verification failed. Please try again.");
+      setIsPasscodeLoading(false);
     }
   };
 
   return (
     <div className="w-full max-w-md bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/30 p-8">
-      <div className="text-center mb-8">
+      <div className="text-center mb-6">
         <Image
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYJZOkBqsaeTOLbOEwhz53LmuCxqlx4FZCyvrnDINoyxkUn91Tsh4RgfoyI-eQ171uAkntsNBkuKDOx8dcghNLRyQ3Mbl7L2WNHMaE-6X3i91C5UykVqixmD9wV_FK7U416tlER4E8uXR_UkBo90roeRFK7pKMHlTdKTv8Iuxo8AfT9QcmL7jvcnluVXo0BsJb6EIZc7VTEAf-StYMbsp5A8FU2KewNVHerKfVC_W2_Ux4Rzjzy9e-LLOa2DRvH-59oaQ"
           alt="Trip Connect Kochi"
@@ -98,8 +144,8 @@ function AdminLoginForm() {
         <h1 className="font-headline-lg text-headline-lg font-bold tracking-tight text-on-surface">
           Administrator Sign-In
         </h1>
-        <p className="font-body-sm text-body-sm text-on-surface-variant mt-2">
-          Trip Connect Operations &amp; Concierge CRM
+        <p className="font-body-sm text-body-sm text-on-surface-variant mt-1.5">
+          Trip Connect Operations &amp; Management Portal
         </p>
       </div>
 
@@ -110,13 +156,12 @@ function AdminLoginForm() {
         </div>
       )}
 
-
-      {/* Primary Action: Google Login ONLY */}
+      {/* Primary Action 1: Google OAuth */}
       <button
         type="button"
         onClick={handleFirebaseGoogleSignIn}
-        disabled={isLoading}
-        className="w-full py-3.5 px-4 rounded-xl bg-white hover:bg-neutral-50 text-neutral-800 font-label-md text-label-md font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-3 border border-neutral-200 active:scale-[0.98] disabled:opacity-75 mb-6"
+        disabled={isLoading || isPasscodeLoading}
+        className="w-full py-3 px-4 rounded-xl bg-white hover:bg-neutral-50 text-neutral-800 font-label-md text-label-md font-semibold transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-3 border border-neutral-300 active:scale-[0.98] disabled:opacity-75 mb-5"
       >
         {isLoading ? (
           <>
@@ -148,7 +193,63 @@ function AdminLoginForm() {
         )}
       </button>
 
-      <div className="pt-4 border-t border-outline-variant/20 text-center">
+      {/* Divider */}
+      <div className="relative flex py-2 items-center mb-5">
+        <div className="flex-grow border-t border-outline-variant/30"></div>
+        <span className="flex-shrink mx-3 text-xs uppercase tracking-wider text-on-surface-variant font-medium">
+          OR PASSCODE
+        </span>
+        <div className="flex-grow border-t border-outline-variant/30"></div>
+      </div>
+
+      {/* Primary Action 2: Master Passcode Form */}
+      <form onSubmit={handlePasscodeLogin} className="space-y-3.5 mb-6">
+        <div>
+          <label className="block text-xs font-semibold text-on-surface-variant mb-1 uppercase tracking-wider">
+            Master Security Key
+          </label>
+          <div className="relative">
+            <input
+              type={showPasscode ? "text" : "password"}
+              value={passcode}
+              onChange={(e) => setPasscode(e.target.value)}
+              placeholder="Enter 14-digit passcode"
+              required
+              className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary pr-10 tracking-widest font-mono"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPasscode(!showPasscode)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface"
+              aria-label="Toggle password visibility"
+            >
+              <span className="material-symbols-outlined text-[18px]">
+                {showPasscode ? "visibility_off" : "visibility"}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={!passcode.trim() || isPasscodeLoading || isLoading}
+          className="w-full py-2.5 px-4 rounded-xl bg-primary hover:bg-primary/90 text-on-primary font-label-md text-sm font-semibold transition-all shadow-md active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
+        >
+          {isPasscodeLoading ? (
+            <>
+              <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
+              <span>Authenticating...</span>
+            </>
+          ) : (
+            <>
+              <span className="material-symbols-outlined text-[18px]">key</span>
+              <span>Unlock Admin Portal</span>
+            </>
+          )}
+        </button>
+      </form>
+
+      <div className="pt-3 border-t border-outline-variant/20 text-center">
         <Link href="/" className="text-sm text-primary hover:underline font-medium inline-flex items-center gap-1.5">
           <span className="material-symbols-outlined text-[16px]">arrow_back</span>
           <span>Return to public website</span>
