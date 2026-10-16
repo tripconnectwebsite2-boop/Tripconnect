@@ -12,6 +12,7 @@ function GlobalLoaderInner() {
   const [loading, setLoading] = useState(() => !isAdmin);
   const [fading, setFading] = useState(false);
   const prevPathname = useRef(pathname);
+  const isInitialMount = useRef(true);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const fadeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -49,28 +50,38 @@ function GlobalLoaderInner() {
       return;
     }
     showLoader(3500);
+    isInitialMount.current = false;
     return () => clearTimers();
   }, [pathname, showLoader, clearTimers]);
 
-  // 2. Route Changes (When switching pages):
+  // 2. Route Changes (ONLY when switching between different page routes):
   useEffect(() => {
-    if (prevPathname.current !== pathname) {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    const currentClean = pathname ? pathname.replace(/\/$/, "") : "";
+    const prevClean = prevPathname.current ? prevPathname.current.replace(/\/$/, "") : "";
+
+    if (currentClean !== prevClean) {
       prevPathname.current = pathname;
 
       // Never run loader on admin routes
-      if (pathname && (pathname.startsWith("/admin") || pathname.startsWith("/studio"))) {
+      if (currentClean.startsWith("/admin") || currentClean.startsWith("/studio")) {
         clearTimers();
         setLoading(false);
         setFading(false);
         return;
       }
 
-      // Show loader when changing pages
+      // Show loader when switching between different pages
       showLoader(3500);
     }
   }, [pathname, showLoader, clearTimers]);
 
-  // 3. Catch all internal link clicks across the site (Header, cards, buttons)
+  // 3. Catch clicks ONLY on main page navigation links (Header / Navigation bar)
+  // NEVER catch in-page content clicks (like "Explore Trips", cards, hashes, etc.)
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
       // Do nothing if currently on admin
@@ -81,12 +92,20 @@ function GlobalLoaderInner() {
       const anchor = (e.target as HTMLElement)?.closest("a");
       if (!anchor) return;
 
+      // CRITICAL: Only trigger for main navigation links (in header/nav), NEVER for in-page content buttons!
+      const isHeaderNavigation = anchor.closest("header") || anchor.closest("nav");
+      if (!isHeaderNavigation) {
+        return; // Skip all in-page content buttons (e.g. "Explore Trips", cards, ctas)
+      }
+
       const href = anchor.getAttribute("href");
       const target = anchor.getAttribute("target");
 
+      // Skip hash links, mailto, tel, or external
       if (
         !href ||
         href.startsWith("#") ||
+        href.includes("#") ||
         href.startsWith("mailto:") ||
         href.startsWith("tel:") ||
         target === "_blank"
@@ -105,7 +124,7 @@ function GlobalLoaderInner() {
         const cleanCurrent = window.location.pathname.replace(/\/$/, "");
         const cleanTarget = url.pathname.replace(/\/$/, "");
 
-        // When switching to a DIFFERENT page!
+        // ONLY when switching to a DIFFERENT page route!
         if (url.origin === window.location.origin && cleanTarget !== cleanCurrent) {
           showLoader(3500);
         }
@@ -114,19 +133,10 @@ function GlobalLoaderInner() {
       }
     };
 
-    const handlePopState = () => {
-      if (window.location.pathname.startsWith("/admin") || window.location.pathname.startsWith("/studio")) {
-        return;
-      }
-      showLoader(3500);
-    };
-
     document.addEventListener("click", handleDocumentClick, { capture: true });
-    window.addEventListener("popstate", handlePopState);
 
     return () => {
       document.removeEventListener("click", handleDocumentClick, { capture: true });
-      window.removeEventListener("popstate", handlePopState);
       clearTimers();
     };
   }, [showLoader, clearTimers]);
