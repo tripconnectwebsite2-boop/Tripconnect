@@ -9,10 +9,6 @@ import { getCustomPageBySlug, getCustomPages, getSiteContent } from "@/lib/db";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function generateStaticParams() {
-  const pages = await getCustomPages({ status: "published" });
-  return pages.map((p) => ({ slug: p.slug }));
-}
 
 export async function generateMetadata({
   params,

@@ -269,14 +269,15 @@ async function getStoreAsync(): Promise<DatabaseStore> {
       inMemoryStore = {
         ...local,
         ...cloud,
-        packages: cloud.packages || local.packages,
-        destinations: cloud.destinations || local.destinations,
-        content: cloud.content || local.content,
-        settings: cloud.settings || local.settings,
-        offers: cloud.offers || local.offers,
-        reviews: cloud.reviews || local.reviews,
-        enquiries: cloud.enquiries || local.enquiries,
-        pages: cloud.pages || local.pages,
+        packages: Array.isArray(cloud.packages) ? cloud.packages : local.packages,
+        destinations: Array.isArray(cloud.destinations) ? cloud.destinations : local.destinations,
+        content: cloud.content && typeof cloud.content === "object" ? cloud.content : local.content,
+        settings: cloud.settings && typeof cloud.settings === "object" ? cloud.settings : local.settings,
+        offers: Array.isArray(cloud.offers) ? cloud.offers : local.offers,
+        reviews: Array.isArray(cloud.reviews) ? cloud.reviews : local.reviews,
+        enquiries: Array.isArray(cloud.enquiries) ? cloud.enquiries : local.enquiries,
+        pages: Array.isArray(cloud.pages) ? cloud.pages : local.pages,
+        bugs: Array.isArray(cloud.bugs) ? cloud.bugs : (local.bugs || []),
       };
       return inMemoryStore!;
     }
@@ -286,7 +287,7 @@ async function getStoreAsync(): Promise<DatabaseStore> {
   return local;
 }
 
-function saveStore(store: DatabaseStore) {
+async function saveStore(store: DatabaseStore): Promise<void> {
   inMemoryStore = store;
   try {
     if (!fs.existsSync(DATA_DIR)) {
@@ -297,7 +298,7 @@ function saveStore(store: DatabaseStore) {
     console.warn("[DatabaseStore] Disk write skipped in serverless environment:", err);
   }
   // Persist to Cloud Firestore across all Vercel serverless containers
-  saveStoreToFirestore(store).catch(() => {});
+  await saveStoreToFirestore(store);
 }
 
 function isSupabaseConfigured(): boolean {
@@ -419,7 +420,7 @@ export async function createPackage(data: Partial<TravelPackage>): Promise<Trave
   };
 
   store.packages.unshift(newPackage);
-  saveStore(store);
+  await saveStore(store);
   return newPackage;
 }
 
@@ -443,7 +444,7 @@ export async function updatePackage(
   };
 
   store.packages[index] = updated;
-  saveStore(store);
+  await saveStore(store);
   return updated;
 }
 
@@ -451,7 +452,7 @@ export async function deletePackage(id: string): Promise<boolean> {
   const store = await getStoreAsync();
   const initialLength = store.packages.length;
   store.packages = store.packages.filter((p) => p.id !== id);
-  saveStore(store);
+  await saveStore(store);
   return store.packages.length < initialLength;
 }
 
@@ -493,7 +494,7 @@ export async function createDestination(data: Partial<Destination>): Promise<Des
     updated_at: now,
   };
   store.destinations.push(newDest);
-  saveStore(store);
+  await saveStore(store);
   return newDest;
 }
 
@@ -509,7 +510,7 @@ export async function updateDestination(
     ...data,
     updated_at: new Date().toISOString(),
   };
-  saveStore(store);
+  await saveStore(store);
   return store.destinations[idx];
 }
 
@@ -517,7 +518,7 @@ export async function deleteDestination(id: string): Promise<boolean> {
   const store = await getStoreAsync();
   const initial = store.destinations.length;
   store.destinations = store.destinations.filter((d) => d.id !== id);
-  saveStore(store);
+  await saveStore(store);
   return store.destinations.length < initial;
 }
 
@@ -571,7 +572,7 @@ export async function createEnquiry(
   };
 
   store.enquiries.unshift(newEnquiry);
-  saveStore(store);
+  await saveStore(store);
   return newEnquiry;
 }
 
@@ -585,7 +586,7 @@ export async function updateEnquiryStatus(
 
   store.enquiries[idx].status = status;
   store.enquiries[idx].updated_at = new Date().toISOString();
-  saveStore(store);
+  await saveStore(store);
   return store.enquiries[idx];
 }
 
@@ -608,7 +609,7 @@ export async function addEnquiryNote(
     created_at: new Date().toISOString(),
   };
   store.enquiry_notes.push(newNote);
-  saveStore(store);
+  await saveStore(store);
   return newNote;
 }
 
@@ -619,7 +620,7 @@ export async function deleteEnquiry(id: string): Promise<boolean> {
   if (store.enquiries.length === initialLength) return false;
   // Also remove associated notes
   store.enquiry_notes = store.enquiry_notes.filter((n) => n.enquiry_id !== id);
-  saveStore(store);
+  await saveStore(store);
   return true;
 }
 
@@ -630,7 +631,7 @@ export async function deleteEnquiriesBulk(ids: string[]): Promise<{ count: numbe
   store.enquiries = store.enquiries.filter((e) => !idSet.has(e.id));
   const count = initialLength - store.enquiries.length;
   store.enquiry_notes = store.enquiry_notes.filter((n) => !idSet.has(n.enquiry_id));
-  saveStore(store);
+  await saveStore(store);
   return { count };
 }
 
@@ -639,7 +640,7 @@ export async function clearAllEnquiries(): Promise<{ count: number }> {
   const count = store.enquiries.length;
   store.enquiries = [];
   store.enquiry_notes = [];
-  saveStore(store);
+  await saveStore(store);
   return { count };
 }
 
@@ -682,7 +683,7 @@ export async function createOffer(data: Partial<SpecialOffer>): Promise<SpecialO
     updated_at: now,
   };
   store.offers.unshift(newOffer);
-  saveStore(store);
+  await saveStore(store);
   return newOffer;
 }
 
@@ -698,7 +699,7 @@ export async function updateOffer(
     ...data,
     updated_at: new Date().toISOString(),
   };
-  saveStore(store);
+  await saveStore(store);
   return store.offers[idx];
 }
 
@@ -706,7 +707,7 @@ export async function deleteOffer(id: string): Promise<boolean> {
   const store = await getStoreAsync();
   const initial = store.offers.length;
   store.offers = store.offers.filter((o) => o.id !== id);
-  saveStore(store);
+  await saveStore(store);
   return store.offers.length < initial;
 }
 
@@ -737,7 +738,7 @@ export async function createReview(data: Partial<Review>): Promise<Review> {
     updated_at: now,
   };
   store.reviews.unshift(newReview);
-  saveStore(store);
+  await saveStore(store);
   return newReview;
 }
 
@@ -750,7 +751,7 @@ export async function updateReview(id: string, data: Partial<Review>): Promise<R
     ...data,
     updated_at: new Date().toISOString(),
   };
-  saveStore(store);
+  await saveStore(store);
   return store.reviews[idx];
 }
 
@@ -758,7 +759,7 @@ export async function deleteReview(id: string): Promise<boolean> {
   const store = await getStoreAsync();
   const initial = store.reviews.length;
   store.reviews = store.reviews.filter((r) => r.id !== id);
-  saveStore(store);
+  await saveStore(store);
   return store.reviews.length < initial;
 }
 
@@ -779,7 +780,7 @@ export async function updateSiteSettings(
     ...settings,
     updated_at: new Date().toISOString(),
   };
-  saveStore(store);
+  await saveStore(store);
   return store.settings;
 }
 
@@ -800,7 +801,7 @@ export async function updateSiteContent(
     ...content,
     updated_at: new Date().toISOString(),
   };
-  saveStore(store);
+  await saveStore(store);
   return store.content;
 }
 
@@ -850,7 +851,7 @@ export async function createBug(
 
   if (!store.bugs) store.bugs = [];
   store.bugs.unshift(newBug);
-  saveStore(store);
+  await saveStore(store);
   return newBug;
 }
 
@@ -878,7 +879,7 @@ export async function updateBug(
     resolved_at: resolvedAt,
     updated_at: now,
   };
-  saveStore(store);
+  await saveStore(store);
   return store.bugs[idx];
 }
 
@@ -887,7 +888,7 @@ export async function deleteBug(id: string): Promise<boolean> {
   if (!store.bugs) return false;
   const initial = store.bugs.length;
   store.bugs = store.bugs.filter((b) => b.id !== id);
-  saveStore(store);
+  await saveStore(store);
   return store.bugs.length < initial;
 }
 
@@ -959,7 +960,7 @@ export async function createCustomPage(
   };
 
   store.pages.unshift(newPage);
-  saveStore(store);
+  await saveStore(store);
   return newPage;
 }
 
@@ -997,7 +998,7 @@ export async function updateCustomPage(
     updated_at: new Date().toISOString(),
   };
 
-  saveStore(store);
+  await saveStore(store);
   return store.pages[idx];
 }
 
@@ -1006,6 +1007,6 @@ export async function deleteCustomPage(id: string): Promise<boolean> {
   if (!store.pages) return false;
   const initial = store.pages.length;
   store.pages = store.pages.filter((p) => p.id !== id);
-  saveStore(store);
+  await saveStore(store);
   return store.pages.length < initial;
 }

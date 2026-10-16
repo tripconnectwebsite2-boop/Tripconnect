@@ -9,10 +9,6 @@ import Image from "next/image";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function generateStaticParams() {
-  const destinations = await getDestinations(true);
-  return destinations.map((d) => ({ slug: d.slug }));
-}
 
 export async function generateMetadata({
   params,

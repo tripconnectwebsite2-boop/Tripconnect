@@ -20,17 +20,11 @@ function getFirestoreInstance() {
   }
 }
 
-let lastFailedTime = 0;
-const RETRY_COOLDOWN_MS = 30000;
-
 /**
  * Fetch persistent store from Cloud Firestore.
- * Returns null if Firestore is not provisioned or offline, falling back safely to local memory.
+ * Always fetches the freshest store from cloud without cooldown locks.
  */
 export async function fetchStoreFromFirestore(): Promise<any | null> {
-  if (Date.now() - lastFailedTime < RETRY_COOLDOWN_MS) {
-    return null;
-  }
   try {
     const db = getFirestoreInstance();
     if (!db) return null;
@@ -39,13 +33,14 @@ export async function fetchStoreFromFirestore(): Promise<any | null> {
       return snap.data();
     }
   } catch (err: any) {
-    lastFailedTime = Date.now();
+    console.warn("[Firestore] Read error:", err?.message || err);
   }
   return null;
 }
 
 /**
  * Persist store to Cloud Firestore across all Vercel serverless instances.
+ * Awaited directly to guarantee persistence before serverless response termination.
  */
 export async function saveStoreToFirestore(store: any): Promise<boolean> {
   try {
@@ -56,9 +51,7 @@ export async function saveStoreToFirestore(store: any): Promise<boolean> {
     await setDoc(doc(db, "tripconnect", "store"), cleanStore);
     return true;
   } catch (err: any) {
-    if (err?.code !== "permission-denied" && !err?.message?.includes("PERMISSION_DENIED")) {
-      console.warn("[Firestore] Cloud store write notice:", err?.message || err);
-    }
+    console.error("[Firestore] Cloud store write error:", err?.message || err);
     return false;
   }
 }

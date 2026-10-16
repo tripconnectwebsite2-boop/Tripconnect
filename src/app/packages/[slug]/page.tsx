@@ -11,12 +11,6 @@ import PackageDetailEnquiryForm from "./PackageDetailEnquiryForm";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function generateStaticParams() {
-  const packages = await getPackages({ status: "published" });
-  return packages
-    .filter((p) => p.status === "published" && p.content_verified && !p.slug.endsWith("-draft"))
-    .map((p) => ({ slug: p.slug }));
-}
 
 export async function generateMetadata({
   params,
