@@ -1,31 +1,63 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { buildWhatsAppChatUrl } from "@/lib/notifications/whatsapp";
+import { TransportationVehicle } from "@/lib/types";
 
 interface TransportationBookingFormProps {
-  initialCar?: string;
+  vehicles?: TransportationVehicle[];
+  initialVehicleName?: string;
+  defaultCategory?: "normal" | "premium" | "bus";
 }
 
-const CAR_OPTIONS = [
-  "Mercedes-Benz E-Class / S-Class",
-  "Audi A6 / Q7 Luxury Matrix",
-  "BMW 5-Series / 7-Series",
-  "Toyota Vellfire VIP Lounge MPV",
-  "Toyota Innova HyCross / Crysta (Captain Seats)",
-  "Force Urbania VIP Mini Coach (12-17 Seats)",
+const DEFAULT_CARS = [
+  // Normal
+  { name: "Maruti Suzuki Dzire (Compact AC Sedan)", category: "normal" },
+  { name: "Toyota Etios / Glanza (Economy Sedan)", category: "normal" },
+  { name: "Maruti Suzuki Swift / Hyundai Aura (Compact City Car)", category: "normal" },
+  { name: "Maruti Suzuki Ertiga (Compact 6-Seater MPV)", category: "normal" },
+  // Premium
+  { name: "Mercedes-Benz E-Class / S-Class (VIP Luxury)", category: "premium" },
+  { name: "Audi A6 / Q7 Luxury Matrix (German Quattro)", category: "premium" },
+  { name: "BMW 5-Series / 7-Series (Executive Lounge)", category: "premium" },
+  { name: "Toyota Vellfire VIP Lounge MPV (Private Jet Comfort)", category: "premium" },
+  { name: "Toyota Innova HyCross VIP (Captain Seats Hybrid)", category: "premium" },
+  // Bus
+  { name: "Volvo 9600 Multi-Axle AC Sleeper (Interstate Flagship)", category: "bus" },
+  { name: "BharatBenz AC Luxury Sleeper & Semi-Sleeper Coach", category: "bus" },
+  { name: "Luxury 35 - 49 Seater Air Suspension Tourist Coach", category: "bus" },
+  { name: "Force Urbania 12/17-Seater VIP Coach", category: "bus" },
 ];
 
 const SERVICE_TYPES = [
-  "Airport Transfer (Cochin COK / Trivandrum TRV)",
-  "Multi-Day Kerala Tour (Munnar, Alleppey, Kumarakom)",
-  "Full-Day City Chauffeur (8h / 80km)",
-  "VIP Corporate Delegation / Summit",
-  "Luxury Destination Wedding Fleet",
+  "Local City Sightseeing & Hourly Rental (8h / 80km)",
+  "Airport Transfer (Cochin COK / Trivandrum TRV / Calicut)",
+  "Multi-Day Kerala Tour (Munnar, Alleppey, Thekkady, Wayanad)",
+  "Interstate Highway Journey (Bangalore, Chennai, Coimbatore)",
+  "All-India Bus Tour Charter / Group Pilgrimage Yatra",
+  "VIP Corporate Delegation / Wedding Luxury Fleet",
 ];
 
-export default function TransportationBookingForm({ initialCar }: TransportationBookingFormProps) {
-  const [selectedCar, setSelectedCar] = useState(initialCar || CAR_OPTIONS[0]);
+export default function TransportationBookingForm({
+  vehicles,
+  initialVehicleName,
+  defaultCategory = "normal",
+}: TransportationBookingFormProps) {
+  // If vehicles prop is passed, use it, otherwise use DEFAULT_CARS
+  const carOptions = useMemo(() => {
+    return vehicles && vehicles.length > 0
+      ? vehicles.map((v) => ({ name: `${v.name} (${v.subtitle || v.starting_price})`, rawName: v.name, category: v.category }))
+      : DEFAULT_CARS.map((c) => ({ name: c.name, rawName: c.name, category: c.category }));
+  }, [vehicles]);
+
+  const defaultCar = initialVehicleName
+    ? carOptions.find((c) => c.rawName.toLowerCase().includes(initialVehicleName.toLowerCase()))?.name || carOptions[0].name
+    : carOptions.find((c) => c.category === defaultCategory)?.name || carOptions[0].name;
+
+  const [selectedCategoryTab, setSelectedCategoryTab] = useState<"all" | "normal" | "premium" | "bus">(
+    defaultCategory
+  );
+  const [selectedCar, setSelectedCar] = useState(defaultCar);
   const [serviceType, setServiceType] = useState(SERVICE_TYPES[0]);
   const [customerName, setCustomerName] = useState("");
   const [phone, setPhone] = useState("");
@@ -39,6 +71,23 @@ export default function TransportationBookingForm({ initialCar }: Transportation
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Sync initial selection
+  useEffect(() => {
+    if (initialVehicleName) {
+      const match = carOptions.find((c) =>
+        c.rawName.toLowerCase().includes(initialVehicleName.toLowerCase())
+      );
+      if (match) {
+        setSelectedCar(match.name);
+        setSelectedCategoryTab(match.category as any);
+      }
+    }
+  }, [initialVehicleName, carOptions]);
+
+  const filteredOptions = selectedCategoryTab === "all"
+    ? carOptions
+    : carOptions.filter((c) => c.category === selectedCategoryTab);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,11 +107,11 @@ export default function TransportationBookingForm({ initialCar }: Transportation
           customer_name: customerName.trim(),
           phone: phone.trim(),
           email: email.trim() || `${phone.replace(/[^0-9]/g, "") || "guest"}@tripconnect.in`,
-          package_title: `Chauffeur: ${selectedCar} (${serviceType})`,
-          preferred_destination: `${pickupLocation || "Kochi"} -> ${destination || "Kerala Tour"}`,
+          package_title: `Vehicle Booking: ${selectedCar}`,
+          preferred_destination: `${pickupLocation || "Kochi"} -> ${destination || "Kerala/All-India Tour"}`,
           travel_date: travelDate || undefined,
           traveller_count: Number(pax) || 2,
-          additional_requirements: `Vehicle: ${selectedCar}\nService: ${serviceType}\nPickup: ${pickupLocation}\nDrop: ${destination}\nNotes: ${notes}`,
+          additional_requirements: `Vehicle: ${selectedCar}\nService: ${serviceType}\nCategory: ${selectedCategoryTab}\nPickup: ${pickupLocation}\nDrop: ${destination}\nPassengers: ${pax}\nNotes: ${notes}`,
           source_page: "/transportation",
         }),
       });
@@ -74,14 +123,14 @@ export default function TransportationBookingForm({ initialCar }: Transportation
 
       setSuccess(true);
     } catch (err: any) {
-      setErrorMsg(err.message || "An error occurred while reserving. Please try via WhatsApp.");
+      setErrorMsg(err.message || "An error occurred while reserving. Please connect directly via WhatsApp.");
     } finally {
       setLoading(false);
     }
   };
 
   const whatsAppUrl = buildWhatsAppChatUrl({
-    customMessage: `Hello Trip Connect Concierge, I would like to reserve luxury transportation:\n• Vehicle: ${selectedCar}\n• Service: ${serviceType}\n• Pickup: ${pickupLocation || "Cochin Airport"}\n• Destination: ${destination || "Kerala Tour"}\n• Date: ${travelDate || "Upcoming"}\n• Guests: ${pax}\n• Name: ${customerName || "Guest"}`,
+    customMessage: `Hello Trip Connect, I would like to book transportation:\n• Category: ${selectedCategoryTab.toUpperCase()}\n• Vehicle / Bus: ${selectedCar}\n• Service: ${serviceType}\n• Pickup Location: ${pickupLocation || "Kochi"}\n• Destination / Route: ${destination || "Tour Circuit"}\n• Travel Date: ${travelDate || "Upcoming"}\n• Passengers: ${pax}\n• Name: ${customerName || "Guest"}\n• Contact: ${phone || "Mobile"}`,
   });
 
   return (
@@ -90,13 +139,13 @@ export default function TransportationBookingForm({ initialCar }: Transportation
         <div>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-xs font-semibold uppercase tracking-wider mb-2">
             <span className="material-symbols-outlined text-[16px]">directions_car</span>
-            VIP Chauffeur Reservation
+            Online Transportation &amp; Bus Booking
           </span>
           <h2 className="font-headline-md md:font-headline-lg text-headline-md text-on-surface font-bold tracking-tight">
-            Reserve Your Luxury Chauffeur
+            Reserve Your Car, Luxury Chauffeur or All-India Bus
           </h2>
           <p className="font-body-sm text-on-surface-variant mt-1">
-            Uniformed native chauffeurs, all-inclusive transparent rates, and sanitized fleet.
+            Uniformed verified drivers, all-inclusive transparent pricing, and 24/7 WhatsApp assistance.
           </p>
         </div>
         <a
@@ -106,7 +155,7 @@ export default function TransportationBookingForm({ initialCar }: Transportation
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-label-md text-sm font-semibold shadow-md transition-all active:scale-95 shrink-0"
         >
           <span className="material-symbols-outlined text-[18px]">chat</span>
-          Instant WhatsApp Dispatch
+          Instant WhatsApp Booking
         </a>
       </div>
 
@@ -116,10 +165,10 @@ export default function TransportationBookingForm({ initialCar }: Transportation
             ✓
           </div>
           <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">
-            Reservation Request Received
+            Booking Enquiry Received!
           </h3>
           <p className="font-body-md text-on-surface-variant max-w-md mx-auto">
-            Our transportation concierge has received your request for <strong>{selectedCar}</strong>. We will confirm availability and vehicle allocation on WhatsApp/call within 15 minutes.
+            Our transportation concierge has received your request for <strong>{selectedCar}</strong>. We will confirm vehicle availability and driver details on WhatsApp or phone call within 15 minutes.
           </p>
           <div className="pt-4 flex flex-wrap justify-center gap-3">
             <a
@@ -128,7 +177,7 @@ export default function TransportationBookingForm({ initialCar }: Transportation
               rel="noopener noreferrer"
               className="px-6 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-label-md text-sm font-semibold shadow-md inline-flex items-center gap-2"
             >
-              <span>Connect with Assigned Chauffeur on WhatsApp</span>
+              <span>Confirm on WhatsApp Immediately</span>
               <span className="material-symbols-outlined text-[18px]">open_in_new</span>
             </a>
             <button
@@ -152,20 +201,88 @@ export default function TransportationBookingForm({ initialCar }: Transportation
             </div>
           )}
 
+          {/* Category Filter Pills */}
+          <div>
+            <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
+              Select Fleet Type (വാഹന വിഭാഗം തിരഞ്ഞെടുക്കുക)
+            </label>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCategoryTab("normal");
+                  const match = carOptions.find((c) => c.category === "normal");
+                  if (match) setSelectedCar(match.name);
+                }}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  selectedCategoryTab === "normal"
+                    ? "bg-emerald-600 text-white shadow-md"
+                    : "bg-surface-container hover:bg-surface-container-high text-on-surface"
+                }`}
+              >
+                🚗 ചെറിയ കാറുകൾ (Normal Cabs)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCategoryTab("premium");
+                  const match = carOptions.find((c) => c.category === "premium");
+                  if (match) setSelectedCar(match.name);
+                }}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  selectedCategoryTab === "premium"
+                    ? "bg-amber-600 text-white shadow-md"
+                    : "bg-surface-container hover:bg-surface-container-high text-on-surface"
+                }`}
+              >
+                ⭐ പ്രീമിയം ലക്ഷ്വറി (Benz, Audi, BMW)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedCategoryTab("bus");
+                  const match = carOptions.find((c) => c.category === "bus");
+                  if (match) setSelectedCar(match.name);
+                }}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  selectedCategoryTab === "bus"
+                    ? "bg-blue-600 text-white shadow-md"
+                    : "bg-surface-container hover:bg-surface-container-high text-on-surface"
+                }`}
+              >
+                🚌 ഓൾ ഇന്ത്യ ബസ്സുകൾ (Bus Booking)
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedCategoryTab("all")}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  selectedCategoryTab === "all"
+                    ? "bg-primary text-on-primary shadow-md"
+                    : "bg-surface-container hover:bg-surface-container-high text-on-surface"
+                }`}
+              >
+                എല്ലാം (Show All)
+              </button>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Preferred Vehicle */}
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
-                Select Luxury Vehicle *
+                Choose Vehicle or Bus Model *
               </label>
               <select
                 value={selectedCar}
                 onChange={(e) => setSelectedCar(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl bg-surface-container-high border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary font-medium"
               >
-                {CAR_OPTIONS.map((car) => (
-                  <option key={car} value={car}>
-                    {car}
+                {filteredOptions.map((car) => (
+                  <option key={car.name} value={car.name}>
+                    {car.name}
                   </option>
                 ))}
               </select>
@@ -192,13 +309,13 @@ export default function TransportationBookingForm({ initialCar }: Transportation
             {/* Pickup Location */}
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
-                Pickup Point / Airport *
+                Pickup Point / Origin City *
               </label>
               <input
                 type="text"
                 value={pickupLocation}
                 onChange={(e) => setPickupLocation(e.target.value)}
-                placeholder="e.g. Cochin Airport (COK), Grand Hyatt Kochi, or Residence"
+                placeholder="e.g. Cochin Airport, Ernakulam, Bangalore, Chennai, Trivandrum"
                 required
                 className="w-full px-4 py-3 rounded-xl bg-surface-container-high border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary placeholder:text-on-surface-variant/50"
               />
@@ -207,13 +324,13 @@ export default function TransportationBookingForm({ initialCar }: Transportation
             {/* Destination / Drop Point */}
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
-                Drop Location / Tour Circuit *
+                Destination / Drop Location / Route *
               </label>
               <input
                 type="text"
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
-                placeholder="e.g. Munnar, Kumarakom, Alleppey, or City Tour"
+                placeholder="e.g. Munnar, Bangalore, Chennai, Goa, Pan-India Tour Circuit"
                 required
                 className="w-full px-4 py-3 rounded-xl bg-surface-container-high border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary placeholder:text-on-surface-variant/50"
               />
@@ -222,7 +339,7 @@ export default function TransportationBookingForm({ initialCar }: Transportation
             {/* Travel Date */}
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
-                Pickup Date &amp; Time
+                Journey Date
               </label>
               <input
                 type="date"
@@ -235,22 +352,18 @@ export default function TransportationBookingForm({ initialCar }: Transportation
             {/* Passenger Count */}
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
-                Number of Passengers
+                Number of Passengers / Berths
               </label>
-              <select
+              <input
+                type="text"
                 value={pax}
                 onChange={(e) => setPax(e.target.value)}
+                placeholder="e.g. 2, 4, 12, or 35"
                 className="w-full px-4 py-3 rounded-xl bg-surface-container-high border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary"
-              >
-                {[1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15, 17].map((num) => (
-                  <option key={num} value={num}>
-                    {num} {num === 1 ? "Guest" : "Guests"}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
 
-            {/* Contact Name */}
+            {/* Guest Name */}
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
                 Your Full Name *
@@ -259,65 +372,76 @@ export default function TransportationBookingForm({ initialCar }: Transportation
                 type="text"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                placeholder="e.g. Dr. Rajesh Pillai"
+                placeholder="Enter your name"
                 required
                 className="w-full px-4 py-3 rounded-xl bg-surface-container-high border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary placeholder:text-on-surface-variant/50"
               />
             </div>
 
-            {/* Contact Phone */}
+            {/* Phone Number */}
             <div>
               <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
-                Mobile Number (with WhatsApp) *
+                WhatsApp / Phone Number *
               </label>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="+91 98470 12345"
+                placeholder="+91 94008 86838"
                 required
                 className="w-full px-4 py-3 rounded-xl bg-surface-container-high border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary placeholder:text-on-surface-variant/50"
               />
             </div>
           </div>
 
-          {/* Email and Special Requirements */}
+          {/* Additional Notes */}
           <div>
             <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">
-              Special Requests (Child Seat, Airport Nameboard, Flight Number)
+              Specific Requirements / Bus Route Details
             </label>
             <textarea
               rows={3}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="e.g. Flight 6E-1402 landing at Cochin 11:30 AM. Need airport placard signage and bottled water."
-              className="w-full px-4 py-3 rounded-xl bg-surface-container-high border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary placeholder:text-on-surface-variant/50"
+              placeholder="e.g. Flight number for airport pickup, AC sleeper berth preference, return trip required, child safety seat, etc."
+              className="w-full px-4 py-3 rounded-xl bg-surface-container-high border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary placeholder:text-on-surface-variant/50 resize-y"
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+          {/* Form Actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-outline-variant/20">
             <div className="flex items-center gap-2 text-xs text-on-surface-variant">
-              <span className="material-symbols-outlined text-[18px] text-primary">verified_user</span>
-              <span>100% Confidential • Professional Chauffeurs • Fixed Pricing Guarantee</span>
+              <span className="material-symbols-outlined text-[18px] text-emerald-600">verified_user</span>
+              <span>No advance booking fees required. Pay after vehicle allocation.</span>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-sm font-semibold transition-all shadow-lg active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
-                  <span>Confirming Chauffeur Allocation...</span>
-                </>
-              ) : (
-                <>
-                  <span>Request Luxury Chauffeur</span>
-                  <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-                </>
-              )}
-            </button>
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <a
+                href={whatsAppUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto text-center px-6 py-3.5 rounded-full border border-emerald-600/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 font-label-md text-sm font-semibold transition-all"
+              >
+                Enquire via WhatsApp
+              </a>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-sm font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 active:scale-95"
+              >
+                {loading ? (
+                  <>
+                    <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                    <span>Submitting...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Confirm Booking</span>
+                    <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </form>
       )}

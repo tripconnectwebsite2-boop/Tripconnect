@@ -16,6 +16,8 @@ import {
   BugSeverity,
   BugCategory,
   CustomPage,
+  TransportationVehicle,
+  VehicleCategory,
 } from "../types";
 import {
   initialDestinations,
@@ -25,6 +27,7 @@ import {
   initialSettings,
   initialSiteContent,
   initialPages,
+  initialTransportationVehicles,
 } from "./seed-data";
 import { createAdminClient } from "../supabase/admin";
 import { fetchStoreFromFirestore, saveStoreToFirestore } from "../firebase/db";
@@ -40,6 +43,7 @@ interface DatabaseStore {
   content: SiteContent;
   bugs?: BugReport[];
   pages?: CustomPage[];
+  vehicles?: TransportationVehicle[];
 }
 
 function getDataDir(): string {
@@ -176,6 +180,7 @@ function ensureStore(): DatabaseStore {
     content: initialSiteContent,
     bugs: initialBugs,
     pages: initialPages,
+    vehicles: initialTransportationVehicles,
   };
 
   try {
@@ -194,9 +199,12 @@ function ensureStore(): DatabaseStore {
         try {
           const raw = fs.readFileSync(bundledDb, "utf-8");
           const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed.vehicles) || parsed.vehicles.length === 0) {
+            parsed.vehicles = initialTransportationVehicles;
+          }
           inMemoryStore = parsed;
           try {
-            fs.writeFileSync(DB_FILE, raw, "utf-8");
+            fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2), "utf-8");
           } catch {}
           return parsed;
         } catch {
@@ -220,6 +228,10 @@ function ensureStore(): DatabaseStore {
     }
     if (!parsed.bugs) {
       parsed.bugs = initialBugs;
+      mutated = true;
+    }
+    if (!Array.isArray(parsed.vehicles) || parsed.vehicles.length === 0) {
+      parsed.vehicles = initialTransportationVehicles;
       mutated = true;
     }
     if (Array.isArray(parsed.pages)) {
@@ -278,6 +290,9 @@ async function getStoreAsync(): Promise<DatabaseStore> {
         enquiries: Array.isArray(cloud.enquiries) ? cloud.enquiries : local.enquiries,
         pages: Array.isArray(cloud.pages) ? cloud.pages : local.pages,
         bugs: Array.isArray(cloud.bugs) ? cloud.bugs : (local.bugs || []),
+        vehicles: Array.isArray(cloud.vehicles) && cloud.vehicles.length > 0 
+          ? cloud.vehicles 
+          : (Array.isArray(local.vehicles) && local.vehicles.length > 0 ? local.vehicles : initialTransportationVehicles),
       };
       return inMemoryStore!;
     }
@@ -1009,4 +1024,105 @@ export async function deleteCustomPage(id: string): Promise<boolean> {
   store.pages = store.pages.filter((p) => p.id !== id);
   await saveStore(store);
   return store.pages.length < initial;
+}
+
+// -----------------------------------------------------------------------------
+// Transportation Fleet & Vehicle Functions
+// -----------------------------------------------------------------------------
+export async function getTransportationVehicles(options?: {
+  category?: VehicleCategory;
+  activeOnly?: boolean;
+}): Promise<TransportationVehicle[]> {
+  const store = await getStoreAsync();
+  let list = Array.isArray(store.vehicles) && store.vehicles.length > 0
+    ? store.vehicles
+    : initialTransportationVehicles;
+
+  if (options?.category) {
+    list = list.filter((v) => v.category === options.category);
+  }
+  if (options?.activeOnly) {
+    list = list.filter((v) => v.is_active);
+  }
+
+  return [...list].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+}
+
+export async function getTransportationVehicleById(
+  id: string
+): Promise<TransportationVehicle | null> {
+  const store = await getStoreAsync();
+  const list = Array.isArray(store.vehicles) && store.vehicles.length > 0
+    ? store.vehicles
+    : initialTransportationVehicles;
+  return list.find((v) => v.id === id) || null;
+}
+
+export async function createTransportationVehicle(
+  data: Partial<TransportationVehicle>
+): Promise<TransportationVehicle> {
+  const store = await getStoreAsync();
+  if (!Array.isArray(store.vehicles) || store.vehicles.length === 0) {
+    store.vehicles = [...initialTransportationVehicles];
+  }
+
+  const id = data.id || `veh-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+  const now = new Date().toISOString();
+
+  const newVehicle: TransportationVehicle = {
+    id,
+    name: data.name?.trim() || "New Vehicle",
+    category: data.category || "normal",
+    subtitle: data.subtitle?.trim() || "",
+    brand: data.brand?.trim() || "",
+    badge: data.badge?.trim() || "",
+    image: data.image || "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=1200&auto=format&fit=crop",
+    starting_price: data.starting_price || "₹14 / km",
+    capacity_pax: data.capacity_pax ?? 4,
+    capacity_luggage: data.capacity_luggage ?? 2,
+    best_for: data.best_for || "",
+    features: Array.isArray(data.features) ? data.features : [],
+    description: data.description?.trim() || "",
+    routes: Array.isArray(data.routes) ? data.routes : [],
+    is_active: data.is_active !== undefined ? Boolean(data.is_active) : true,
+    order: data.order !== undefined ? Number(data.order) : store.vehicles.length + 1,
+    created_at: now,
+    updated_at: now,
+  };
+
+  store.vehicles.push(newVehicle);
+  await saveStore(store);
+  return newVehicle;
+}
+
+export async function updateTransportationVehicle(
+  id: string,
+  data: Partial<TransportationVehicle>
+): Promise<TransportationVehicle | null> {
+  const store = await getStoreAsync();
+  if (!Array.isArray(store.vehicles) || store.vehicles.length === 0) {
+    store.vehicles = [...initialTransportationVehicles];
+  }
+
+  const idx = store.vehicles.findIndex((v) => v.id === id);
+  if (idx === -1) return null;
+
+  const existing = store.vehicles[idx];
+  store.vehicles[idx] = {
+    ...existing,
+    ...data,
+    updated_at: new Date().toISOString(),
+  };
+
+  await saveStore(store);
+  return store.vehicles[idx];
+}
+
+export async function deleteTransportationVehicle(id: string): Promise<boolean> {
+  const store = await getStoreAsync();
+  if (!Array.isArray(store.vehicles)) return false;
+  const initial = store.vehicles.length;
+  store.vehicles = store.vehicles.filter((v) => v.id !== id);
+  await saveStore(store);
+  return store.vehicles.length < initial;
 }

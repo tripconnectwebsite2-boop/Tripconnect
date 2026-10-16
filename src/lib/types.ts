@@ -273,3 +273,29 @@ export interface CustomPage {
   created_at: string;
   updated_at: string;
 }
+
+// -----------------------------------------------------------------------------
+// Transportation Fleet & Vehicle Management
+// -----------------------------------------------------------------------------
+export type VehicleCategory = "normal" | "premium" | "bus";
+
+export interface TransportationVehicle {
+  id: string;
+  name: string;
+  category: VehicleCategory;
+  subtitle: string;
+  brand?: string;
+  badge?: string;
+  image: string;
+  starting_price: string;
+  capacity_pax: string | number;
+  capacity_luggage: string | number;
+  best_for?: string;
+  features: string[];
+  description: string;
+  routes?: string[];
+  is_active: boolean;
+  order: number;
+  created_at?: string;
+  updated_at?: string;
+}

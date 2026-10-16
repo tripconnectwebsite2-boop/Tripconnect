@@ -211,6 +211,77 @@ export default async function AdminDashboardOverview() {
             </table>
           </div>
         </div>
+
+        {/* Quick Management Shortcuts */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link
+            href="/admin/transportation"
+            className="p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/50 transition-all flex items-center gap-4 group shadow-sm hover:shadow-md"
+          >
+            <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <span className="material-symbols-outlined text-2xl">directions_car</span>
+            </div>
+            <div>
+              <h3 className="font-bold text-sm text-on-surface group-hover:text-primary transition-colors">
+                Transportation Fleet
+              </h3>
+              <p className="text-xs text-on-surface-variant mt-0.5">
+                Normal cars, luxury Benz/Audi & All-India buses
+              </p>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/content"
+            className="p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/50 transition-all flex items-center gap-4 group shadow-sm hover:shadow-md"
+          >
+            <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <span className="material-symbols-outlined text-2xl">edit_document</span>
+            </div>
+            <div>
+              <h3 className="font-bold text-sm text-on-surface group-hover:text-primary transition-colors">
+                Content & Media
+              </h3>
+              <p className="text-xs text-on-surface-variant mt-0.5">
+                Edit hero banners, text, images & phone
+              </p>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/packages"
+            className="p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/50 transition-all flex items-center gap-4 group shadow-sm hover:shadow-md"
+          >
+            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <span className="material-symbols-outlined text-2xl">luggage</span>
+            </div>
+            <div>
+              <h3 className="font-bold text-sm text-on-surface group-hover:text-primary transition-colors">
+                Tour Packages
+              </h3>
+              <p className="text-xs text-on-surface-variant mt-0.5">
+                Kerala & India bespoke itineraries
+              </p>
+            </div>
+          </Link>
+
+          <Link
+            href="/admin/bugs"
+            className="p-5 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/50 transition-all flex items-center gap-4 group shadow-sm hover:shadow-md"
+          >
+            <div className="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+              <span className="material-symbols-outlined text-2xl">bug_report</span>
+            </div>
+            <div>
+              <h3 className="font-bold text-sm text-on-surface group-hover:text-primary transition-colors">
+                Bug Reports
+              </h3>
+              <p className="text-xs text-on-surface-variant mt-0.5">
+                User glitch reports & tech status
+              </p>
+            </div>
+          </Link>
+        </div>
       </div>
     </AdminLayout>
   );
