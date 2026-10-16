@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { getPackageById, updatePackage, deletePackage } from "@/lib/db";
+import { syncPackageToSanity, deletePackageFromSanity } from "@/lib/sanity-sync";
 
 export async function GET(
   request: Request,
@@ -75,6 +76,11 @@ export async function PATCH(
     return NextResponse.json({ error: "Package not found" }, { status: 404 });
   }
 
+  // Sync updated package to Sanity Cloud
+  syncPackageToSanity(updated).catch((err) =>
+    console.warn("[Sanity Sync] Package update sync:", err?.message || err)
+  );
+
   revalidatePath("/", "layout");
   revalidatePath("/packages");
   if (updated.slug) {
@@ -97,6 +103,11 @@ export async function DELETE(
   if (!deleted) {
     return NextResponse.json({ error: "Package not found" }, { status: 404 });
   }
+
+  // Delete from Sanity Cloud
+  deletePackageFromSanity(id).catch((err) =>
+    console.warn("[Sanity Sync] Package delete sync:", err?.message || err)
+  );
 
   revalidatePath("/", "layout");
   revalidatePath("/packages");

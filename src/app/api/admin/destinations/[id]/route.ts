@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { updateDestination, deleteDestination } from "@/lib/db";
+import { syncDestinationToSanity } from "@/lib/sanity-sync";
 
 export async function PATCH(
   request: Request,
@@ -19,6 +20,11 @@ export async function PATCH(
   if (!updated) {
     return NextResponse.json({ error: "Destination not found" }, { status: 404 });
   }
+
+  // Sync updated destination to Sanity Cloud
+  syncDestinationToSanity(updated).catch((err) =>
+    console.warn("[Sanity Sync] Destination update sync:", err?.message || err)
+  );
 
   revalidatePath("/", "layout");
   revalidatePath("/destinations");

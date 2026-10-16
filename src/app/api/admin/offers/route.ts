@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { getOffers, createOffer } from "@/lib/db";
+import { syncOfferToSanity } from "@/lib/sanity-sync";
 
 export async function GET() {
   const session = await getAdminSession();
@@ -34,6 +35,12 @@ export async function POST(request: Request) {
     }
 
     const created = await createOffer(body);
+
+    // Sync offer to Sanity Cloud
+    syncOfferToSanity(created).catch((err) =>
+      console.warn("[Sanity Sync] Offer create sync:", err?.message || err)
+    );
+
     revalidatePath("/");
     revalidatePath("/offers");
     return NextResponse.json({ success: true, offer: created }, { status: 201 });

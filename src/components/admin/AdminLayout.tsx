@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -25,7 +25,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: "Settings", href: "/admin/settings", icon: "settings" },
   ];
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     try {
       sessionStorage.removeItem("tc_admin_session_active");
       sessionStorage.removeItem("tc_admin_passcode_verified");
@@ -35,7 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
     router.push("/admin/login");
     router.refresh();
-  };
+  }, [router]);
 
   // Automatic logout when user navigates back or leaves the admin section
   useEffect(() => {
@@ -74,7 +74,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       window.removeEventListener("pagehide", handlePageHide);
       window.removeEventListener("pageshow", handlePageShow);
     };
-  }, []);
+  }, [handleLogout]);
 
   return (
     <div className="min-h-screen bg-surface-container-low flex flex-col lg:flex-row text-on-surface">

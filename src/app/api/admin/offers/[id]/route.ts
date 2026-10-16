@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { updateOffer, deleteOffer } from "@/lib/db";
+import { syncOfferToSanity } from "@/lib/sanity-sync";
 
 export async function PATCH(
   request: Request,
@@ -26,6 +27,11 @@ export async function PATCH(
   if (!updated) {
     return NextResponse.json({ error: "Offer not found" }, { status: 404 });
   }
+
+  // Sync updated offer to Sanity Cloud
+  syncOfferToSanity(updated).catch((err) =>
+    console.warn("[Sanity Sync] Offer update sync:", err?.message || err)
+  );
 
   revalidatePath("/");
   revalidatePath("/offers");

@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { getTransportationVehicles, createTransportationVehicle } from "@/lib/db";
 import { VehicleCategory } from "@/lib/types";
+import { syncVehicleToSanity } from "@/lib/sanity-sync";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -52,6 +53,11 @@ export async function POST(request: Request) {
     }
 
     const newVehicle = await createTransportationVehicle(body);
+
+    // Sync vehicle to Sanity Cloud
+    syncVehicleToSanity(newVehicle).catch((err) =>
+      console.warn("[Sanity Sync] Vehicle create sync:", err?.message || err)
+    );
 
     revalidatePath("/", "layout");
     revalidatePath("/transportation");

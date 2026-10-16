@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { getSiteSettings, updateSiteSettings } from "@/lib/db";
+import { syncSettingsToSanity } from "@/lib/sanity-sync";
 
 export async function GET() {
   const session = await getAdminSession();
@@ -22,6 +23,12 @@ export async function PATCH(request: Request) {
   try {
     const body = await request.json();
     const updated = await updateSiteSettings(body);
+
+    // Sync settings to Sanity Cloud
+    syncSettingsToSanity(updated).catch((err) =>
+      console.warn("[Sanity Sync] Settings update sync:", err?.message || err)
+    );
+
     revalidatePath("/", "layout");
     return NextResponse.json({ success: true, settings: updated });
   } catch (err: any) {

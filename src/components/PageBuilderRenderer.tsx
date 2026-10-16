@@ -54,15 +54,15 @@ export default function PageBuilderRenderer({
                 key={key}
                 content={{
                   ...siteContent,
-                  hero_badge: section.badge || siteContent?.hero_badge,
-                  hero_title: section.title || siteContent?.hero_title,
-                  hero_subtitle: section.subtitle || siteContent?.hero_subtitle,
-                  hero_bg_image: section.bgImageUrl || siteContent?.hero_bg_image,
-                  hero_primary_cta_text: section.primaryCta?.label || siteContent?.hero_primary_cta_text,
-                  hero_primary_cta_link: section.primaryCta?.link || siteContent?.hero_primary_cta_link,
-                  hero_secondary_cta_text: section.secondaryCta?.label || siteContent?.hero_secondary_cta_text,
-                  hero_secondary_cta_link: section.secondaryCta?.link || siteContent?.hero_secondary_cta_link,
-                  hero_floating_badge: section.floatingBadge || siteContent?.hero_floating_badge,
+                  hero_badge: siteContent?.hero_badge || section.badge,
+                  hero_title: siteContent?.hero_title || section.title,
+                  hero_subtitle: siteContent?.hero_subtitle || section.subtitle,
+                  hero_bg_image: siteContent?.hero_bg_image || section.bgImageUrl,
+                  hero_primary_cta_text: siteContent?.hero_primary_cta_text || section.primaryCta?.label,
+                  hero_primary_cta_link: siteContent?.hero_primary_cta_link || section.primaryCta?.link,
+                  hero_secondary_cta_text: siteContent?.hero_secondary_cta_text || section.secondaryCta?.label,
+                  hero_secondary_cta_link: siteContent?.hero_secondary_cta_link || section.secondaryCta?.link,
+                  hero_floating_badge: siteContent?.hero_floating_badge || section.floatingBadge,
                 }}
               />
             );
@@ -87,11 +87,12 @@ export default function PageBuilderRenderer({
                 key={key}
                 content={{
                   ...siteContent,
-                  kerala_badge: section.badge || siteContent?.kerala_badge,
-                  kerala_title: section.title || siteContent?.kerala_title,
-                  kerala_subtitle: section.subtitle || siteContent?.kerala_subtitle,
-                  kerala_image: section.featureImageUrl || siteContent?.kerala_image,
+                  kerala_badge: siteContent?.kerala_badge || section.badge,
+                  kerala_title: siteContent?.kerala_title || section.title,
+                  kerala_subtitle: siteContent?.kerala_subtitle || section.subtitle,
+                  kerala_image: siteContent?.kerala_image || section.featureImageUrl,
                 }}
+                packages={packages}
               />
             );
 
@@ -101,9 +102,9 @@ export default function PageBuilderRenderer({
                 key={key}
                 content={{
                   ...siteContent,
-                  home_transport_title: section.title || siteContent?.home_transport_title,
-                  home_transport_subtitle: section.subtitle || siteContent?.home_transport_subtitle,
-                  home_transport_cta_text: section.ctaText || siteContent?.home_transport_cta_text,
+                  home_transport_title: siteContent?.home_transport_title || section.title,
+                  home_transport_subtitle: siteContent?.home_transport_subtitle || section.subtitle,
+                  home_transport_cta_text: siteContent?.home_transport_cta_text || section.ctaText,
                 }}
               />
             );
@@ -114,10 +115,10 @@ export default function PageBuilderRenderer({
                 key={key}
                 content={{
                   ...siteContent,
-                  why_badge: section.badge || siteContent?.why_badge,
-                  why_title: section.title || siteContent?.why_title,
-                  why_subtitle: section.subtitle || siteContent?.why_subtitle,
-                  why_image: section.imageUrl || siteContent?.why_image,
+                  why_badge: siteContent?.why_badge || section.badge,
+                  why_title: siteContent?.why_title || section.title,
+                  why_subtitle: siteContent?.why_subtitle || section.subtitle,
+                  why_image: siteContent?.why_image || section.imageUrl,
                 }}
               />
             );

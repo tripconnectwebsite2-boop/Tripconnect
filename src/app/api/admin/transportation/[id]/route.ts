@@ -6,6 +6,7 @@ import {
   updateTransportationVehicle,
   deleteTransportationVehicle,
 } from "@/lib/db";
+import { syncVehicleToSanity, deleteVehicleFromSanity } from "@/lib/sanity-sync";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -45,6 +46,11 @@ export async function PATCH(
       return NextResponse.json({ error: "Vehicle not found" }, { status: 404 });
     }
 
+    // Sync updated vehicle to Sanity Cloud
+    syncVehicleToSanity(updated).catch((err) =>
+      console.warn("[Sanity Sync] Vehicle update sync:", err?.message || err)
+    );
+
     revalidatePath("/", "layout");
     revalidatePath("/transportation");
     return NextResponse.json({ success: true, vehicle: updated });
@@ -71,6 +77,11 @@ export async function DELETE(
     if (!deleted) {
       return NextResponse.json({ error: "Vehicle not found or could not be deleted." }, { status: 404 });
     }
+
+    // Delete vehicle from Sanity Cloud
+    deleteVehicleFromSanity(id).catch((err) =>
+      console.warn("[Sanity Sync] Vehicle delete sync:", err?.message || err)
+    );
 
     revalidatePath("/", "layout");
     revalidatePath("/transportation");

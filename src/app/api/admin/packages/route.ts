@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { getPackages, createPackage } from "@/lib/db";
+import { syncPackageToSanity } from "@/lib/sanity-sync";
 
 export async function GET(request: Request) {
   const session = await getAdminSession();
@@ -40,6 +41,11 @@ export async function POST(request: Request) {
       ...body,
       status: body.status === "published" ? "published" : "draft",
     });
+
+    // Sync to Sanity CMS Cloud
+    syncPackageToSanity(newPkg).catch((err) =>
+      console.warn("[Sanity Sync] Package create sync:", err?.message || err)
+    );
 
     revalidatePath("/", "layout");
     revalidatePath("/packages");

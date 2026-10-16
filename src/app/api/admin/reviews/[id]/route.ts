@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { updateReview, deleteReview } from "@/lib/db";
+import { syncReviewToSanity } from "@/lib/sanity-sync";
 
 export async function PATCH(
   request: Request,
@@ -19,6 +20,11 @@ export async function PATCH(
   if (!updated) {
     return NextResponse.json({ error: "Review not found" }, { status: 404 });
   }
+
+  // Sync updated review to Sanity Cloud
+  syncReviewToSanity(updated).catch((err) =>
+    console.warn("[Sanity Sync] Review update sync:", err?.message || err)
+  );
 
   revalidatePath("/", "layout");
   return NextResponse.json({ success: true, review: updated });

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { getDestinations, createDestination } from "@/lib/db";
+import { syncDestinationToSanity } from "@/lib/sanity-sync";
 
 export async function GET() {
   const session = await getAdminSession();
@@ -26,6 +27,12 @@ export async function POST(request: Request) {
     }
 
     const created = await createDestination(body);
+
+    // Sync destination to Sanity Cloud
+    syncDestinationToSanity(created).catch((err) =>
+      console.warn("[Sanity Sync] Destination create sync:", err?.message || err)
+    );
+
     revalidatePath("/", "layout");
     revalidatePath("/destinations");
     return NextResponse.json({ success: true, destination: created }, { status: 201 });
