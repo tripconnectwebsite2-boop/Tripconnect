@@ -44,12 +44,9 @@ function AdminLoginForm() {
       const user = result.user;
       const userEmail = (user.email || "").trim().toLowerCase();
 
-      // STRICT VALIDATION: Only AUTHORIZED_ADMIN_EMAIL is permitted
       if (userEmail !== AUTHORIZED_ADMIN_EMAIL) {
         await signOut(auth);
-        setErrorMsg(
-          `Access Denied: The account "${user.email}" is not authorized. Access is strictly restricted to ${AUTHORIZED_ADMIN_EMAIL}.`
-        );
+        setErrorMsg(`Access Denied: The account "${user.email}" is not authorized.`);
         setIsLoading(false);
         return;
       }
