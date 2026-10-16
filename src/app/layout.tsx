@@ -69,6 +69,7 @@ export default function RootLayout({
         <FirebaseAnalytics />
         <Analytics />
         <ClientProviders />
+        <Analytics />
       </body>
     </html>
   );
