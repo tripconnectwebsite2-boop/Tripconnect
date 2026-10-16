@@ -8,11 +8,10 @@ function GlobalLoaderInner() {
   const pathname = usePathname();
   const isAdmin = pathname ? (pathname.startsWith("/admin") || pathname.startsWith("/studio")) : false;
 
-  // ONLY when switching pages: initial load / refresh is NOT loading
-  const [loading, setLoading] = useState(false);
+  // When website opens: if normal website, start in loading state; if admin, NO loader
+  const [loading, setLoading] = useState(() => !isAdmin);
   const [fading, setFading] = useState(false);
   const prevPathname = useRef(pathname);
-  const isInitialMount = useRef(true);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const fadeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -42,18 +41,19 @@ function GlobalLoaderInner() {
     }, durationMs);
   }, [clearTimers, pathname]);
 
-  // 1. Initial Page Load / Full Refresh: DO NOT SHOW LOADER
+  // 1. Initial Page Load / When Website Opens (Full logo animation for normal website, never for admin)
   useEffect(() => {
-    isInitialMount.current = false;
-  }, []);
-
-  // 2. Route Changes (ONLY when switching pages):
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
+    if (pathname && (pathname.startsWith("/admin") || pathname.startsWith("/studio"))) {
+      setLoading(false);
+      setFading(false);
       return;
     }
+    showLoader(3500);
+    return () => clearTimers();
+  }, [pathname, showLoader, clearTimers]);
 
+  // 2. Route Changes (When switching pages):
+  useEffect(() => {
     if (prevPathname.current !== pathname) {
       prevPathname.current = pathname;
 
@@ -105,7 +105,7 @@ function GlobalLoaderInner() {
         const cleanCurrent = window.location.pathname.replace(/\/$/, "");
         const cleanTarget = url.pathname.replace(/\/$/, "");
 
-        // ONLY when switching to a DIFFERENT page!
+        // When switching to a DIFFERENT page!
         if (url.origin === window.location.origin && cleanTarget !== cleanCurrent) {
           showLoader(3500);
         }
