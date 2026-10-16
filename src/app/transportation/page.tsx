@@ -151,12 +151,12 @@ export default async function TransportationPage() {
                 className="bg-surface-container-lowest rounded-3xl border border-outline-variant/30 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col group"
               >
                 {/* Image */}
-                <div className="relative h-48 w-full bg-surface-container overflow-hidden">
+                <div className="relative aspect-[3/2] w-full bg-surface-container-low overflow-hidden">
                   <Image
                     src={vehicle.image}
                     alt={vehicle.name}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                   />
                   <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
@@ -258,12 +258,12 @@ export default async function TransportationPage() {
                   <div className="h-1.5 w-full bg-gradient-to-r from-amber-500 via-primary to-amber-600" />
 
                   {/* Image */}
-                  <div className="relative h-56 w-full bg-surface-container overflow-hidden">
+                  <div className="relative aspect-[3/2] w-full bg-surface-container-low overflow-hidden">
                     <Image
                       src={vehicle.image}
                       alt={vehicle.name}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
@@ -372,12 +372,12 @@ export default async function TransportationPage() {
                 className="bg-surface-container-lowest rounded-3xl border border-blue-500/30 overflow-hidden shadow-md hover:shadow-xl transition-all flex flex-col md:flex-row group"
               >
                 {/* Image side */}
-                <div className="relative md:w-5/12 h-64 md:h-auto bg-surface-container overflow-hidden shrink-0">
+                <div className="relative md:w-5/12 h-64 md:h-auto min-h-[220px] bg-surface-container-low overflow-hidden shrink-0">
                   <Image
                     src={bus.image}
                     alt={bus.name}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
                   <div className="absolute top-3 left-3">

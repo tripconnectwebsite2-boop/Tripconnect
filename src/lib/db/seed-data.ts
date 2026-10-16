@@ -711,7 +711,7 @@ export const initialPages: CustomPage[] = [];
 
 export const initialTransportationVehicles: TransportationVehicle[] = [
   // ---------------------------------------------------------------------------
-  // 1. Normal Transportation / Small Cars (ചെറിയ കാറുകൾ)
+  // 1. Standard Cabs & Compact Cars
   // ---------------------------------------------------------------------------
   {
     id: "veh-dzire",
@@ -720,7 +720,7 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
     brand: "Maruti Suzuki",
     subtitle: "Compact AC Sedan",
     badge: "Most Popular Budget",
-    image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=1200&auto=format&fit=crop",
+    image: "/images/transportation/maruti-dzire.jpg",
     starting_price: "₹14 / km (or ₹2,200 / day)",
     capacity_pax: 4,
     capacity_luggage: 2,
@@ -742,12 +742,12 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
   },
   {
     id: "veh-etios",
-    name: "Toyota Etios / Glanza",
+    name: "Toyota Etios Sedan",
     category: "normal",
     brand: "Toyota",
     subtitle: "Spacious Economy Sedan",
     badge: "High Comfort Economy",
-    image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1200&auto=format&fit=crop",
+    image: "/images/transportation/toyota-etios.jpg",
     starting_price: "₹15 / km (or ₹2,400 / day)",
     capacity_pax: 4,
     capacity_luggage: 3,
@@ -769,12 +769,12 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
   },
   {
     id: "veh-swift",
-    name: "Maruti Suzuki Swift / Hyundai Aura",
+    name: "Maruti Suzuki Swift",
     category: "normal",
-    brand: "Maruti / Hyundai",
-    subtitle: "Compact City Hatchback & Sedan",
+    brand: "Maruti Suzuki",
+    subtitle: "Nimble City Hatchback",
     badge: "Budget Friendly",
-    image: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=1200&auto=format&fit=crop",
+    image: "/images/transportation/maruti-swift.jpg",
     starting_price: "₹13 / km (or ₹1,999 / day)",
     capacity_pax: 4,
     capacity_luggage: 2,
@@ -800,7 +800,7 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
     brand: "Maruti Suzuki",
     subtitle: "Compact 6-Seater Family MPV",
     badge: "Best Family Value",
-    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop",
+    image: "/images/transportation/maruti-ertiga.jpg",
     starting_price: "₹18 / km (or ₹3,200 / day)",
     capacity_pax: 6,
     capacity_luggage: 3,
@@ -821,22 +821,22 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
   },
 
   // ---------------------------------------------------------------------------
-  // 2. Premium & Luxury Transportation (പ്രീമിയം സെക്ഷൻ)
+  // 2. Premium Segment (Executive Luxury Chauffeur Fleet)
   // ---------------------------------------------------------------------------
   {
     id: "veh-benz",
-    name: "Mercedes-Benz E-Class & S-Class",
+    name: "Mercedes-Benz S-Class",
     category: "premium",
     brand: "Mercedes-Benz",
-    subtitle: "The Benchmark of Executive Opulence",
+    subtitle: "The Benchmark of Executive Luxury",
     badge: "Flagship Luxury",
-    image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=1200&auto=format&fit=crop",
-    starting_price: "₹6,500 / 8h transfer",
+    image: "/images/transportation/mercedes-s-class.jpg",
+    starting_price: "₹8,500 / 8h transfer",
     capacity_pax: 3,
     capacity_luggage: 3,
     best_for: "VIP Arrivals, Luxury Weddings, Dignitary Transfers & 5-Star Kerala Tours",
     features: [
-      "Plush Nappa Leather Seating with Recline",
+      "Plush Nappa Leather Seating with Recline & Massage",
       "Panoramic Glass Sunroof with Sunblind",
       "Burmester 3D Surround Sound Acoustics",
       "Dual-Zone Independent Rear Climate Control",
@@ -844,7 +844,7 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
       "Impeccably Uniformed English-Speaking Chauffeur",
     ],
     description:
-      "Glide smoothly between Cochin International Airport (COK), Kumarakom lakeside resorts, and luxury heritage hotels in Kochi. The Mercedes-Benz delivers whisper-quiet cabin acoustics and dignified road presence for esteemed guests.",
+      "Glide smoothly between Cochin International Airport (COK), Kumarakom lakeside resorts, and luxury heritage hotels in Kochi. The Mercedes-Benz S-Class delivers whisper-quiet cabin acoustics and dignified road presence for esteemed guests.",
     is_active: true,
     order: 5,
     created_at: new Date().toISOString(),
@@ -852,12 +852,12 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
   },
   {
     id: "veh-audi",
-    name: "Audi A6 & Audi Q7 Luxury Matrix",
+    name: "Audi A6 Luxury Sedan",
     category: "premium",
     brand: "Audi",
-    subtitle: "Dynamic German Engineering with Quattro Poise",
-    badge: "Highland Grandeur",
-    image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=1200&auto=format&fit=crop",
+    subtitle: "German Engineering & Quattro Poise",
+    badge: "Executive Sedan",
+    image: "/images/transportation/audi-a6.jpg",
     starting_price: "₹6,000 / 8h transfer",
     capacity_pax: 4,
     capacity_luggage: 4,
@@ -871,7 +871,7 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
       "Onboard Mobile Fast-Charging Docks",
     ],
     description:
-      "Combining understated German sophistication with high ground stance, the Audi fleet conquers winding Western Ghats hairpins to Munnar with effortless grace while cocooning passengers in bespoke leather luxury.",
+      "Combining understated German sophistication with high ground stance, the Audi A6 conquers winding Western Ghats hairpins to Munnar with effortless grace while cocooning passengers in bespoke leather luxury.",
     is_active: true,
     order: 6,
     created_at: new Date().toISOString(),
@@ -879,19 +879,19 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
   },
   {
     id: "veh-bmw",
-    name: "BMW 5-Series & 7-Series",
+    name: "BMW 7-Series Executive",
     category: "premium",
     brand: "BMW",
-    subtitle: "Executive Lounge Comfort & Dynamic Poise",
+    subtitle: "Opulent Rear Lounge & Dynamic Poise",
     badge: "Pure Executive",
-    image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=1200&auto=format&fit=crop",
-    starting_price: "₹6,500 / 8h transfer",
+    image: "/images/transportation/bmw-7-series.jpg",
+    starting_price: "₹7,500 / 8h transfer",
     capacity_pax: 3,
     capacity_luggage: 3,
     best_for: "Corporate Leaders, Luxury Airport Transfers, Honeymoon Couples",
     features: [
       "Executive Rear Reclining Lounge Seats",
-      "Harman Kardon Surround Sound System",
+      "Bowers & Wilkins Diamond Surround Sound System",
       "Four-Zone Automatic Climate Control",
       "Soft-Close Automatic Doors",
       "Onboard High-Speed 5G Wi-Fi Hotspot",
@@ -911,7 +911,7 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
     brand: "Toyota",
     subtitle: "The Ultimate First-Class Jet Cabin on Wheels",
     badge: "Ultra Luxury MPV",
-    image: "https://images.unsplash.com/photo-1563720223185-11003d516935?q=80&w=1200&auto=format&fit=crop",
+    image: "/images/transportation/toyota-vellfire.jpg",
     starting_price: "₹9,500 / 8h transfer",
     capacity_pax: 5,
     capacity_luggage: 5,
@@ -938,7 +938,7 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
     brand: "Toyota",
     subtitle: "The Undisputed King of Kerala Touring",
     badge: "Most Preferred VIP Tourer",
-    image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?q=80&w=1200&auto=format&fit=crop",
+    image: "/images/transportation/toyota-innova-hycross.jpg",
     starting_price: "₹3,800 / day (₹22/km)",
     capacity_pax: 6,
     capacity_luggage: 5,
@@ -960,7 +960,7 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
   },
 
   // ---------------------------------------------------------------------------
-  // 3. All-India Bus Services & Tourist Charters (ഇന്ത്യൻ ബസ് സർവീസ് & ടൂറിസ്റ്റ് ബസ്)
+  // 3. Interstate Bus Services & Group Charters
   // ---------------------------------------------------------------------------
   {
     id: "veh-volvo-sleeper",
@@ -969,7 +969,7 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
     brand: "Volvo",
     subtitle: "Flagship Interstate Luxury Sleeper Coach",
     badge: "Interstate Flagship",
-    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=1200&auto=format&fit=crop",
+    image: "/images/transportation/volvo-9600-sleeper.jpg",
     starting_price: "From ₹1,200 / Berth (or ₹75/km Charter)",
     capacity_pax: "30 - 36 Luxury Sleepers",
     capacity_luggage: "Massive Lower Cargo Boot",
@@ -998,12 +998,12 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
   },
   {
     id: "veh-bharatbenz",
-    name: "BharatBenz AC Luxury Sleeper & Semi-Sleeper",
+    name: "BharatBenz 1924 AC Luxury Coach",
     category: "bus",
     brand: "BharatBenz",
     subtitle: "German Engineered Interstate & Tourism Coach",
     badge: "Interstate & Tourism",
-    image: "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=1200&auto=format&fit=crop",
+    image: "/images/transportation/bharatbenz-bus.jpg",
     starting_price: "From ₹1,000 / Seat (or ₹65/km Charter)",
     capacity_pax: "32 - 40 Seats / Berths",
     capacity_luggage: "Spacious Underbelly Storage",
@@ -1033,10 +1033,10 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
     id: "veh-tourist-bus",
     name: "Luxury 35 - 49 Seater Air Suspension Tourist Coach",
     category: "bus",
-    brand: "Ashok Leyland / Tata / BharatBenz",
+    brand: "Tata / Ashok Leyland",
     subtitle: "Pan-India National Permit Tourist & Pilgrimage Bus",
     badge: "Group Tour Charter",
-    image: "https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?q=80&w=1200&auto=format&fit=crop",
+    image: "/images/transportation/luxury-tourist-coach.jpg",
     starting_price: "₹50 - ₹62 / km (Special All-Inclusive Tour Packages)",
     capacity_pax: "35 to 49 Pushback Seats",
     capacity_luggage: "Extensive Under-Chassis Boot",
@@ -1069,7 +1069,7 @@ export const initialTransportationVehicles: TransportationVehicle[] = [
     brand: "Force",
     subtitle: "European Design Executive Touring Van",
     badge: "VIP Small Group",
-    image: "https://images.unsplash.com/photo-1563720223185-11003d516935?q=80&w=1200&auto=format&fit=crop",
+    image: "/images/transportation/force-urbania.jpg",
     starting_price: "₹34 - ₹38 / km (or ₹5,500 / day)",
     capacity_pax: "12 - 17 Luxury Seats",
     capacity_luggage: "Generous Rear Luggage Compartment",
