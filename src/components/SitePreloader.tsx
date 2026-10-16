@@ -17,7 +17,7 @@ function GlobalLoaderInner() {
     if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
   }, []);
 
-  const showLoader = useCallback((durationMs: number = 1400) => {
+  const showLoader = useCallback((durationMs: number = 1800) => {
     clearTimers();
     setLoading(true);
     setFading(false);
@@ -31,9 +31,9 @@ function GlobalLoaderInner() {
     }, durationMs);
   }, [clearTimers]);
 
-  // 1. Initial Page Load / Full Refresh (2.2 seconds)
+  // 1. Initial Page Load / Full Refresh
   useEffect(() => {
-    showLoader(2200);
+    showLoader(2400);
     return () => clearTimers();
   }, [showLoader, clearTimers]);
 
@@ -41,7 +41,7 @@ function GlobalLoaderInner() {
   useEffect(() => {
     if (prevPathname.current !== pathname) {
       prevPathname.current = pathname;
-      showLoader(1400);
+      showLoader(1800);
     }
   }, [pathname, showLoader]);
 
@@ -71,7 +71,7 @@ function GlobalLoaderInner() {
 
         if (url.origin === window.location.origin && cleanTarget !== cleanCurrent) {
           // Immediately show loading animation when navigating to another page
-          showLoader(1500);
+          showLoader(1900);
         }
       } catch {
         // ignore
@@ -79,7 +79,7 @@ function GlobalLoaderInner() {
     };
 
     const handlePopState = () => {
-      showLoader(1300);
+      showLoader(1600);
     };
 
     document.addEventListener("click", handleDocumentClick, { capture: true });
@@ -97,7 +97,7 @@ function GlobalLoaderInner() {
   return (
     <div
       aria-label="Loading Trip Connect"
-      className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl transition-opacity duration-350 ease-out select-none ${
+      className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-white/98 dark:bg-white backdrop-blur-2xl transition-opacity duration-350 ease-out select-none ${
         fading ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"
       }`}
     >
