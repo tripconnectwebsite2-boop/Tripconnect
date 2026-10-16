@@ -46,7 +46,9 @@ function AdminLoginForm() {
 
       if (userEmail !== AUTHORIZED_ADMIN_EMAIL) {
         await signOut(auth);
-        setErrorMsg(`Access Denied: The account "${user.email}" is not authorized.`);
+        setErrorMsg(
+          `Access Denied: The account "${user.email}" is not authorized. Only ${AUTHORIZED_ADMIN_EMAIL} is permitted to access the admin portal.`
+        );
         setIsLoading(false);
         return;
       }
@@ -115,9 +117,12 @@ function AdminLoginForm() {
 
       {/* Error Alert Banner */}
       {errorMsg && (
-        <div className="mb-6 p-4 rounded-xl bg-error-container text-on-error-container font-body-sm text-body-sm flex items-start gap-2.5 animate-fadeIn">
-          <span className="material-symbols-outlined text-[20px] shrink-0 text-error">error</span>
-          <span className="leading-snug">{errorMsg}</span>
+        <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-700 dark:text-red-300 font-body-sm text-body-sm flex items-start gap-3 animate-fadeIn">
+          <span className="material-symbols-outlined text-[22px] shrink-0 text-red-600">block</span>
+          <div className="leading-snug">
+            <strong className="block font-semibold mb-0.5">പ്രവേശനം നിഷേധിച്ചു / Access Denied</strong>
+            <span>{errorMsg}</span>
+          </div>
         </div>
       )}
 
