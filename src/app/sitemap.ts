@@ -5,7 +5,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://tripconnect.in";
 
   // Fetch only published verified items for search indexing
-  const packages = await getPackages({ status: "published" });
+  const rawPackages = await getPackages({ status: "published" });
+  const packages = rawPackages.filter(
+    (p) => p.status === "published" && p.content_verified && !p.slug.endsWith("-draft")
+  );
   const destinations = await getDestinations(true);
   const customPages = await getCustomPages({ status: "published" });
 

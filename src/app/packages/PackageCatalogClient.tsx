@@ -29,6 +29,11 @@ export default function PackageCatalogClient({
 
   const filteredPackages = useMemo(() => {
     return initialPackages.filter((pkg) => {
+      // Must be published, verified, and not a draft slug
+      if (pkg.status !== "published" || !pkg.content_verified || pkg.slug.endsWith("-draft")) {
+        return false;
+      }
+
       // Search filter
       if (search.trim()) {
         const q = search.toLowerCase().trim();

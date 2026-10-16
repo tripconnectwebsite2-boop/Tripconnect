@@ -296,11 +296,11 @@ export async function getPackages(filters?: {
   if (filters?.status) {
     result = result.filter((p) => p.status === filters.status);
     if (!filters.includeUnverified) {
-      result = result.filter((p) => p.content_verified);
+      result = result.filter((p) => p.content_verified && !p.slug.endsWith("-draft"));
     }
   } else {
-    // Default public behavior: only published and verified
-    result = result.filter((p) => p.status === "published" && p.content_verified);
+    // Default public behavior: only published, verified and non-draft
+    result = result.filter((p) => p.status === "published" && p.content_verified && !p.slug.endsWith("-draft"));
   }
 
   if (filters?.category && filters.category !== "All") {
@@ -342,7 +342,7 @@ export async function getPackageBySlug(
   const store = ensureStore();
   const pkg = store.packages.find((p) => p.slug === slug);
   if (!pkg) return null;
-  if (!includeDrafts && (pkg.status !== "published" || !pkg.content_verified)) {
+  if (!includeDrafts && (pkg.status !== "published" || !pkg.content_verified || pkg.slug.endsWith("-draft"))) {
     return null;
   }
   return pkg;

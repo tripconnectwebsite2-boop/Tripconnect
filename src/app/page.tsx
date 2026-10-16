@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Home() {
-  const [activeOffers, approvedReviews, publishedPackages, destinations, siteContent, siteSettings] = await Promise.all([
+  const [activeOffers, approvedReviews, rawPackages, destinations, siteContent, siteSettings] = await Promise.all([
     getOffers(true), // Only current active verified offers
     getReviews(true), // Only approved genuine reviews
     getPackages({ status: "published" }), // Only published packages
@@ -24,6 +24,10 @@ export default async function Home() {
     getSiteContent(),
     getSiteSettings(),
   ]);
+
+  const publishedPackages = rawPackages.filter(
+    (p) => p.status === "published" && p.content_verified && !p.slug.endsWith("-draft")
+  );
 
   return (
     <>

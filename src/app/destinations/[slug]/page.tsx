@@ -48,8 +48,11 @@ export default async function DestinationDetailPage({
 
   const allPackages = await getPackages({ status: "published" });
   const linkedPackages = allPackages.filter((p) =>
-    p.destination_name?.toLowerCase().includes(destination.name.toLowerCase()) ||
-    p.destination_id?.toLowerCase().includes(destination.id.toLowerCase())
+    p.status === "published" &&
+    p.content_verified &&
+    !p.slug.endsWith("-draft") &&
+    (p.destination_name?.toLowerCase().includes(destination.name.toLowerCase()) ||
+     p.destination_id?.toLowerCase().includes(destination.id.toLowerCase()))
   );
 
   return (

@@ -40,7 +40,7 @@ export default function KeralaTours({
       image:
         content?.kerala_tour2_image ||
         "https://lh3.googleusercontent.com/aida-public/AB6AXuDCXa4pkOq0ty9_41mIx9UTEheTGIuJxcg9o0D40EZJRkTZnoyL4hB1gCuk62Bvhd7lMOPIa26eBygCDhuweowtOxzg_CChGSVglWspZ0TZmJC7seoNVyu1DB_X_74wtIE5DbM2hvPryKN76goIUdONWjazCD4hkEN8ncjerEygEnCEFj6vYwl_fa-xKJwjOOE_eUwTDeFVCmWra8gE5fE72kVXD0LX-Nla2PYGEI6BnnTlwN9iwaGn0A",
-      slug: "alleppey-houseboat-retreat",
+      slug: "alleppey-luxury-cruise",
     },
     {
       title: content?.kerala_tour3_title || "Wayanad Rainforest Sanctuary",
@@ -52,25 +52,30 @@ export default function KeralaTours({
       image:
         content?.kerala_tour3_image ||
         "https://lh3.googleusercontent.com/aida-public/AB6AXuAIMzmHxxHFOG9GNcnOQIC8jw9II3muiJ05oxhHDw5vpL6yhcWWo5M68-qw0zQNNaSKkLS0FMrFd5pww0TROn3gijfgZ1fAE76cdQyDMASwwJYxNnm92bC_i3rpx-ZrPg0b6AB4Eu8OYG9i8xmR7mG76HG-3p1dAlJ3IbZSEx_Nlvh1pmaEkmlJoN0jK6Bs99SnsU8gwgoXqyV-IZgDEAQGtFXVWlDhl8GXIpHQhTcHIRC_xbT43MiBbw",
-      slug: "wayanad-rainforest-wildlife-retreat-draft",
+      slug: "wayanad-rainforest-sanctuary",
     },
     {
-      title: "Varkala Cliffside & Serenity",
-      tag: "Coastal Bliss",
-      icon: "beach_access",
-      duration: "2N / 3D",
-      desc: "Arabian Sea sunsets from red cliffs, morning coastal yoga sessions, and soothing mineral water springs.",
-      price: "₹12,800",
+      title: "Classic Kerala Grand Tour",
+      tag: "Heritage Circuit",
+      icon: "landscape",
+      duration: "6N / 7D",
+      desc: "Multi-destination balanced circuit across God’s Own Country with luxury tea resort, spice plantation walk, and overnight private backwater houseboat.",
+      price: "₹32,000",
       image:
-        "https://lh3.googleusercontent.com/aida-public/AB6AXuDqhSF1rQ9FshAFS2pdPFJJkYF1bO1qPrjbRy6lVElxMJnextwpOP2W90i_2DPNINSQ63D756zhEGRRbvI8U4NIt6rwUVJ52KUxib39vCbj3HdvKYAf0Yua8lVYpb7ezdG9ohybcoqh2njLgOdU-vlBaIPeVYPekCGjjVZdSq1xo85WUX4IU6-_NnfKgd21rvgE9mpAWGdgzgrx8cI7NDmm6g3wYELlrdUBJ5ln4OPCNdGYTf5rKhRKVg",
-      slug: "varkala-cliffside-coastal-escape",
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuBsEueUPJrI0O1sHnvIQdp-xgXpkaYKfOkgLG6MC7pdryUyfy__v92icO0eIqpBYlE15-9goslKClobZY9z8oaCniCTHIB5G5ssC8EhDlcIrNcgMgjqyfniZ5typYoNow0w1ZzunISf4YBooojKwq3dxn1-LaKsVNNA4fxmrTJ0YAEgLoQIlWtwVBhWM2MfH9ffWIfAfJ89oaPVDmMPsvCUj4WWokPYvJ0KhoTul8CRrbBTqKSw15J8jw",
+      slug: "classic-kerala-grand-tour",
     },
   ];
 
   const tours = (() => {
-    if (!dbPackages || dbPackages.length === 0) return defaultTours;
-    const keralaOnly = dbPackages.filter((p) => p.category === "Kerala Tours" || (p.category as string) === "kerala");
-    const list = (keralaOnly.length >= 2 ? keralaOnly : dbPackages).slice(0, 4);
+    const validLivePackages = (dbPackages || []).filter(
+      (p) => p.status === "published" && p.content_verified && !p.slug.endsWith("-draft")
+    );
+    if (validLivePackages.length === 0) return defaultTours;
+    const keralaOnly = validLivePackages.filter(
+      (p) => p.category === "Kerala Tours" || (p.category as string) === "kerala"
+    );
+    const list = (keralaOnly.length >= 2 ? keralaOnly : validLivePackages).slice(0, 4);
     const icons = ["landscape", "sailing", "forest", "beach_access"];
     const tags = ["Highland Mist", "Backwater Cruise", "Wild Rainforest", "Coastal Bliss"];
 

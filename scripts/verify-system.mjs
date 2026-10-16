@@ -291,6 +291,12 @@ async function runTests() {
         });
         const data = await res.json();
         assert(res.status === 200 && data.package?.status === 'published', `Package verified and published to catalog`);
+
+        // 5c. Clean up temporary test package
+        await fetch(`${BASE_URL}/api/admin/packages/${newPkgId}`, {
+          method: 'DELETE',
+          headers: { Cookie: adminCookie }
+        });
       } catch (err) {
         assert(false, `Package publish update failed: ${err.message}`);
       }

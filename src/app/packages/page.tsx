@@ -14,7 +14,10 @@ export const metadata = {
 };
 
 export default async function PackagesPage() {
-  const packages = await getPackages({ status: "published" });
+  const rawPackages = await getPackages({ status: "published" });
+  const packages = rawPackages.filter(
+    (p) => p.status === "published" && p.content_verified && !p.slug.endsWith("-draft")
+  );
   const destinations = await getDestinations(true);
 
   return (

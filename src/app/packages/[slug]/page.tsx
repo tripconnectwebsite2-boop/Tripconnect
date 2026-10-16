@@ -13,7 +13,9 @@ export const revalidate = 0;
 
 export async function generateStaticParams() {
   const packages = await getPackages({ status: "published" });
-  return packages.map((p) => ({ slug: p.slug }));
+  return packages
+    .filter((p) => p.status === "published" && p.content_verified && !p.slug.endsWith("-draft"))
+    .map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -23,7 +25,9 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const pkg = await getPackageBySlug(slug, false);
-  if (!pkg) return { title: "Package Not Found | Trip Connect" };
+  if (!pkg || pkg.status !== "published" || !pkg.content_verified || pkg.slug.endsWith("-draft")) {
+    return { title: "Package Not Found | Trip Connect" };
+  }
 
   return {
     title: `${pkg.title} | Trip Connect Kerala`,
@@ -44,11 +48,10 @@ export default async function PackageDetailPage({
   const { slug } = await params;
   const pkg = await getPackageBySlug(slug, false); // Only display published & verified packages to public
 
-  if (!pkg) {
+  if (!pkg || pkg.status !== "published" || !pkg.content_verified || pkg.slug.endsWith("-draft")) {
     notFound();
   }
 
-  const isDraft = pkg.status !== "published";
   const whatsappUrl = buildWhatsAppChatUrl({
     packageTitle: pkg.title,
   });
@@ -70,24 +73,6 @@ export default async function PackageDetailPage({
             <span>/</span>
             <span className="text-on-surface font-semibold truncate max-w-xs">{pkg.title}</span>
           </nav>
-
-          {/* Draft Preview Alert Banner */}
-          {isDraft && (
-            <div className="mb-8 p-4 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-900 text-xs font-semibold flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[18px]">info</span>
-                <span>
-                  <strong>Administrator Draft Preview:</strong> This package is not published and is not visible to public search or visitors.
-                </span>
-              </div>
-              <Link
-                href="/admin/packages"
-                className="px-3 py-1 rounded bg-amber-600 text-white hover:bg-amber-700"
-              >
-                Open Admin Manager
-              </Link>
-            </div>
-          )}
 
           {/* Header Info Banner */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start mb-12">

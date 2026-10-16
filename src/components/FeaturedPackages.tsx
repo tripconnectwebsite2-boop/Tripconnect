@@ -32,7 +32,7 @@ export default function FeaturedPackages({ packages: dbPackages }: { packages?: 
       price: "₹28,500",
       badge: "Heritage",
       badgeClass: "bg-tertiary-fixed text-on-tertiary-fixed",
-      slug: "golden-triangle-heritage",
+      slug: "golden-triangle-rajasthan",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuDvVABX4Y6jpzGgP2sYLLGWh5N-fDDHyeJg4EHWR23avMU0zO6OGgeAMUJv0833v7mEJvBUdyTsdGgK-a4p5sd8araMwsXVp_LN4fbT5IkXmPt0O85SJrGMy_7EYw-VkJFJdUCyc7Dnp3YshUDpj2FxTFGsyYXnD5GIVRbIfYqFgrBbDVy5_eFsOg9ZOsDoJwUjXm9xueRC1zCZurRuygbrmMTYYGNGOWgyjpK4dHMoJrhght8Rjo4gvQ",
       inclusions: [
@@ -49,7 +49,7 @@ export default function FeaturedPackages({ packages: dbPackages }: { packages?: 
       price: "₹22,400",
       badge: "Highland Trek",
       badgeClass: "bg-secondary-container text-on-secondary-container",
-      slug: "wayanad-rainforest-wildlife-retreat-draft",
+      slug: "wayanad-coorg-highlands",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuDHZFZCVDrJOtbPFmJ02LXvzZJwQCWNccpArTImJK-Owjd3RrzWKylxMdF3AUU6IK9Cd9GUw_liFfH6FWboas_5l5QIxJ_XrJJzFV54ibqAG49kyS8eGTznP5rBBenwpgXDvYI2Bbpw4nMKC-Sr_ykchVWEKVjYNkuwnWrKVT-PrWr1tWh341oQ6JTsR-vURqSSpHtQDZZdMRu3o3f8n6hVcYz8fZloUoMH5q-OWWXsRSLzH6ViJL_D0A",
       inclusions: [
@@ -63,11 +63,14 @@ export default function FeaturedPackages({ packages: dbPackages }: { packages?: 
 
   // If live packages are provided from DB, dynamically construct cards
   const packages = (() => {
-    if (!dbPackages || dbPackages.length === 0) {
+    const validLivePackages = (dbPackages || []).filter(
+      (p) => p.status === "published" && p.content_verified && !p.slug.endsWith("-draft")
+    );
+    if (validLivePackages.length === 0) {
       return defaultFallbackPackages;
     }
-    const featured = dbPackages.filter((p) => p.is_featured);
-    const chosen = (featured.length >= 3 ? featured : dbPackages).slice(0, 3);
+    const featured = validLivePackages.filter((p) => p.is_featured);
+    const chosen = (featured.length >= 3 ? featured : validLivePackages).slice(0, 3);
     return chosen.map((p) => {
       const defaultIcons = ["sailing", "hotel", "airport_shuttle", "spa"];
       const inclusions = (p.inclusions && p.inclusions.length > 0 ? p.inclusions : (p.highlights || [])).slice(0, 4).map((text, i) => ({
