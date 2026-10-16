@@ -153,7 +153,7 @@ export default async function TransportationPage() {
                 {/* Image */}
                 <div className="relative aspect-[3/2] w-full bg-surface-container-low overflow-hidden">
                   <Image
-                    src={vehicle.image}
+                    src={vehicle.image || "/images/transportation/maruti-dzire.jpg"}
                     alt={vehicle.name}
                     fill
                     className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
@@ -260,7 +260,7 @@ export default async function TransportationPage() {
                   {/* Image */}
                   <div className="relative aspect-[3/2] w-full bg-surface-container-low overflow-hidden">
                     <Image
-                      src={vehicle.image}
+                      src={vehicle.image || "/images/transportation/mercedes-s-class.jpg"}
                       alt={vehicle.name}
                       fill
                       className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
@@ -374,7 +374,7 @@ export default async function TransportationPage() {
                 {/* Image side */}
                 <div className="relative md:w-5/12 h-64 md:h-auto min-h-[220px] bg-surface-container-low overflow-hidden shrink-0">
                   <Image
-                    src={bus.image}
+                    src={bus.image || "/images/transportation/volvo-9600-sleeper.jpg"}
                     alt={bus.name}
                     fill
                     className="object-cover object-center group-hover:scale-105 transition-transform duration-700"

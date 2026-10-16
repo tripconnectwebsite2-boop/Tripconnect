@@ -95,7 +95,7 @@ export default async function PackageDetailPage({
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
                 <div className="md:col-span-2 rounded-2xl overflow-hidden aspect-[16/10] bg-surface-container-high shadow-md relative">
                   <Image
-                    src={pkg.gallery[0]}
+                    src={pkg.gallery?.[0] || "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80"}
                     alt={pkg.title}
                     fill
                     priority
@@ -106,7 +106,7 @@ export default async function PackageDetailPage({
                 <div className="flex flex-col gap-4">
                   <div className="rounded-2xl overflow-hidden aspect-[16/9] bg-surface-container-high shadow-sm relative">
                     <Image
-                      src={pkg.gallery[1] || pkg.gallery[0]}
+                      src={pkg.gallery?.[1] || pkg.gallery?.[0] || "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=800&q=80"}
                       alt="Gallery view 2"
                       fill
                       loading="lazy"
@@ -116,7 +116,7 @@ export default async function PackageDetailPage({
                   </div>
                   <div className="rounded-2xl overflow-hidden aspect-[16/9] bg-surface-container-high shadow-sm relative">
                     <Image
-                      src={pkg.gallery[2] || pkg.gallery[0]}
+                      src={pkg.gallery?.[2] || pkg.gallery?.[0] || "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=800&q=80"}
                       alt="Gallery view 3"
                       fill
                       loading="lazy"

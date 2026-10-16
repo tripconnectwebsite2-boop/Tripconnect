@@ -68,7 +68,7 @@ export default async function DestinationsPage() {
                   >
                     <div className="relative aspect-[16/10] overflow-hidden bg-surface-container-high">
                       <Image
-                        src={dest.cover_image}
+                        src={dest.cover_image || "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80"}
                         alt={dest.name}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -131,7 +131,7 @@ export default async function DestinationsPage() {
                 >
                   <div className="relative aspect-[16/10] overflow-hidden bg-surface-container-high">
                     <Image
-                      src={dest.cover_image}
+                      src={dest.cover_image || "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1200&q=80"}
                       alt={dest.name}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

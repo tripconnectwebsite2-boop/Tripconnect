@@ -71,7 +71,7 @@ export default async function DestinationDetailPage({
           {/* Hero Banner */}
           <div className="relative rounded-3xl overflow-hidden aspect-[16/7] bg-surface-container-high shadow-xl">
             <Image
-              src={destination.cover_image}
+              src={destination.cover_image || "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80"}
               alt={destination.name}
               fill
               priority
@@ -136,7 +136,7 @@ export default async function DestinationDetailPage({
                       >
                         <div className="relative aspect-[16/10] bg-surface-container-high">
                           <Image
-                            src={pkg.gallery[0]}
+                            src={pkg.gallery?.[0] || "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&w=1200&q=80"}
                             alt={pkg.title}
                             fill
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
