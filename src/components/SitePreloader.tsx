@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, Suspense } from "react";
 import { usePathname } from "next/navigation";
-import TripConnectLogoLoader from "./TripConnectLogoLoader";
+import LuxuryTravelLoader from "./LuxuryTravelLoader";
 
 function GlobalLoaderInner() {
   const pathname = usePathname();
@@ -11,7 +11,7 @@ function GlobalLoaderInner() {
   const prevPathname = useRef(pathname);
   const fadeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const triggerLoader = (visibleDurationMs: number = 1300) => {
+  const triggerLoader = (visibleDurationMs: number = 850) => {
     if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
 
     setLoading(true);
@@ -22,13 +22,13 @@ function GlobalLoaderInner() {
       fadeTimeoutRef.current = setTimeout(() => {
         setLoading(false);
         setFading(false);
-      }, 350);
+      }, 300);
     }, visibleDurationMs);
   };
 
-  // 1. Initial Page Load (Refresh or direct open)
+  // 1. Initial Page Load
   useEffect(() => {
-    triggerLoader(1400);
+    triggerLoader(950);
     return () => {
       if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
     };
@@ -38,11 +38,11 @@ function GlobalLoaderInner() {
   useEffect(() => {
     if (prevPathname.current !== pathname) {
       prevPathname.current = pathname;
-      triggerLoader(1300);
+      triggerLoader(750);
     }
   }, [pathname]);
 
-  // 3. Catch clicks on any internal links (Navigation links, buttons, cards)
+  // 3. Catch clicks on any internal navigation links (Header links, cards, buttons)
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
       const anchor = (e.target as HTMLElement)?.closest("a");
@@ -68,16 +68,16 @@ function GlobalLoaderInner() {
           url.pathname !== window.location.pathname
         ) {
           // Immediately activate loader on click
-          triggerLoader(1500);
+          triggerLoader(1200);
         }
       } catch {
         // ignore
       }
     };
 
-    // Also listen to back/forward browser button
+    // Also handle browser back/forward navigation
     const handlePopState = () => {
-      triggerLoader(1300);
+      triggerLoader(750);
     };
 
     document.addEventListener("click", handleDocumentClick, { capture: true });
@@ -94,11 +94,11 @@ function GlobalLoaderInner() {
   return (
     <div
       aria-hidden="true"
-      className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-white/98 backdrop-blur-2xl transition-opacity duration-300 select-none ${
+      className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl transition-opacity duration-300 select-none ${
         fading ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"
       }`}
     >
-      <TripConnectLogoLoader size="fullscreen" />
+      <LuxuryTravelLoader size="md" />
     </div>
   );
 }
