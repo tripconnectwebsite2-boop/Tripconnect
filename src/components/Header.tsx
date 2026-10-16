@@ -64,6 +64,7 @@ export default function Header({ content }: { content?: Partial<SiteContent> }) 
     { label: "Home", href: "/" },
     { label: "Packages", href: "/packages" },
     { label: "Destinations", href: "/destinations" },
+    { label: "Transportation", href: "/transportation" },
     { label: "Special Offers", href: "/offers" },
     ...headerPages,
     { label: "About", href: "/about" },

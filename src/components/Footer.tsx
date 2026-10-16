@@ -72,6 +72,11 @@ export default async function Footer({ content }: { content?: Partial<SiteConten
                 </Link>
               </li>
               <li>
+                <Link className="hover:text-primary transition-colors" href="/transportation">
+                  Luxury Transportation
+                </Link>
+              </li>
+              <li>
                 <Link className="hover:text-primary transition-colors" href="/offers">
                   Special Offers
                 </Link>
