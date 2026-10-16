@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { clearAdminSession } from "@/lib/auth";
+import { clearAdminSession, createLocalAdminSession } from "@/lib/auth";
 import { verifyPasscode } from "@/lib/auth-token";
 
 export async function POST(request: Request) {
@@ -20,6 +20,9 @@ export async function POST(request: Request) {
         { status: 401 }
       );
     }
+
+    // Establish official admin session for all subsequent API calls
+    await createLocalAdminSession("tripconnectwebsite2@gmail.com");
 
     return NextResponse.json({
       success: true,
