@@ -10,7 +10,10 @@ import { SiteContent } from "@/lib/types";
 export default function Hero({ content }: { content?: Partial<SiteContent> }) {
   const heroRef = useRef<HTMLElement>(null);
 
-  const heroBadge = content?.hero_badge || "Bespoke Concierge • Based in Kochi";
+  const heroBadge =
+    content?.hero_badge === "Bespoke Concierge • Based in Kochi"
+      ? ""
+      : (content?.hero_badge || "");
   const heroTitle = content?.hero_title || "Your Next Journey Starts Here.";
   const heroSubtitle = content?.hero_subtitle || "Discover Kerala and beyond with travel experiences planned around you. Quiet luxury, untamed nature, and native precision.";
   const heroBgImage = content?.hero_bg_image || "https://lh3.googleusercontent.com/aida-public/AB6AXuASJNgmdoiZS-L2EeJH6bC_BJnjEyc-ps714Hvrrs1hcrJEl2ZyJC4wWWDzjURJSuRBsPKY-RAjO0M6M_UiktOdHDcQ5vlA9kuFvyCtaZqCgPEG5rcst98ta1hhUz2TNekWn6_J1_1IxA436qF-rzy4WVUPxKdoDVWeDBRRqt-5BOVhknH02JbQfYWaAVE55EFBq0CYXA9RvcaQPY1ypKD72jvMgsh53TqVVFKOiI8nV_M6Dlxhmn6qGg";
@@ -107,17 +110,19 @@ export default function Hero({ content }: { content?: Partial<SiteContent> }) {
           className="max-w-4xl pt-6 lg:pt-10 relative z-10"
         >
           {/* Top Concierge Badge */}
-          <motion.div variants={itemVariants} className="inline-block">
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-surface-container-high/80 backdrop-blur-md text-primary mb-6 lg:mb-8 shadow-sm border border-outline-variant/30 hover:border-primary/40 transition-colors animate-float">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary" />
-              </span>
-              <span className="font-label-sm text-label-sm tracking-wider uppercase text-on-surface-variant font-semibold">
-                {heroBadge}
-              </span>
-            </div>
-          </motion.div>
+          {heroBadge ? (
+            <motion.div variants={itemVariants} className="inline-block">
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-surface-container-high/80 backdrop-blur-md text-primary mb-6 lg:mb-8 shadow-sm border border-outline-variant/30 hover:border-primary/40 transition-colors animate-float">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary" />
+                </span>
+                <span className="font-label-sm text-label-sm tracking-wider uppercase text-on-surface-variant font-semibold">
+                  {heroBadge}
+                </span>
+              </div>
+            </motion.div>
+          ) : null}
 
           {/* Main Headline */}
           <motion.h1

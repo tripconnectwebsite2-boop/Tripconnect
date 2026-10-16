@@ -264,7 +264,7 @@ function generateNdjson() {
       {
         _key: 'sec-hero',
         _type: 'heroSection',
-        badge: initialSiteContent.hero_badge || 'Kochi & Kerala Premier Tour Operator',
+        badge: initialSiteContent.hero_badge || '',
         title: initialSiteContent.hero_title || 'Discover God’s Own Country with Kochi’s Most Trusted Travel Concierge',
         subtitle: initialSiteContent.hero_subtitle || 'Bespoke holiday packages, backwater houseboats, luxury chauffeur sedans, and All-India Volvo sleeper coaches.',
         primaryCta: {
