@@ -11,7 +11,7 @@ function GlobalLoaderInner() {
   const prevPathname = useRef(pathname);
   const fadeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const triggerLoader = (visibleDurationMs: number = 850) => {
+  const triggerLoader = (visibleDurationMs: number = 2400) => {
     if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
 
     setLoading(true);
@@ -22,13 +22,14 @@ function GlobalLoaderInner() {
       fadeTimeoutRef.current = setTimeout(() => {
         setLoading(false);
         setFading(false);
-      }, 300);
+      }, 400);
     }, visibleDurationMs);
   };
 
-  // 1. Initial Page Load
+  // 1. Initial Page Load (Full Refresh / direct visit to any page)
   useEffect(() => {
-    triggerLoader(950);
+    // Show full luxury loading animation on page refresh (2.4 seconds)
+    triggerLoader(2400);
     return () => {
       if (fadeTimeoutRef.current) clearTimeout(fadeTimeoutRef.current);
     };
@@ -38,7 +39,7 @@ function GlobalLoaderInner() {
   useEffect(() => {
     if (prevPathname.current !== pathname) {
       prevPathname.current = pathname;
-      triggerLoader(750);
+      triggerLoader(1300);
     }
   }, [pathname]);
 
@@ -67,8 +68,8 @@ function GlobalLoaderInner() {
           url.origin === window.location.origin &&
           url.pathname !== window.location.pathname
         ) {
-          // Immediately activate loader on click
-          triggerLoader(1200);
+          // Immediately activate loader on link click
+          triggerLoader(1400);
         }
       } catch {
         // ignore
@@ -77,7 +78,7 @@ function GlobalLoaderInner() {
 
     // Also handle browser back/forward navigation
     const handlePopState = () => {
-      triggerLoader(750);
+      triggerLoader(1300);
     };
 
     document.addEventListener("click", handleDocumentClick, { capture: true });
@@ -94,7 +95,7 @@ function GlobalLoaderInner() {
   return (
     <div
       aria-hidden="true"
-      className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl transition-opacity duration-300 select-none ${
+      className={`fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-white/98 dark:bg-slate-950/98 backdrop-blur-2xl transition-opacity duration-400 ease-out select-none ${
         fading ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"
       }`}
     >

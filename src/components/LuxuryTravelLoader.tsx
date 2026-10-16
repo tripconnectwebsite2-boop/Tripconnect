@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 
 interface LuxuryTravelLoaderProps {
   className?: string;
@@ -9,6 +11,21 @@ export default function LuxuryTravelLoader({
   className = "",
   size = "md",
 }: LuxuryTravelLoaderProps) {
+  const [progress, setProgress] = useState(18);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 96) {
+          return 100;
+        }
+        return Math.min(100, prev + Math.floor(Math.random() * 9 + 5));
+      });
+    }, 130);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const scaleClass = {
     sm: "scale-85",
     md: "scale-100",
@@ -35,7 +52,7 @@ export default function LuxuryTravelLoader({
           100% { transform: translateX(250%); }
         }
         @keyframes tcPulseGlow {
-          0%, 100% { transform: scale(1); opacity: 0.8; }
+          0%, 100% { transform: scale(1); opacity: 0.85; }
           50% { transform: scale(1.08); opacity: 1; }
         }
         .tc-orbit-clockwise {
@@ -53,7 +70,7 @@ export default function LuxuryTravelLoader({
       `}} />
 
       {/* Ambient background glow aura */}
-      <div className="absolute w-56 h-56 rounded-full bg-gradient-to-tr from-primary/20 via-sky-500/10 to-amber-500/15 blur-3xl pointer-events-none" />
+      <div className="absolute w-64 h-64 rounded-full bg-gradient-to-tr from-primary/20 via-sky-500/10 to-amber-500/15 blur-3xl pointer-events-none" />
 
       {/* Luxury Celestial Astrolabe / Navigator Compass */}
       <div className="relative w-28 h-28 flex items-center justify-center mb-6">
@@ -119,8 +136,18 @@ export default function LuxuryTravelLoader({
       </div>
 
       {/* Shimmering Journey Rail Indicator */}
-      <div className="w-36 h-[2px] mt-5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden relative z-10">
+      <div className="w-44 h-[3px] mt-5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden relative z-10">
         <div className="absolute inset-y-0 w-2/3 bg-gradient-to-r from-transparent via-primary to-amber-500 rounded-full tc-shimmer-bar" />
+      </div>
+
+      {/* Progress metrics indicator */}
+      <div className="mt-3 flex flex-col items-center space-y-0.5 z-10">
+        <span className="text-[11px] font-mono font-semibold text-slate-600 dark:text-slate-400 tracking-wider">
+          {progress}%
+        </span>
+        <span className="text-[9px] uppercase font-medium tracking-[0.22em] text-primary/75 animate-pulse">
+          Curating bespoke travel experience...
+        </span>
       </div>
     </div>
   );
