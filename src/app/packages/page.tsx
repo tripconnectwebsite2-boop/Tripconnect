@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import { getPackages, getDestinations } from "@/lib/db";
+import { getCmsPackages, getCmsDestinations } from "@/sanity/lib/data";
 import Link from "next/link";
 import PackageCatalogClient from "./PackageCatalogClient";
 
@@ -14,11 +14,11 @@ export const metadata = {
 };
 
 export default async function PackagesPage() {
-  const rawPackages = await getPackages({ status: "published" });
+  const rawPackages = await getCmsPackages();
   const packages = rawPackages.filter(
-    (p) => p.status === "published" && p.content_verified && !p.slug.endsWith("-draft")
+    (p) => p.status === "published" && p.content_verified !== false && !p.slug.endsWith("-draft")
   );
-  const destinations = await getDestinations(true);
+  const destinations = await getCmsDestinations();
 
   return (
     <>

@@ -1,0 +1,225 @@
+import { defineField, defineType } from 'sanity';
+
+export const travelPackage = defineType({
+  name: 'travelPackage',
+  title: 'Tour Packages',
+  type: 'document',
+  fields: [
+    defineField({
+      name: 'title',
+      title: 'Package Title',
+      type: 'string',
+      description: 'E.g. "Classic Kerala Grand Tour (5N/6D)"',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'slug',
+      title: 'URL Slug',
+      type: 'slug',
+      options: {
+        source: 'title',
+        maxLength: 96,
+      },
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'order',
+      title: 'Display Order / Priority',
+      type: 'number',
+      description: 'Lower numbers appear first on the website (e.g. 1, 2, 3). Drag-and-drop or edit directly.',
+      initialValue: 1,
+    }),
+    defineField({
+      name: 'status',
+      title: 'Publishing Status',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Published', value: 'published' },
+          { title: 'Draft', value: 'draft' },
+          { title: 'Scheduled (Auto-publish at set date)', value: 'scheduled' },
+          { title: 'Archived', value: 'archived' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'published',
+    }),
+    defineField({
+      name: 'publishedAt',
+      title: 'Publication Date & Time',
+      type: 'datetime',
+      description: 'Used for scheduled publishing and display dates.',
+      initialValue: () => new Date().toISOString(),
+    }),
+    defineField({
+      name: 'unpublishAt',
+      title: 'Automatic Unpublish / Expiry Date (Optional)',
+      type: 'datetime',
+      description: 'Optional date when this package should stop appearing on the website.',
+    }),
+    defineField({
+      name: 'destination',
+      title: 'Primary Destination',
+      type: 'reference',
+      to: [{ type: 'destination' }],
+      description: 'Link this package to its primary destination (e.g. Munnar, Alleppey, Wayanad).',
+    }),
+    defineField({
+      name: 'destinationName',
+      title: 'Destination Display Tag',
+      type: 'string',
+      description: 'Short label shown on cards (e.g. "Munnar • Thekkady • Alleppey").',
+    }),
+    defineField({
+      name: 'category',
+      title: 'Package Category',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Kerala Tours', value: 'Kerala Tours' },
+          { title: 'India Tours', value: 'India Tours' },
+          { title: 'Family Trips', value: 'Family Trips' },
+          { title: 'Honeymoon Packages', value: 'Honeymoon Packages' },
+          { title: 'Adventure & Nature', value: 'Adventure & Nature' },
+          { title: 'Weekend & Short Trips', value: 'Weekend & Short Trips' },
+          { title: 'Custom / Tailor-Made Trips', value: 'Custom / Tailor-Made Trips' },
+        ],
+      },
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'isFeatured',
+      title: 'Feature on Homepage?',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'startingPrice',
+      title: 'Starting Price (INR)',
+      type: 'number',
+      description: 'Numeric price for filtering and display (e.g. 24500).',
+      validation: (r) => r.required().positive(),
+    }),
+    defineField({
+      name: 'currency',
+      title: 'Currency Symbol / Code',
+      type: 'string',
+      initialValue: 'INR',
+    }),
+    defineField({
+      name: 'durationDays',
+      title: 'Duration (Days)',
+      type: 'number',
+      initialValue: 6,
+      validation: (r) => r.required().positive(),
+    }),
+    defineField({
+      name: 'durationNights',
+      title: 'Duration (Nights)',
+      type: 'number',
+      initialValue: 5,
+      validation: (r) => r.required().positive(),
+    }),
+    defineField({
+      name: 'shortDescription',
+      title: 'Short Summary Card Description',
+      type: 'text',
+      rows: 2,
+      description: 'Short 1-2 sentence teaser shown on tour cards.',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'description',
+      title: 'Full Package Overview',
+      type: 'text',
+      rows: 4,
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'highlights',
+      title: 'Key Tour Highlights',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description: 'Bullet points displayed prominently on the package detail page.',
+    }),
+    defineField({
+      name: 'gallery',
+      title: 'Photo Gallery',
+      type: 'array',
+      of: [{ type: 'imageWithAlt' }],
+      options: {
+        layout: 'grid',
+      },
+      description: 'High-definition photos of resorts, houseboats, destinations, and activities.',
+    }),
+    defineField({
+      name: 'itinerary',
+      title: 'Day-by-Day Itinerary (Ordered)',
+      type: 'array',
+      of: [{ type: 'itineraryDay' }],
+    }),
+    defineField({
+      name: 'inclusions',
+      title: 'What is Included (Inclusions)',
+      type: 'array',
+      of: [{ type: 'string' }],
+    }),
+    defineField({
+      name: 'exclusions',
+      title: 'What is NOT Included (Exclusions)',
+      type: 'array',
+      of: [{ type: 'string' }],
+    }),
+    defineField({
+      name: 'accommodationDetails',
+      title: 'Accommodation Details Summary',
+      type: 'string',
+      description: 'E.g. "Munnar 4-Star Resort (2N) • Thekkady Plantation Suite (1N) • Houseboat (1N)"',
+    }),
+    defineField({
+      name: 'departureDates',
+      title: 'Departure Dates / Availability Notes',
+      type: 'string',
+      description: 'E.g. "Daily Private Departures • 365 Days Available"',
+    }),
+    defineField({
+      name: 'seo',
+      title: 'SEO & Social Media Overrides',
+      type: 'seo',
+    }),
+  ],
+  orderings: [
+    {
+      title: 'Display Order (Ascending)',
+      name: 'orderAsc',
+      by: [{ field: 'order', direction: 'asc' }],
+    },
+    {
+      title: 'Price: Low to High',
+      name: 'priceAsc',
+      by: [{ field: 'startingPrice', direction: 'asc' }],
+    },
+    {
+      title: 'Price: High to Low',
+      name: 'priceDesc',
+      by: [{ field: 'startingPrice', direction: 'desc' }],
+    },
+  ],
+  preview: {
+    select: {
+      title: 'title',
+      category: 'category',
+      price: 'startingPrice',
+      days: 'durationDays',
+      nights: 'durationNights',
+      media: 'gallery.0',
+    },
+    prepare({ title, category, price, days, nights, media }) {
+      return {
+        title: title || 'Untitled Package',
+        subtitle: `${category || ''} • ₹${price?.toLocaleString?.('en-IN') || price || 0} (${nights}N/${days}D)`,
+        media,
+      };
+    },
+  },
+});

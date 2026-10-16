@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import { getOffers } from "@/lib/db";
+import { getCmsSpecialOffers } from "@/sanity/lib/data";
 import Link from "next/link";
 
 export const metadata = {
@@ -12,7 +12,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function OffersPage() {
-  const offers = await getOffers(true); // Only active, verified, non-expired offers
+  const offers = await getCmsSpecialOffers();
 
   return (
     <>

@@ -2,13 +2,12 @@ import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import { getDestinationBySlug, getDestinations, getPackages } from "@/lib/db";
+import { getCmsDestinationBySlug, getCmsPackages } from "@/sanity/lib/data";
 import Link from "next/link";
 import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
 
 export async function generateMetadata({
   params,
@@ -16,16 +15,16 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const dest = await getDestinationBySlug(slug);
+  const dest = await getCmsDestinationBySlug(slug);
   if (!dest) return { title: "Destination Not Found | Trip Connect" };
 
   return {
-    title: `${dest.name} Tour Packages & Itineraries | Trip Connect`,
-    description: dest.short_description,
+    title: dest.seo_title || `${dest.name} Tour Packages & Itineraries | Trip Connect`,
+    description: dest.seo_description || dest.short_description,
     openGraph: {
-      title: dest.name,
-      description: dest.short_description,
-      images: [{ url: dest.cover_image }],
+      title: dest.seo_title || dest.name,
+      description: dest.seo_description || dest.short_description,
+      images: dest.cover_image ? [{ url: dest.cover_image }] : [],
     },
   };
 }
@@ -36,13 +35,13 @@ export default async function DestinationDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const destination = await getDestinationBySlug(slug);
+  const destination = await getCmsDestinationBySlug(slug);
 
   if (!destination) {
     notFound();
   }
 
-  const allPackages = await getPackages({ status: "published" });
+  const allPackages = await getCmsPackages();
   const linkedPackages = allPackages.filter((p) =>
     p.status === "published" &&
     p.content_verified &&

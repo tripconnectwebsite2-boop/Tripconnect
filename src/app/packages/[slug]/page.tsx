@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import { getPackageBySlug, getPackages } from "@/lib/db";
+import { getCmsPackageBySlug } from "@/sanity/lib/data";
 import { buildWhatsAppChatUrl } from "@/lib/notifications/whatsapp";
 import Link from "next/link";
 import Image from "next/image";
@@ -11,24 +11,23 @@ import PackageDetailEnquiryForm from "./PackageDetailEnquiryForm";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const pkg = await getPackageBySlug(slug, false);
-  if (!pkg || pkg.status !== "published" || !pkg.content_verified || pkg.slug.endsWith("-draft")) {
+  const pkg = await getCmsPackageBySlug(slug);
+  if (!pkg || pkg.status !== "published" || pkg.slug.endsWith("-draft")) {
     return { title: "Package Not Found | Trip Connect" };
   }
 
   return {
-    title: `${pkg.title} | Trip Connect Kerala`,
-    description: pkg.short_description,
+    title: pkg.seo_title || `${pkg.title} | Trip Connect Kerala`,
+    description: pkg.seo_description || pkg.short_description,
     openGraph: {
-      title: pkg.title,
-      description: pkg.short_description,
+      title: pkg.seo_title || pkg.title,
+      description: pkg.seo_description || pkg.short_description,
       images: pkg.gallery[0] ? [{ url: pkg.gallery[0] }] : [],
     },
   };
@@ -40,9 +39,9 @@ export default async function PackageDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const pkg = await getPackageBySlug(slug, false); // Only display published & verified packages to public
+  const pkg = await getCmsPackageBySlug(slug);
 
-  if (!pkg || pkg.status !== "published" || !pkg.content_verified || pkg.slug.endsWith("-draft")) {
+  if (!pkg || pkg.status !== "published" || pkg.slug.endsWith("-draft")) {
     notFound();
   }
 

@@ -4,11 +4,11 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import { getCustomPageBySlug, getCustomPages, getSiteContent } from "@/lib/db";
+import { getCmsPageBySlug, getCmsSiteContent } from "@/sanity/lib/data";
+import PageBuilderRenderer from "@/components/PageBuilderRenderer";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
 
 export async function generateMetadata({
   params,
@@ -16,20 +16,21 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const page = await getCustomPageBySlug(slug);
+  const page = await getCmsPageBySlug(slug);
   if (!page || page.status !== "published") {
     return { title: "Page Not Found | Trip Connect" };
   }
 
   return {
-    title: page.seo_title || `${page.title} | Trip Connect Kochi`,
+    title: page.seo?.metaTitle || page.seo_title || `${page.title} | Trip Connect Kochi`,
     description:
+      page.seo?.metaDescription ||
       page.seo_description ||
       page.hero_subtitle ||
       `Discover ${page.title} curated by Trip Connect luxury travel concierge in Kochi, Kerala.`,
     openGraph: {
-      title: page.title,
-      description: page.hero_subtitle || page.seo_description,
+      title: page.seo?.metaTitle || page.title,
+      description: page.seo?.metaDescription || page.hero_subtitle || page.seo_description,
       images: page.hero_image ? [{ url: page.hero_image }] : undefined,
     },
   };
@@ -41,21 +42,35 @@ export default async function CustomDynamicPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const page = await getCustomPageBySlug(slug);
+  const page = await getCmsPageBySlug(slug);
 
   if (!page || page.status !== "published") {
     notFound();
   }
 
-  const content = await getSiteContent().catch(() => null);
+  const content = await getCmsSiteContent().catch(() => null);
   const rawPhone = content?.whatsapp_number || "919400886838";
   const cleanPhone = rawPhone.replace(/[^0-9]/g, "");
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
     `Hello Trip Connect, I would like to inquire about: ${page.title}`
   )}`;
 
-  // Simple Markdown paragraph renderer
-  const formattedSections = page.content.split("\n\n").map((chunk, i) => {
+  // If page is composed via Sanity Page Builder
+  if (page.pageBuilder && Array.isArray(page.pageBuilder) && page.pageBuilder.length > 0) {
+    return (
+      <>
+        <Header content={content || undefined} />
+        <main className="w-full pt-20 bg-surface min-h-screen">
+          <PageBuilderRenderer sections={page.pageBuilder} siteContent={content || undefined} />
+        </main>
+        <Footer content={content || undefined} />
+        <FloatingWhatsApp />
+      </>
+    );
+  }
+
+  // Simple Markdown paragraph renderer for standard text pages
+  const formattedSections = (page.content || "").split("\n\n").map((chunk: string, i: number) => {
     const trimmed = chunk.trim();
     if (trimmed.startsWith("### ")) {
       return (
@@ -154,7 +169,7 @@ export default async function CustomDynamicPage({
                     <span>Key Highlights of this Experience</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                    {page.highlights.map((hl, idx) => (
+                    {page.highlights.map((hl: string, idx: number) => (
                       <div key={idx} className="flex items-start gap-2.5">
                         <span className="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">
                           done_all

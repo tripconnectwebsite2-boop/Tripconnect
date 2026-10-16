@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import TransportationBookingForm from "./TransportationBookingForm";
 import { buildWhatsAppChatUrl } from "@/lib/notifications/whatsapp";
-import { getTransportationVehicles } from "@/lib/db";
+import { getCmsTransportationVehicles } from "@/sanity/lib/data";
 import { TransportationVehicle } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 };
 
 export default async function TransportationPage() {
-  const allVehicles: TransportationVehicle[] = await getTransportationVehicles({ activeOnly: true });
+  const allVehicles: TransportationVehicle[] = await getCmsTransportationVehicles({ activeOnly: true });
 
   const normalVehicles = allVehicles.filter((v) => v.category === "normal");
   const premiumVehicles = allVehicles.filter((v) => v.category === "premium");

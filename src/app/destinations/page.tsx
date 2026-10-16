@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import { getDestinations, getPackages } from "@/lib/db";
+import { getCmsDestinations, getCmsPackages } from "@/sanity/lib/data";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -14,8 +14,8 @@ export const metadata = {
 };
 
 export default async function DestinationsPage() {
-  const destinations = await getDestinations(true);
-  const packages = await getPackages({ status: "published" });
+  const destinations = await getCmsDestinations();
+  const packages = await getCmsPackages();
 
   const keralaDestinations = destinations.filter((d) => d.region === "Kerala");
   const indiaDestinations = destinations.filter((d) => d.region !== "Kerala");
