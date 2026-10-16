@@ -14,25 +14,13 @@ function AdminLoginForm() {
   const searchParams = useSearchParams();
   const from = searchParams.get("from") || "/admin";
 
-  const [authStep, setAuthStep] = useState<"google" | "passcode">("google");
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [firebaseActive, setFirebaseActive] = useState(false);
 
-  // Verified user from Google Step
-  const [verifiedEmail, setVerifiedEmail] = useState("");
-  const [verifiedName, setVerifiedName] = useState("");
-  const [verifiedPhoto, setVerifiedPhoto] = useState<string | null>(null);
-
-  // Passcode step state
-  const [passcode, setPasscode] = useState("");
-  const [showPasscode, setShowPasscode] = useState(false);
-  const [isPasscodeLoading, setIsPasscodeLoading] = useState(false);
-
   useEffect(() => {
     setFirebaseActive(isFirebaseConfigured());
 
-    // Clean session on entering login page
     try {
       sessionStorage.removeItem("tc_admin_passcode_verified");
     } catch {
@@ -40,7 +28,7 @@ function AdminLoginForm() {
     }
   }, []);
 
-  // Step 1: Firebase Google OAuth Sign-In handler
+  // Firebase Google OAuth Sign-In handler (ONLY method)
   const handleFirebaseGoogleSignIn = async () => {
     setIsLoading(true);
     setErrorMsg("");
@@ -58,7 +46,6 @@ function AdminLoginForm() {
 
       // STRICT VALIDATION: Only AUTHORIZED_ADMIN_EMAIL is permitted
       if (userEmail !== AUTHORIZED_ADMIN_EMAIL) {
-        // Immediately disconnect unauthorized Google user
         await signOut(auth);
         setErrorMsg(
           `Access Denied: The account "${user.email}" is not authorized. Access is strictly restricted to ${AUTHORIZED_ADMIN_EMAIL}.`
@@ -67,14 +54,34 @@ function AdminLoginForm() {
         return;
       }
 
-      // Google authentication succeeded with authorized email!
-      setVerifiedEmail(userEmail);
-      setVerifiedName(user.displayName || "Administrator");
-      setVerifiedPhoto(user.photoURL || null);
-      setIsLoading(false);
+      // Establish backend admin session
+      const idToken = await user.getIdToken();
+      const res = await fetch("/api/admin/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: userEmail,
+          idToken: idToken || null,
+        }),
+      });
 
-      // Transition to Step 2 (Passcode verification)
-      setAuthStep("passcode");
+      const data = await res.json();
+      if (!res.ok) {
+        await signOut(auth);
+        setErrorMsg(data.error || "Authentication failed. Unauthorized account.");
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        sessionStorage.setItem("tc_admin_passcode_verified", "true");
+      } catch {
+        // Silent
+      }
+
+      // Direct entry to Admin Portal
+      router.push(from);
+      router.refresh();
     } catch (err: any) {
       console.error("[Firebase Google Auth Error]:", err);
       setIsLoading(false);
@@ -87,62 +94,6 @@ function AdminLoginForm() {
         setErrorMsg(err.message || "Failed to complete Google authentication. Please try again.");
       }
     }
-  };
-
-  // Step 2: Master Security Passcode verification handler
-  const handlePasscodeLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!passcode.trim() || isPasscodeLoading) return;
-
-    setIsPasscodeLoading(true);
-    setErrorMsg("");
-
-    try {
-      const res = await fetch("/api/admin/auth/verify-passcode", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          passcode: passcode.trim(),
-          email: verifiedEmail || AUTHORIZED_ADMIN_EMAIL,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        setErrorMsg(data.error || "Invalid Master Passcode. Access denied.");
-        setIsPasscodeLoading(false);
-        return;
-      }
-
-      // Mark passcode verified in sessionStorage for seamless navigation in admin portal
-      try {
-        sessionStorage.setItem("tc_admin_passcode_verified", "true");
-      } catch {
-        // Silent
-      }
-
-      router.push(from);
-      router.refresh();
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Passcode verification failed. Please try again.");
-      setIsPasscodeLoading(false);
-    }
-  };
-
-  // Switch Account: signs out from Firebase and returns to Step 1
-  const handleSwitchAccount = async () => {
-    try {
-      if (auth) await signOut(auth);
-    } catch {
-      // Silent
-    }
-    setVerifiedEmail("");
-    setVerifiedName("");
-    setVerifiedPhoto(null);
-    setPasscode("");
-    setErrorMsg("");
-    setAuthStep("google");
   };
 
   return (
@@ -158,12 +109,10 @@ function AdminLoginForm() {
           className="h-12 w-auto mx-auto object-contain mb-4"
         />
         <h1 className="font-headline-lg text-headline-lg font-bold tracking-tight text-on-surface">
-          {authStep === "google" ? "Administrator Sign-In" : "Security Verification"}
+          Administrator Sign-In
         </h1>
         <p className="font-body-sm text-body-sm text-on-surface-variant mt-1.5">
-          {authStep === "google"
-            ? "Trip Connect Operations & Management Portal"
-            : "Step 2 of 2: Enter Master Passcode"}
+          Trip Connect Operations &amp; Management Portal
         </p>
       </div>
 
@@ -175,153 +124,54 @@ function AdminLoginForm() {
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* STEP 1: ONLY GOOGLE SIGN-IN                                              */}
-      {/* ========================================================================= */}
-      {authStep === "google" && (
-        <div className="space-y-6">
-          <div className="p-3.5 rounded-xl bg-surface-container-high/60 border border-outline-variant/30 text-xs text-on-surface-variant leading-relaxed flex items-start gap-2.5">
-            <span className="material-symbols-outlined text-[18px] text-primary shrink-0 mt-0.5">lock</span>
-            <span>
-              Access is strictly restricted to the authorized administrator Google account (
-              <strong className="text-on-surface font-mono font-semibold">{AUTHORIZED_ADMIN_EMAIL}</strong>
-              ). All other accounts are automatically rejected.
-            </span>
-          </div>
+      {/* Security Info Card */}
+      <div className="mb-6 p-4 rounded-xl bg-surface-container-high/60 border border-outline-variant/30 text-xs text-on-surface-variant leading-relaxed flex items-start gap-2.5">
+        <span className="material-symbols-outlined text-[18px] text-primary shrink-0 mt-0.5">verified_user</span>
+        <span>
+          Access is strictly restricted to the authorized administrator account (
+          <strong className="text-on-surface font-mono font-semibold">{AUTHORIZED_ADMIN_EMAIL}</strong>
+          ). All other accounts are automatically denied.
+        </span>
+      </div>
 
-          <button
-            type="button"
-            onClick={handleFirebaseGoogleSignIn}
-            disabled={isLoading}
-            className="w-full py-3.5 px-4 rounded-xl bg-white hover:bg-neutral-50 text-neutral-800 font-label-md text-label-md font-semibold transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-3 border border-neutral-300 active:scale-[0.98] disabled:opacity-75"
-          >
-            {isLoading ? (
-              <>
-                <span className="w-5 h-5 border-2 border-neutral-400 border-t-neutral-800 rounded-full animate-spin"></span>
-                <span>Connecting to Google...</span>
-              </>
-            ) : (
-              <>
-                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-                  <path
-                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    fill="#4285F4"
-                  />
-                  <path
-                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                    fill="#34A853"
-                  />
-                  <path
-                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                    fill="#FBBC05"
-                  />
-                  <path
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                    fill="#EA4335"
-                  />
-                </svg>
-                <span>Sign in with Google</span>
-              </>
-            )}
-          </button>
-        </div>
-      )}
+      {/* Google OAuth Action Button (ONLY SIGN-IN METHOD) */}
+      <button
+        type="button"
+        onClick={handleFirebaseGoogleSignIn}
+        disabled={isLoading}
+        className="w-full py-3.5 px-4 rounded-xl bg-white hover:bg-neutral-50 text-neutral-800 font-label-md text-label-md font-semibold transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-3 border border-neutral-300 active:scale-[0.98] disabled:opacity-75"
+      >
+        {isLoading ? (
+          <>
+            <span className="w-5 h-5 border-2 border-neutral-400 border-t-neutral-800 rounded-full animate-spin"></span>
+            <span>Connecting to Google...</span>
+          </>
+        ) : (
+          <>
+            <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                fill="#EA4335"
+              />
+            </svg>
+            <span>Sign in with Google</span>
+          </>
+        )}
+      </button>
 
-      {/* ========================================================================= */}
-      {/* STEP 2: MASTER PASSCODE VERIFICATION (ONLY OPENS AFTER GOOGLE SIGN-IN)    */}
-      {/* ========================================================================= */}
-      {authStep === "passcode" && (
-        <div className="space-y-5 animate-fadeIn">
-          {/* Verified Google Account Pill */}
-          <div className="p-3 rounded-xl bg-surface-container-high border border-outline-variant/30 flex items-center justify-between">
-            <div className="flex items-center gap-2.5 min-w-0">
-              {verifiedPhoto ? (
-                <Image
-                  src={verifiedPhoto}
-                  alt={verifiedName}
-                  width={32}
-                  height={32}
-                  className="w-8 h-8 rounded-full object-cover shrink-0"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0">
-                  {verifiedEmail.slice(0, 1).toUpperCase()}
-                </div>
-              )}
-              <div className="min-w-0 text-left">
-                <div className="text-xs font-semibold text-on-surface truncate">{verifiedName}</div>
-                <div className="text-[11px] text-on-surface-variant font-mono truncate">{verifiedEmail}</div>
-              </div>
-            </div>
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0 border border-emerald-200">
-              <span className="material-symbols-outlined text-[13px]">check_circle</span>
-              <span>Verified</span>
-            </span>
-          </div>
-
-          {/* Passcode Form */}
-          <form onSubmit={handlePasscodeLogin} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-on-surface-variant mb-1.5 uppercase tracking-wider">
-                Master Security Key
-              </label>
-              <div className="relative">
-                <input
-                  type={showPasscode ? "text" : "password"}
-                  value={passcode}
-                  onChange={(e) => setPasscode(e.target.value)}
-                  placeholder="Enter 14-digit passcode"
-                  required
-                  autoFocus
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-surface-container-high border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary pr-10 tracking-widest font-mono"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPasscode(!showPasscode)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface"
-                  aria-label="Toggle password visibility"
-                >
-                  <span className="material-symbols-outlined text-[18px]">
-                    {showPasscode ? "visibility_off" : "visibility"}
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={!passcode.trim() || isPasscodeLoading}
-              className="w-full py-3 px-4 rounded-xl bg-primary hover:bg-primary/90 text-on-primary font-label-md text-sm font-semibold transition-all shadow-md active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {isPasscodeLoading ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
-                  <span>Verifying Master Key...</span>
-                </>
-              ) : (
-                <>
-                  <span className="material-symbols-outlined text-[18px]">key</span>
-                  <span>Unlock Admin Portal</span>
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Switch Account Action */}
-          <div className="text-center pt-2">
-            <button
-              type="button"
-              onClick={handleSwitchAccount}
-              className="text-xs text-on-surface-variant hover:text-primary transition-colors inline-flex items-center gap-1"
-            >
-              <span className="material-symbols-outlined text-[14px]">logout</span>
-              <span>Sign in with a different Google account</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Return Link */}
+      {/* Return to website */}
       <div className="mt-6 pt-4 border-t border-outline-variant/20 text-center">
         <Link href="/" className="text-xs text-primary hover:underline font-medium inline-flex items-center gap-1">
           <span className="material-symbols-outlined text-[15px]">arrow_back</span>

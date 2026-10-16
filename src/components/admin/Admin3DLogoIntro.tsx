@@ -59,9 +59,9 @@ export default function Admin3DLogoIntro({
       // Fallback
     }
 
-    // Fresh login / not yet unlocked: prompt for password
-    setIsUnlocked(false);
-    setIsOpen(true);
+    // Passcode requirement disabled - Google Sign-In is the sole authentication method
+    setIsUnlocked(true);
+    setIsOpen(false);
     setCheckedStorage(true);
   }, [forceShow, handleClose]);
 
