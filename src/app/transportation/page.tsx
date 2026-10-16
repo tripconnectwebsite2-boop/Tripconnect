@@ -8,8 +8,7 @@ import { buildWhatsAppChatUrl } from "@/lib/notifications/whatsapp";
 import { getCmsTransportationVehicles } from "@/sanity/lib/data";
 import { TransportationVehicle } from "@/lib/types";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Car Rental & All-India Bus Booking Kochi | Small Cars, Mercedes, Audi & Volvo | Trip Connect",

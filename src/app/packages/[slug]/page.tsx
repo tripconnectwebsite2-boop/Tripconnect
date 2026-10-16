@@ -8,8 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import PackageDetailEnquiryForm from "./PackageDetailEnquiryForm";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,

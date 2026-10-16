@@ -5,8 +5,7 @@ import { getCmsPackages, getCmsDestinations } from "@/sanity/lib/data";
 import Link from "next/link";
 import PackageCatalogClient from "./PackageCatalogClient";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60;
 
 export const metadata = {
   title: "Curated Travel Packages | Trip Connect Kochi",

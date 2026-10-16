@@ -37,11 +37,10 @@ export default function AmbientBackgroundMotion() {
       <motion.div
         style={{ y: orb1Y, x: orb1X, scale: orb1Scale }}
         animate={{
-          opacity: [0.12, 0.22, 0.12],
-          filter: ["blur(90px)", "blur(120px)", "blur(90px)"],
+          opacity: [0.14, 0.24, 0.14],
         }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -top-32 -left-32 w-[550px] sm:w-[750px] h-[550px] sm:h-[750px] rounded-full bg-gradient-to-tr from-[#006193]/20 via-[#4ba6df]/15 to-transparent blur-[110px] will-change-transform"
+        className="absolute -top-32 -left-32 w-[550px] sm:w-[750px] h-[550px] sm:h-[750px] rounded-full bg-gradient-to-tr from-[#006193]/20 via-[#4ba6df]/15 to-transparent blur-[100px] will-change-transform"
       />
 
       {/* Warm Golden/Amber Orb (Alleppey Sunset Twilight) */}
@@ -49,10 +48,9 @@ export default function AmbientBackgroundMotion() {
         style={{ y: orb2Y, x: orb2X, scale: orb2Scale }}
         animate={{
           opacity: [0.08, 0.16, 0.08],
-          filter: ["blur(100px)", "blur(140px)", "blur(100px)"],
         }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute top-[40%] -right-40 w-[500px] sm:w-[680px] h-[500px] sm:h-[680px] rounded-full bg-gradient-to-br from-[#8f4e00]/15 via-[#f59e0b]/10 to-transparent blur-[120px] will-change-transform"
+        className="absolute top-[40%] -right-40 w-[500px] sm:w-[680px] h-[500px] sm:h-[680px] rounded-full bg-gradient-to-br from-[#8f4e00]/15 via-[#f59e0b]/10 to-transparent blur-[110px] will-change-transform"
       />
 
       {/* Emerald / Backwater Lagoon Ambient Glow */}
@@ -60,10 +58,9 @@ export default function AmbientBackgroundMotion() {
         style={{ y: orb3Y, x: orb3X }}
         animate={{
           opacity: [0.06, 0.14, 0.06],
-          filter: ["blur(110px)", "blur(130px)", "blur(110px)"],
         }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        className="absolute top-[75%] left-[20%] w-[450px] sm:w-[600px] h-[450px] sm:h-[600px] rounded-full bg-gradient-to-t from-[#0d9488]/12 via-[#06b6d4]/8 to-transparent blur-[110px] will-change-transform"
+        className="absolute top-[75%] left-[20%] w-[450px] sm:w-[600px] h-[450px] sm:h-[600px] rounded-full bg-gradient-to-t from-[#0d9488]/12 via-[#06b6d4]/8 to-transparent blur-[100px] will-change-transform"
       />
 
       {/* Elegant Parallax Water Current & Mist Streamlines (SVG) */}

@@ -6,36 +6,48 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { SiteContent } from "@/lib/types";
 
+let cachedDynamicContent: Partial<SiteContent> | null = null;
+let cachedHeaderPages: { label: string; href: string }[] | null = null;
+
 export default function Header({ content }: { content?: Partial<SiteContent> }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [dynamicContent, setDynamicContent] = useState<Partial<SiteContent> | undefined>(content);
-  const [headerPages, setHeaderPages] = useState<{ label: string; href: string }[]>([]);
+  const [dynamicContent, setDynamicContent] = useState<Partial<SiteContent> | undefined>(
+    content || cachedDynamicContent || undefined
+  );
+  const [headerPages, setHeaderPages] = useState<{ label: string; href: string }[]>(
+    cachedHeaderPages || []
+  );
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!content) {
+    if (!content && !cachedDynamicContent) {
       fetch("/api/content")
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
-          if (data) setDynamicContent(data);
+          if (data) {
+            cachedDynamicContent = data;
+            setDynamicContent(data);
+          }
         })
         .catch(() => {});
     }
 
-    // Load any custom pages enabled for header navigation
-    fetch("/api/pages?in_header=true")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data?.pages && Array.isArray(data.pages)) {
-          setHeaderPages(
-            data.pages.slice(0, 3).map((p: any) => ({
+    if (!cachedHeaderPages) {
+      // Load any custom pages enabled for header navigation
+      fetch("/api/pages?in_header=true")
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data?.pages && Array.isArray(data.pages)) {
+            const pages = data.pages.slice(0, 3).map((p: any) => ({
               label: p.title,
               href: `/p/${p.slug}`,
-            }))
-          );
-        }
-      })
-      .catch(() => {});
+            }));
+            cachedHeaderPages = pages;
+            setHeaderPages(pages);
+          }
+        })
+        .catch(() => {});
+    }
   }, [content]);
 
   // Close mobile menu automatically on route change

@@ -6,8 +6,7 @@ import { getCmsDestinationBySlug, getCmsPackages } from "@/sanity/lib/data";
 import Link from "next/link";
 import Image from "next/image";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,

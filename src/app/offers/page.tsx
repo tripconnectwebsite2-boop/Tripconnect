@@ -9,7 +9,7 @@ export const metadata = {
   description: "Limited seasonal discounts and advance retreat offers for Kerala backwaters, tea highlands, and Pan-India circuits.",
 };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function OffersPage() {
   const offers = await getCmsSpecialOffers();

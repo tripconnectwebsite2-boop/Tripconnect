@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import StructuredData from "@/components/StructuredData";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
+import NavigationProgressBar from "@/components/NavigationProgressBar";
 import FirebaseAnalytics from "@/components/FirebaseAnalytics";
 import ClientProviders from "@/components/ClientProviders";
 import { Analytics } from "@vercel/analytics/next";
@@ -61,10 +62,7 @@ export default function RootLayout({
       </head>
       <body className="bg-surface font-sans text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
         <ScrollProgressBar />
-        {/* Top micro-loading bar with luxury brand ocean blue gradient */}
-        <div aria-hidden="true" className="fixed top-0 left-0 right-0 z-[60] h-[3px] pointer-events-none">
-          <div className="h-full bg-gradient-to-r from-primary via-primary-fixed-dim to-secondary-fixed shadow-[0_0_8px_rgba(0,97,147,0.45)] animate-micro-bar" />
-        </div>
+        <NavigationProgressBar />
         {children}
         <FirebaseAnalytics />
         <Analytics />
