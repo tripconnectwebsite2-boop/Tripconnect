@@ -7,7 +7,7 @@ interface TripConnectLogoLoaderProps {
 
 export default function TripConnectLogoLoader({
   className = "",
-  size = "md",
+  size = "fullscreen",
 }: TripConnectLogoLoaderProps) {
   const sizeClasses = {
     sm: "w-[240px] max-w-[85vw]",
@@ -21,7 +21,7 @@ export default function TripConnectLogoLoader({
       className={`grid place-items-center bg-transparent select-none ${className}`}
       aria-label="Trip Connect Kochi loading"
     >
-      <div className={`loader-container ${sizeClasses} flex flex-col items-center justify-center`}>
+      <div className={`loader ${sizeClasses} flex flex-col items-center justify-center`}>
         <style dangerouslySetInnerHTML={{ __html: `
           .tc-logo-svg {
             display: block;
@@ -39,11 +39,11 @@ export default function TripConnectLogoLoader({
             stroke-dasharray: 1;
             stroke-dashoffset: 1;
             animation:
-              tc-draw-line 2.25s cubic-bezier(.4,0,.2,1) infinite,
-              tc-reveal-fill .45s ease-out infinite;
+              tc-draw-line 2.25s cubic-bezier(.4,0,.2,1) forwards,
+              tc-reveal-fill .45s ease-out forwards;
             animation-delay: calc(var(--i) * 0.075s), calc(1.45s + var(--i) * 0.075s);
-            animation-duration: 3.6s, 3.6s;
             animation-iteration-count: infinite, infinite;
+            animation-duration: 3.6s, 3.6s;
             animation-timing-function: cubic-bezier(.4,0,.2,1), ease-out;
             animation-fill-mode: both, both;
           }
@@ -81,16 +81,10 @@ export default function TripConnectLogoLoader({
           .tc-logo-path:nth-of-type(22) { --i: 21; }
           .tc-logo-path:nth-of-type(23) { --i: 22; }
           @keyframes tc-draw-line {
-            0% { stroke-dashoffset: 1; }
-            65% { stroke-dashoffset: 0; }
-            100% { stroke-dashoffset: 0; }
+            to { stroke-dashoffset: 0; }
           }
           @keyframes tc-reveal-fill {
-            0% { fill-opacity: 0; }
-            45% { fill-opacity: 0; }
-            70% { fill-opacity: 1; }
-            90% { fill-opacity: 1; }
-            100% { fill-opacity: 0; }
+            to { fill-opacity: 1; }
           }
           @media (prefers-reduced-motion: reduce) {
             .tc-logo-path { animation: none; stroke-dashoffset: 0; fill-opacity: 1; }
@@ -104,7 +98,7 @@ export default function TripConnectLogoLoader({
           role="img"
           aria-label="Trip Connect Kochi logo"
         >
-          <g fillRule="evenodd" clipRule="evenodd">
+          <g fill="#000000" fillRule="evenodd" clipRule="evenodd">
             <path className="tc-logo-path" pathLength={1} d="M 867 294 L 862 295 L 862 299 L 859 308 L 859 314 L 861 315 L 864 314 L 868 296 Z"/>
             <path className="tc-logo-path" pathLength={1} d="M 843 294 L 841 297 L 841 304 L 839 308 L 839 314 L 843 314 L 845 310 L 845 307 L 848 305 L 851 307 L 850 314 L 852 315 L 856 311 L 858 295 L 854 294 L 853 299 L 851 301 L 848 301 L 846 299 L 847 295 Z"/>
             <path className="tc-logo-path" pathLength={1} d="M 837 294 L 830 294 L 823 301 L 823 309 L 829 315 L 832 315 L 836 313 L 837 311 L 836 310 L 831 310 L 828 308 L 828 304 L 832 299 L 838 299 L 839 298 L 839 295 Z"/>

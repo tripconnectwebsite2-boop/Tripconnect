@@ -3,10 +3,9 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import StructuredData from "@/components/StructuredData";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
-import NavigationProgressBar from "@/components/NavigationProgressBar";
+import PageTransitionLoader from "@/components/PageTransitionLoader";
 import FirebaseAnalytics from "@/components/FirebaseAnalytics";
 import ClientProviders from "@/components/ClientProviders";
-import SitePreloader from "@/components/SitePreloader";
 import { Analytics } from "@vercel/analytics/next";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -62,9 +61,8 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body className="bg-surface font-sans text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
-        <SitePreloader />
+        <PageTransitionLoader />
         <ScrollProgressBar />
-        <NavigationProgressBar />
         {children}
         <FirebaseAnalytics />
         <Analytics />
