@@ -5,6 +5,9 @@ import { getPackages, getDestinations } from "@/lib/db";
 import Link from "next/link";
 import PackageCatalogClient from "./PackageCatalogClient";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata = {
   title: "Curated Travel Packages | Trip Connect Kochi",
   description: "Browse handpicked Kerala tours, backwater cruises, and Pan-India circuits. Verified starting prices, day-by-day itineraries, and private chauffeur journeys.",

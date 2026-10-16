@@ -8,6 +8,9 @@ import Link from "next/link";
 import Image from "next/image";
 import PackageDetailEnquiryForm from "./PackageDetailEnquiryForm";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function generateStaticParams() {
   const packages = await getPackages({ status: "published" });
   return packages.map((p) => ({ slug: p.slug }));

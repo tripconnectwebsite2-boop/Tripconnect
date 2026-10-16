@@ -4,13 +4,20 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import Image from "next/image";
 import { APPLE_EASE } from "@/lib/animation";
-import { SiteContent } from "@/lib/types";
+import { SiteContent, TravelPackage } from "@/lib/types";
 
-export default function KeralaTours({ content }: { content?: Partial<SiteContent> }) {
+export default function KeralaTours({
+  content,
+  packages: dbPackages,
+}: {
+  content?: Partial<SiteContent>;
+  packages?: TravelPackage[];
+}) {
   const keralaBadge = content?.kerala_badge || "Flagship Journeys";
   const keralaTitle = content?.kerala_title || "Discover the Beauty of Kerala";
   const keralaSubtitle = content?.kerala_subtitle || "Handcrafted routes through God’s Own Country, from mist-kissed highlands to tranquil backwater lagoons.";
-  const tours = [
+
+  const defaultTours = [
     {
       title: content?.kerala_tour1_title || "Munnar Cloud Mist & Tea Trails",
       tag: "Highland Mist",
@@ -59,6 +66,25 @@ export default function KeralaTours({ content }: { content?: Partial<SiteContent
       slug: "varkala-cliffside-coastal-escape",
     },
   ];
+
+  const tours = (() => {
+    if (!dbPackages || dbPackages.length === 0) return defaultTours;
+    const keralaOnly = dbPackages.filter((p) => p.category === "Kerala Tours" || (p.category as string) === "kerala");
+    const list = (keralaOnly.length >= 2 ? keralaOnly : dbPackages).slice(0, 4);
+    const icons = ["landscape", "sailing", "forest", "beach_access"];
+    const tags = ["Highland Mist", "Backwater Cruise", "Wild Rainforest", "Coastal Bliss"];
+
+    return list.map((p, idx) => ({
+      title: p.title,
+      tag: p.destination_name || tags[idx % tags.length],
+      icon: icons[idx % icons.length],
+      duration: `${p.duration_nights}N / ${p.duration_days}D`,
+      desc: p.short_description || defaultTours[idx % defaultTours.length].desc,
+      price: `₹${p.starting_price.toLocaleString("en-IN")}`,
+      image: p.gallery?.[0] || defaultTours[idx % defaultTours.length].image,
+      slug: p.slug,
+    }));
+  })();
 
   return (
     <section className="w-full py-16 lg:py-24 px-4 sm:px-6 lg:px-12 max-w-7xl 2xl:max-w-[1360px] mx-auto overflow-hidden" id="kerala-tours">

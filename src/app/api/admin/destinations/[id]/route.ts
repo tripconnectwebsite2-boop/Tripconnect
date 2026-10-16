@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { updateDestination, deleteDestination } from "@/lib/db";
 
@@ -19,6 +20,11 @@ export async function PATCH(
     return NextResponse.json({ error: "Destination not found" }, { status: 404 });
   }
 
+  revalidatePath("/", "layout");
+  revalidatePath("/destinations");
+  if (updated.slug) {
+    revalidatePath(`/destinations/${updated.slug}`);
+  }
   return NextResponse.json({ success: true, destination: updated });
 }
 
@@ -37,5 +43,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Destination not found" }, { status: 404 });
   }
 
+  revalidatePath("/", "layout");
+  revalidatePath("/destinations");
   return NextResponse.json({ success: true, message: "Destination removed." });
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { getDestinations, createDestination } from "@/lib/db";
 
@@ -25,6 +26,8 @@ export async function POST(request: Request) {
     }
 
     const created = await createDestination(body);
+    revalidatePath("/", "layout");
+    revalidatePath("/destinations");
     return NextResponse.json({ success: true, destination: created }, { status: 201 });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Failed to create destination." }, { status: 500 });

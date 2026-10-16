@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { getPackages, createPackage } from "@/lib/db";
 
@@ -40,6 +41,8 @@ export async function POST(request: Request) {
       status: body.status === "published" ? "published" : "draft",
     });
 
+    revalidatePath("/", "layout");
+    revalidatePath("/packages");
     return NextResponse.json({ success: true, package: newPkg }, { status: 201 });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Failed to create package." }, { status: 500 });

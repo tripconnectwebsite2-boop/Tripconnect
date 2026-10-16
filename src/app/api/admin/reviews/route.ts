@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { getReviews, createReview } from "@/lib/db";
 
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
     }
 
     const created = await createReview(body);
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true, review: created }, { status: 201 });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Failed to create review." }, { status: 500 });

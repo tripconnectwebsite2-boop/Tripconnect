@@ -5,6 +5,9 @@ import { getDestinations, getPackages } from "@/lib/db";
 import Link from "next/link";
 import Image from "next/image";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata = {
   title: "Destinations Geographic Atlas | Trip Connect Kerala",
   description: "Explore curated travel destinations across God’s Own Country and Pan-India. Discover Munnar, Alleppey, Wayanad, Varkala, Rajasthan, Kashmir and more.",

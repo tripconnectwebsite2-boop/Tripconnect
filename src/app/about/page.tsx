@@ -5,6 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { getSiteContent } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata = {
   title: "About Trip Connect | Native Kerala Concierge & Tour Specialist",
   description: "Learn about Trip Connect Kochi. Founded on native Kerala expertise, bespoke travel curation, transparent itineraries, and direct human hospitality.",

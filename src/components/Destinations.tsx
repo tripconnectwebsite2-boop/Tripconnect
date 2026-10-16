@@ -4,9 +4,10 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import Image from "next/image";
 import { APPLE_EASE } from "@/lib/animation";
+import { Destination } from "@/lib/types";
 
-export default function Destinations() {
-  const keralaDestinations = [
+export default function Destinations({ destinations: dbDestinations }: { destinations?: Destination[] }) {
+  const defaultKeralaDestinations = [
     {
       name: "Munnar",
       slug: "munnar",
@@ -51,13 +52,14 @@ export default function Destinations() {
     },
   ];
 
-  const indiaDestinations = [
+  const defaultIndiaDestinations = [
     {
       name: "Rajasthan",
       tag: "Royal Palaces",
       desc: "Forts, royal courtyards, and Thar dunes.",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuBA2KBVA1-vto0Nr3rMkS62Kso4TxtBQv5eGBOlA0UYF8ZT89ayz2O0oPhx1Fq5YJTHZ0HB6qj-kCrc5EMQ6EPumSvWwbOVg6OJqakvSih8wWlVhJZ1-e_D0qHBhT_LRcS45-IlFhDEvmA7JsLI6IVYbMixhJPFrkBvC28Wlev9q59_OAInYf5wn_491adquAgqDN9KzKQvey7kbpQ5MhbpVC_cYF1MGEYSIdA8qymhlEBlEWIEobOgEQ",
+      slug: "rajasthan",
     },
     {
       name: "Kashmir",
@@ -65,6 +67,7 @@ export default function Destinations() {
       desc: "Dal Lake shikaras & alpine meadows.",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuAejrFREpWCmER6tk4lGcVwNraZ28s44uPMnI6Bjjlhzf-YClhd-wTd3tKBIMMnwC4sggWPbObzhtugJ6mTZ3teXGwR2LjohKtRJ9Vfu7mznDjk9nBwycQI9PZEexGBEoJ1plJAmDZPWvh5zmURPurHvuHeWKJJ54SdzO-TrSCOEUDbbTG4Gpns2mYtnRSfIuCF1i-Hth1KM0OO2shaTPvfOmhVrxdzgWnD6e2UXsooGJtQYxl95aR3zA",
+      slug: "kashmir",
     },
     {
       name: "Himachal",
@@ -72,6 +75,7 @@ export default function Destinations() {
       desc: "Pine-fringed passes & mountain sanctuaries.",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuAncHq9IQ1qmGmThfMCHDiaMK85LI9hYUbMYJeYQfvDiysPBQcXQkqBHs9zBGAv2I3FD9BF5263yFKwx8hoTwcJ0yNTSVpUBJtbrCfDDKKLmhIQCHYP3RBB_--A9uba2ioiycLDtFEEq40EvnsRXd2DIVGJ1nSHFwbPAnX-TmB49O4utW7ADgjLGuFpOEPw_4kDtXxrIexAeyVvKC0NDHn7C7t0TTOWWXC2mo3JmszqZ0DcmsxvKSIKTQ",
+      slug: "himachal",
     },
     {
       name: "Goa",
@@ -79,8 +83,34 @@ export default function Destinations() {
       desc: "Secluded coves & Portuguese estates.",
       image:
         "https://lh3.googleusercontent.com/aida-public/AB6AXuApVW6XVf2yU6Di3i0Ef_x85IKmvzRMeH05946uPZrHoOB2aRH1ejFQHt8-9yktXs0bT-w7jUB0Og60IU8gycUPgp_kNAHAluP5q86miauVUCv6XWUI8cfrOEy84I0DG5koCWGTDr0o5K6K8_Jofu0TrTgcFadyanmp4gB0U9tlUJvW02dzPwsqFq2L4O8gvyr3CODp322BVGA0TcwagQTqvCAq-gK30ozFK8zkt2t1pyaULxn3OS6Wkw",
+      slug: "goa",
     },
   ];
+
+  const keralaDestinations = (() => {
+    if (!dbDestinations || dbDestinations.length === 0) return defaultKeralaDestinations;
+    const filtered = dbDestinations.filter((d) => d.region === "Kerala");
+    if (filtered.length === 0) return defaultKeralaDestinations;
+    return filtered.map((d) => ({
+      name: d.name,
+      slug: d.slug,
+      desc: d.short_description || d.tagline || "Scenic retreat",
+      image: d.cover_image || d.hero_image || defaultKeralaDestinations[0].image,
+    }));
+  })();
+
+  const indiaDestinations = (() => {
+    if (!dbDestinations || dbDestinations.length === 0) return defaultIndiaDestinations;
+    const filtered = dbDestinations.filter((d) => d.region !== "Kerala");
+    if (filtered.length === 0) return defaultIndiaDestinations;
+    return filtered.map((d) => ({
+      name: d.name,
+      tag: d.region || "Pan-India",
+      desc: d.short_description || d.tagline || "Royal circuit",
+      image: d.cover_image || d.hero_image || defaultIndiaDestinations[0].image,
+      slug: d.slug,
+    }));
+  })();
 
   return (
     <section className="w-full py-16 lg:py-24 px-4 sm:px-6 lg:px-12 max-w-7xl 2xl:max-w-[1360px] mx-auto overflow-hidden" id="destinations">

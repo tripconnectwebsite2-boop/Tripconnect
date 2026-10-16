@@ -6,6 +6,9 @@ import { getDestinationBySlug, getDestinations, getPackages } from "@/lib/db";
 import Link from "next/link";
 import Image from "next/image";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function generateStaticParams() {
   const destinations = await getDestinations(true);
   return destinations.map((d) => ({ slug: d.slug }));

@@ -4,6 +4,9 @@ import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import { getPackages, getSiteContent } from "@/lib/db";
 import ContactFormClient from "./ContactFormClient";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata = {
   title: "Contact Concierge Desk | Trip Connect Kochi",
   description: "Get in touch with our Kochi travel planners. Direct WhatsApp consultation, custom itinerary curation, and 24/7 Kerala travel assistance.",

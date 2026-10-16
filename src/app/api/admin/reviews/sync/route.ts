@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { syncGoogleReviews } from "@/lib/google-reviews";
 import { updateSiteSettings, getSiteSettings } from "@/lib/db";
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
         google_reviews_last_synced: new Date().toISOString(),
       });
 
+      revalidatePath("/", "layout");
       return NextResponse.json({
         success: true,
         message: `Review count updated to ${count} (${(updated.google_rating ?? 5.0).toFixed(1)} ★). Changes are immediately live!`,
@@ -57,6 +59,7 @@ export async function POST(request: Request) {
 
     // Trigger auto-sync
     const result = await syncGoogleReviews(customUrl);
+    revalidatePath("/", "layout");
     return NextResponse.json(result);
   } catch (error: any) {
     return NextResponse.json(

@@ -10,15 +10,17 @@ import PlanTripForm from "@/components/PlanTripForm";
 import Footer from "@/components/Footer";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import AmbientBackgroundMotion from "@/components/AmbientBackgroundMotion";
-import { getOffers, getReviews, getPackages, getSiteContent, getSiteSettings } from "@/lib/db";
+import { getOffers, getReviews, getPackages, getDestinations, getSiteContent, getSiteSettings } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function Home() {
-  const [activeOffers, approvedReviews, publishedPackages, siteContent, siteSettings] = await Promise.all([
+  const [activeOffers, approvedReviews, publishedPackages, destinations, siteContent, siteSettings] = await Promise.all([
     getOffers(true), // Only current active verified offers
     getReviews(true), // Only approved genuine reviews
     getPackages({ status: "published" }), // Only published packages
+    getDestinations(true), // Only active destinations
     getSiteContent(),
     getSiteSettings(),
   ]);
@@ -30,9 +32,9 @@ export default async function Home() {
       <main className="relative z-10 w-full pt-20 bg-transparent min-h-[calc(100vh-280px)]">
         <div className="flex flex-col w-full">
           <Hero content={siteContent} />
-          <KeralaTours content={siteContent} />
-          <FeaturedPackages />
-          <Destinations />
+          <KeralaTours content={siteContent} packages={publishedPackages} />
+          <FeaturedPackages packages={publishedPackages} />
+          <Destinations destinations={destinations} />
           <WhyTripConnect content={siteContent} />
           {/* Conditionally rendered: Only displayed if genuine approved reviews exist */}
           {approvedReviews.length > 0 && (

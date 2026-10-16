@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { updateReview, deleteReview } from "@/lib/db";
 
@@ -19,6 +20,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Review not found" }, { status: 404 });
   }
 
+  revalidatePath("/", "layout");
   return NextResponse.json({ success: true, review: updated });
 }
 
@@ -37,5 +39,6 @@ export async function DELETE(
     return NextResponse.json({ error: "Review not found" }, { status: 404 });
   }
 
+  revalidatePath("/", "layout");
   return NextResponse.json({ success: true, message: "Review removed." });
 }

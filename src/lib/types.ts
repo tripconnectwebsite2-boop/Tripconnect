@@ -38,6 +38,7 @@ export interface TravelPackage {
   availability_notes?: string;
   status: "draft" | "published" | "archived";
   content_verified: boolean;
+  is_featured?: boolean;
   seo_title?: string;
   seo_description?: string;
   published_at?: string | null;
@@ -53,6 +54,8 @@ export interface Destination {
   short_description: string;
   description: string;
   cover_image: string;
+  hero_image?: string;
+  tagline?: string;
   status: "draft" | "published" | "archived";
   seo_title?: string;
   seo_description?: string;

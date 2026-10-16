@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { getCustomPageById, updateCustomPage, deleteCustomPage } from "@/lib/db";
 
@@ -37,6 +38,10 @@ export async function PATCH(
     return NextResponse.json({ error: "Page not found" }, { status: 404 });
   }
 
+  revalidatePath("/", "layout");
+  if (updated.slug) {
+    revalidatePath(`/p/${updated.slug}`);
+  }
   return NextResponse.json({ success: true, page: updated });
 }
 
@@ -55,5 +60,6 @@ export async function DELETE(
     return NextResponse.json({ error: "Page not found" }, { status: 404 });
   }
 
+  revalidatePath("/", "layout");
   return NextResponse.json({ success: true, message: "Page removed successfully." });
 }

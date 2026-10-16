@@ -4,9 +4,10 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import Image from "next/image";
 import { APPLE_EASE } from "@/lib/animation";
+import { TravelPackage } from "@/lib/types";
 
-export default function FeaturedPackages() {
-  const packages = [
+export default function FeaturedPackages({ packages: dbPackages }: { packages?: TravelPackage[] }) {
+  const defaultFallbackPackages = [
     {
       title: "Classic Kerala Grand Tour",
       subtitle: "Cochin • Munnar • Thekkady • Alleppey",
@@ -59,6 +60,34 @@ export default function FeaturedPackages() {
       ],
     },
   ];
+
+  // If live packages are provided from DB, dynamically construct cards
+  const packages = (() => {
+    if (!dbPackages || dbPackages.length === 0) {
+      return defaultFallbackPackages;
+    }
+    const featured = dbPackages.filter((p) => p.is_featured);
+    const chosen = (featured.length >= 3 ? featured : dbPackages).slice(0, 3);
+    return chosen.map((p) => {
+      const defaultIcons = ["sailing", "hotel", "airport_shuttle", "spa"];
+      const inclusions = (p.inclusions && p.inclusions.length > 0 ? p.inclusions : (p.highlights || [])).slice(0, 4).map((text, i) => ({
+        icon: defaultIcons[i % defaultIcons.length],
+        text,
+      }));
+
+      return {
+        title: p.title,
+        subtitle: p.destination_name || "Kerala & Beyond",
+        duration: `${p.duration_nights}N / ${p.duration_days}D`,
+        price: `₹${p.starting_price.toLocaleString("en-IN")}`,
+        badge: p.is_featured ? "Featured" : (p.category === "Kerala Tours" || (p.category as string) === "kerala") ? "Signature" : "Circuit",
+        badgeClass: (p.category === "Kerala Tours" || (p.category as string) === "kerala") ? "bg-secondary-container text-on-secondary-container" : "bg-tertiary-fixed text-on-tertiary-fixed",
+        slug: p.slug,
+        image: p.gallery?.[0] || defaultFallbackPackages[0].image,
+        inclusions: inclusions.length > 0 ? inclusions : defaultFallbackPackages[0].inclusions,
+      };
+    });
+  })();
 
   return (
     <section className="w-full py-16 lg:py-24 bg-surface-container-low/85 backdrop-blur-md overflow-hidden" id="featured-packages">

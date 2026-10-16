@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { getPackageById, updatePackage, deletePackage } from "@/lib/db";
 
@@ -74,6 +75,11 @@ export async function PATCH(
     return NextResponse.json({ error: "Package not found" }, { status: 404 });
   }
 
+  revalidatePath("/", "layout");
+  revalidatePath("/packages");
+  if (updated.slug) {
+    revalidatePath(`/packages/${updated.slug}`);
+  }
   return NextResponse.json({ success: true, package: updated });
 }
 
@@ -92,5 +98,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Package not found" }, { status: 404 });
   }
 
+  revalidatePath("/", "layout");
+  revalidatePath("/packages");
   return NextResponse.json({ success: true, message: "Package removed." });
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/auth";
 import { getCustomPages, createCustomPage } from "@/lib/db";
 
@@ -41,6 +42,8 @@ export async function POST(request: Request) {
       seo_description: body.seo_description?.trim() || body.hero_subtitle?.trim() || "",
     });
 
+    revalidatePath("/", "layout");
+    revalidatePath(`/p/${created.slug}`);
     return NextResponse.json({ success: true, page: created }, { status: 201 });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Failed to create page." }, { status: 500 });
